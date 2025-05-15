@@ -1,20 +1,21 @@
-import os
-import shutil
-import argparse
+
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from video_gpx_stitcher import parse_gpx, compute_motion_accel, align_by_accel, export_csv
+from video_gpx_aligner import parse_gpx, compute_motion_accel, align_by_accel, export_csv
 from rich.console import Console
 from rich.progress import Progress, BarColumn, TimeRemainingColumn, TextColumn
+import shutil
+import argparse
 
 console = Console()
 
 def match_gpx_to_video(video_path, gpx_files):
     video_accel = compute_motion_accel(str(video_path))
-    console.print(f"[cyan]Computed motion accel for {video_path.name} ({len(video_accel)} frames)[/cyan]")
+    console.print(f"[cyan]Computed motion accel for {video_path.name} ({len(video_accel)} samples)[/cyan]")
 
     best_score = -np.inf
+    best_overlap = 0
     best_offset = 0
     best_gpx = None
     best_gpx_df = None
@@ -23,7 +24,6 @@ def match_gpx_to_video(video_path, gpx_files):
         try:
             gpx_df = parse_gpx(str(gpx_path))
             gpx_accel = list(gpx_df['accel'])
-
             console.print(f"[magenta]Checking:[/magenta] {gpx_path.name} with {len(gpx_df)} trackpoints")
 
             if len(gpx_accel) < 2 or len(video_accel) < 2:
@@ -31,20 +31,21 @@ def match_gpx_to_video(video_path, gpx_files):
 
             offset = align_by_accel(video_accel, gpx_accel)
             corr_len = min(len(video_accel), len(gpx_accel) - offset)
-            if corr_len <= 0:
+            if corr_len <= 10:
                 continue
 
             score = np.corrcoef(video_accel[:corr_len], gpx_accel[offset:offset + corr_len])[0, 1]
-            if not np.isnan(score) and score > best_score:
+            if not np.isnan(score) and corr_len > best_overlap:
                 best_score = score
                 best_offset = offset
                 best_gpx = gpx_path
                 best_gpx_df = gpx_df
+                best_overlap = corr_len
         except Exception as e:
             console.print(f"[red]Error parsing {gpx_path.name}:[/red] {e}")
             continue
 
-    return best_gpx, best_offset, video_accel, best_gpx_df, best_score
+    return best_gpx, best_offset, video_accel, best_gpx_df, best_overlap, best_score
 
 def main(video_dir, gpx_dir, output_dir):
     video_dir = Path(video_dir)
@@ -57,11 +58,6 @@ def main(video_dir, gpx_dir, output_dir):
 
     console.print(f"[bold cyan]Found {len(video_files)} video(s) and {len(gpx_files)} GPX file(s).[/bold cyan]")
 
-    for vf in video_files:
-        console.print(f"[blue]Video:[/blue] {vf}")
-    for gf in gpx_files:
-        console.print(f"[magenta]GPX:[/magenta] {gf}")
-
     with Progress(
         TextColumn("[progress.description]{task.description}"),
         BarColumn(),
@@ -73,11 +69,11 @@ def main(video_dir, gpx_dir, output_dir):
 
         for video_path in video_files:
             console.print(f"\n[yellow]Analyzing:[/yellow] {video_path.name}")
-            best_gpx, offset, video_accel, gpx_df, score = match_gpx_to_video(video_path, gpx_files)
+            best_gpx, offset, video_accel, gpx_df, overlap, score = match_gpx_to_video(video_path, gpx_files)
 
             if best_gpx is None:
-                console.print(f"[red]No match found for:[/red] {video_path.name}")
-                console.print("[dim]Consider checking if the GPX files have enough data, or if the video is too short or static.[/dim]")
+                console.print(f"[red]No suitable match found for:[/red] {video_path.name}")
+                console.print("[dim]Most GPX matches were too short. Check data quality or duration alignment.[/dim]")
                 progress.advance(task)
                 continue
 
@@ -92,7 +88,10 @@ def main(video_dir, gpx_dir, output_dir):
             shutil.copy(best_gpx, new_gpx)
             export_csv(video_accel, gpx_df, offset, new_csv)
 
-            console.print(f"[green]✔ Matched with:[/green] {best_gpx.name} [blue](corr={score:.4f})[/blue]")
+            console.print(
+                f"[green]✔ Matched:[/green] {best_gpx.name} "
+                f"[blue](corr={score:.4f}, overlap={overlap} sec)[/blue]"
+            )
             progress.advance(task)
 
 if __name__ == "__main__":
