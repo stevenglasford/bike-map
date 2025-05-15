@@ -4,10 +4,15 @@ import argparse
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from video_gpx_stitcher import parse_gpx, compute_motion_accel, align_by_accel, export_csv
+from video_gpx_aligner import parse_gpx, compute_motion_accel, align_by_accel, export_csv
+from rich.console import Console
+from rich.progress import Progress, BarColumn, TimeRemainingColumn, TextColumn
+
+console = Console()
 
 def match_gpx_to_video(video_path, gpx_files):
     video_accel = compute_motion_accel(str(video_path))
+    console.print(f"[cyan]Computed motion accel for {video_path.name} ({len(video_accel)} frames)[/cyan]")
 
     best_score = -np.inf
     best_offset = 0
@@ -15,27 +20,29 @@ def match_gpx_to_video(video_path, gpx_files):
     best_gpx_df = None
 
     for gpx_path in gpx_files:
-        gpx_df = parse_gpx(str(gpx_path))
-        gpx_accel = list(gpx_df['accel'])
-
-        if len(gpx_accel) < 2 or len(video_accel) < 2:
-            continue
-
         try:
+            gpx_df = parse_gpx(str(gpx_path))
+            gpx_accel = list(gpx_df['accel'])
+
+            console.print(f"[magenta]Checking:[/magenta] {gpx_path.name} with {len(gpx_df)} trackpoints")
+
+            if len(gpx_accel) < 2 or len(video_accel) < 2:
+                continue
+
             offset = align_by_accel(video_accel, gpx_accel)
-            corr_len = min(len(video_accel), len(gpx_accel))
+            corr_len = min(len(video_accel), len(gpx_accel) - offset)
+            if corr_len <= 0:
+                continue
+
             score = np.corrcoef(video_accel[:corr_len], gpx_accel[offset:offset + corr_len])[0, 1]
-        except Exception:
+            if not np.isnan(score) and score > best_score:
+                best_score = score
+                best_offset = offset
+                best_gpx = gpx_path
+                best_gpx_df = gpx_df
+        except Exception as e:
+            console.print(f"[red]Error parsing {gpx_path.name}:[/red] {e}")
             continue
-
-        if np.isnan(score):
-            continue
-
-        if score > best_score:
-            best_score = score
-            best_offset = offset
-            best_gpx = gpx_path
-            best_gpx_df = gpx_df
 
     return best_gpx, best_offset, video_accel, best_gpx_df, best_score
 
@@ -45,29 +52,48 @@ def main(video_dir, gpx_dir, output_dir):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    video_files = sorted(video_dir.glob("*.mp4"))
-    gpx_files = sorted(gpx_dir.glob("*.gpx"))
+    video_files = sorted(list(video_dir.rglob("*.mp4")) + list(video_dir.rglob("*.MP4")))
+    gpx_files = sorted(list(gpx_dir.rglob("*.gpx")) + list(gpx_dir.rglob("*.GPX")))
 
-    for video_path in video_files:
-        print(f"\nProcessing {video_path.name}...")
-        best_gpx, offset, video_accel, gpx_df, score = match_gpx_to_video(video_path, gpx_files)
+    console.print(f"[bold cyan]Found {len(video_files)} video(s) and {len(gpx_files)} GPX file(s).[/bold cyan]")
 
-        if best_gpx is None:
-            print("  No suitable GPX match found.")
-            continue
+    for vf in video_files:
+        console.print(f"[blue]Video:[/blue] {vf}")
+    for gf in gpx_files:
+        console.print(f"[magenta]GPX:[/magenta] {gf}")
 
-        new_dir = output_dir / f'd{video_path.stem}'
-        new_dir.mkdir(parents=True, exist_ok=True)
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        "[progress.percentage]{task.percentage:>3.0f}%",
+        TimeRemainingColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("[green]Processing videos...", total=len(video_files))
 
-        new_video = new_dir / video_path.name
-        new_gpx = new_dir / best_gpx.name
-        new_csv = new_dir / "aligned_output.csv"
+        for video_path in video_files:
+            console.print(f"\n[yellow]Analyzing:[/yellow] {video_path.name}")
+            best_gpx, offset, video_accel, gpx_df, score = match_gpx_to_video(video_path, gpx_files)
 
-        shutil.copy(video_path, new_video)
-        shutil.copy(best_gpx, new_gpx)
+            if best_gpx is None:
+                console.print(f"[red]No match found for:[/red] {video_path.name}")
+                console.print("[dim]Consider checking if the GPX files have enough data, or if the video is too short or static.[/dim]")
+                progress.advance(task)
+                continue
 
-        print(f"  Matched with: {best_gpx.name} (corr={score:.4f})")
-        export_csv(video_accel, gpx_df, offset, new_csv)
+            new_dir = output_dir / f'd{video_path.stem}'
+            new_dir.mkdir(parents=True, exist_ok=True)
+
+            new_video = new_dir / video_path.name
+            new_gpx = new_dir / best_gpx.name
+            new_csv = new_dir / "aligned_output.csv"
+
+            shutil.copy(video_path, new_video)
+            shutil.copy(best_gpx, new_gpx)
+            export_csv(video_accel, gpx_df, offset, new_csv)
+
+            console.print(f"[green]✔ Matched with:[/green] {best_gpx.name} [blue](corr={score:.4f})[/blue]")
+            progress.advance(task)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
