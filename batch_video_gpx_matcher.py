@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from video_gpx_aligner import parse_gpx, compute_motion_accel, align_by_accel, export_csv
+from video_gpx_stitcher import parse_gpx, compute_motion_accel, align_by_accel, export_csv
 from rich.console import Console
 from rich.progress import Progress, BarColumn, TimeRemainingColumn, TextColumn
 
