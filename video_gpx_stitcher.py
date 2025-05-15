@@ -5,6 +5,8 @@ import pandas as pd
 import math
 from scipy.signal import correlate
 from datetime import timedelta
+import argparse
+import os
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 3958.8  # miles
@@ -98,9 +100,16 @@ def export_csv(video_accel, gpx_df, shift_index, output_path):
     print(f"CSV saved to {output_path}")
 
 if __name__ == "__main__":
-    video_path = "video.mp4"
-    gpx_path = "track.gpx"
-    output_csv = "aligned_output.csv"
+    parser = argparse.ArgumentParser(description="Align a video with a GPX file based on acceleration.")
+    parser.add_argument("--video", "-v", required=True, help="Path to the panoramic video file.")
+    parser.add_argument("--gpx", "-g", required=True, help="Path to the GPX file.")
+    parser.add_argument("--output", "-o", default="aligned_output.csv", help="Path to output CSV file.")
+
+    args = parser.parse_args()
+
+    video_path = args.video
+    gpx_path = args.gpx
+    output_csv = args.output
 
     print("[1] Parsing GPX...")
     gpx_df = parse_gpx(gpx_path)
