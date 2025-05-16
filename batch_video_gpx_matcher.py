@@ -1,104 +1,104 @@
-import argparse
-import os
-import shutil
-import subprocess
-import pandas as pd
-import gpxpy
+
 from pathlib import Path
-import json
-from datetime import datetime, timedelta
+import numpy as np
+import pandas as pd
+from video_gpx_stitcher import parse_gpx, compute_motion_accel, align_by_accel, export_csv
+from rich.console import Console
+from rich.progress import Progress, BarColumn, TimeRemainingColumn, TextColumn
+import shutil
+import argparse
 
-def find_files(directory):
-    print(f"\nChecking directory: {directory}")
-    print("Files:", os.listdir(directory))
+console = Console()
 
-    mp4_file = gpx_file = csv_file = None
-    for file in os.listdir(directory):
-        path = os.path.join(directory, file)
-        lower = file.lower()
-        if lower.endswith(".mp4") and not mp4_file:
-            mp4_file = path
-        elif lower.endswith(".gpx") and not gpx_file:
-            gpx_file = path
-        elif lower.endswith(".csv") and not csv_file:
-            csv_file = path
-    return mp4_file, gpx_file, csv_file
+def match_gpx_to_video(video_path, gpx_files):
+    video_accel = compute_motion_accel(str(video_path))
+    console.print(f"[cyan]Computed motion accel for {video_path.name} ({len(video_accel)} samples)[/cyan]")
 
+    best_score = -np.inf
+    best_overlap = 0
+    best_offset = 0
+    best_gpx = None
+    best_gpx_df = None
 
-
-def get_first_gpx_time(gpx_file):
-    with open(gpx_file, 'r') as f:
-        gpx = gpxpy.parse(f)
-        for track in gpx.tracks:
-            for segment in track.segments:
-                for point in segment.points:
-                    if point.time:
-                        return point.time
-    raise ValueError("No valid timestamp found in GPX file")
-
-def get_video_codec(input_mp4):
-    cmd = [
-        "ffprobe", "-v", "error", "-select_streams", "v:0",
-        "-show_entries", "stream=codec_name", "-of", "json", input_mp4
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-    codec_info = json.loads(result.stdout)
-    return codec_info["streams"][0]["codec_name"]
-
-def correct_timestamp(input_mp4, output_mp4, start_time, codec):
-    timestamp_str = start_time.strftime("%Y-%m-%dT%H:%M:%S")
-    encoder = "hevc_nvenc" if codec == "h265" else "h264_nvenc"
-
-    cmd = [
-        "ffmpeg", "-hwaccel", "cuda",
-        "-i", input_mp4,
-        "-metadata", f"creation_time={timestamp_str}",
-        "-c:v", encoder, "-c:a", "copy",
-        "-y", str(output_mp4)
-    ]
-    print("Executing:", ' '.join(cmd))
-    subprocess.run(cmd, check=True)
-
-def process_directory(input_dir, output_dir):
-    for subdir in Path(input_dir).iterdir():
-        if not subdir.is_dir():
-            continue
-
-        mp4_file, gpx_file, csv_file = find_files(subdir)
-        if not (mp4_file and gpx_file and csv_file):
-            print(f"Skipping {subdir} (missing .mp4/.csv/.gpx)")
-            continue
-
+    for gpx_path in gpx_files:
         try:
-            gpx_start_time = get_first_gpx_time(gpx_file)
+            gpx_df = parse_gpx(str(gpx_path))
+            gpx_accel = list(gpx_df['accel'])
+            console.print(f"[magenta]Checking:[/magenta] {gpx_path.name} with {len(gpx_df)} trackpoints")
+
+            if len(gpx_accel) < 2 or len(video_accel) < 2:
+                continue
+
+            offset = align_by_accel(video_accel, gpx_accel)
+            corr_len = min(len(video_accel), len(gpx_accel) - offset)
+            if corr_len <= 10:
+                continue
+
+            score = np.corrcoef(video_accel[:corr_len], gpx_accel[offset:offset + corr_len])[0, 1]
+            if not np.isnan(score) and corr_len > best_overlap:
+                best_score = score
+                best_offset = offset
+                best_gpx = gpx_path
+                best_gpx_df = gpx_df
+                best_overlap = corr_len
         except Exception as e:
-            print(f"Failed to extract GPX time from {gpx_file}: {e}")
+            console.print(f"[red]Error parsing {gpx_path.name}:[/red] {e}")
             continue
 
-        try:
-            codec = get_video_codec(mp4_file)
-        except Exception as e:
-            print(f"Failed to determine video codec of {mp4_file}: {e}")
-            continue
+    return best_gpx, best_offset, video_accel, best_gpx_df, best_overlap, best_score
 
-        video_name = Path(mp4_file).stem
-        output_subdir = Path(output_dir) / f"d1{video_name}"
-        output_subdir.mkdir(parents=True, exist_ok=True)
+def main(video_dir, gpx_dir, output_dir):
+    video_dir = Path(video_dir)
+    gpx_dir = Path(gpx_dir)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-        output_mp4_path = output_subdir / f"{video_name}.mp4"
+    video_files = sorted(list(video_dir.rglob("*.mp4")) + list(video_dir.rglob("*.MP4")))
+    gpx_files = sorted(list(gpx_dir.rglob("*.gpx")) + list(gpx_dir.rglob("*.GPX")))
 
-        try:
-            correct_timestamp(mp4_file, output_mp4_path, gpx_start_time, codec)
-            shutil.copy2(gpx_file, output_subdir)
-            os.remove(mp4_file)
-            print(f"Processed: {video_name}")
-        except subprocess.CalledProcessError as e:
-            print(f"ffmpeg failed for {video_name}: {e}")
+    console.print(f"[bold cyan]Found {len(video_files)} video(s) and {len(gpx_files)} GPX file(s).[/bold cyan]")
+
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        "[progress.percentage]{task.percentage:>3.0f}%",
+        TimeRemainingColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("[green]Processing videos...", total=len(video_files))
+
+        for video_path in video_files:
+            console.print(f"\n[yellow]Analyzing:[/yellow] {video_path.name}")
+            best_gpx, offset, video_accel, gpx_df, overlap, score = match_gpx_to_video(video_path, gpx_files)
+
+            if best_gpx is None:
+                console.print(f"[red]No suitable match found for:[/red] {video_path.name}")
+                console.print("[dim]Most GPX matches were too short. Check data quality or duration alignment.[/dim]")
+                progress.advance(task)
+                continue
+
+            new_dir = output_dir / f'd{video_path.stem}'
+            new_dir.mkdir(parents=True, exist_ok=True)
+
+            new_video = new_dir / video_path.name
+            new_gpx = new_dir / best_gpx.name
+            new_csv = new_dir / "aligned_output.csv"
+
+            shutil.copy(video_path, new_video)
+            shutil.copy(best_gpx, new_gpx)
+            export_csv(video_accel, gpx_df, offset, new_csv)
+
+            console.print(
+                f"[green]✔ Matched:[/green] {best_gpx.name} "
+                f"[blue](corr={score:.4f}, overlap={overlap} sec)[/blue]"
+            )
+            progress.advance(task)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--input_dir", required=True, help="Directory of video subdirectories")
-    parser.add_argument("-o", "--output_dir", required=True, help="Where corrected folders go")
+    parser.add_argument("-v", "--video_dir", required=True, help="Directory of MP4 videos")
+    parser.add_argument("-g", "--gpx_dir", required=True, help="Directory of GPX files")
+    parser.add_argument("-o", "--output_dir", default="./matched_output", help="Where to place output directories")
     args = parser.parse_args()
 
-    process_directory(args.input_dir, args.output_dir)
+    main(args.video_dir, args.gpx_dir, args.output_dir)
