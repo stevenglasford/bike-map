@@ -12,13 +12,15 @@ def find_files(directory):
     mp4_file = gpx_file = csv_file = None
     for file in os.listdir(directory):
         path = os.path.join(directory, file)
-        if file.endswith(".mp4"):
+        lower = file.lower()
+        if lower.endswith(".mp4") and not mp4_file:
             mp4_file = path
-        elif file.endswith(".gpx"):
+        elif lower.endswith(".gpx") and not gpx_file:
             gpx_file = path
-        elif file.endswith(".csv"):
+        elif lower.endswith(".csv") and not csv_file:
             csv_file = path
     return mp4_file, gpx_file, csv_file
+
 
 def get_first_gpx_time(gpx_file):
     with open(gpx_file, 'r') as f:
@@ -66,7 +68,7 @@ def process_directory(input_dir, output_dir):
         try:
             gpx_start_time = get_first_gpx_time(gpx_file)
         except Exception as e:
-            print(f"Failed to extract GPX time from {gpx_file}: {e}")
+            print(f"Skipping {subdir} (missing files: mp4={bool(mp4_file)}, gpx={bool(gpx_file)}, csv={bool(csv_file)})")
             continue
 
         try:
