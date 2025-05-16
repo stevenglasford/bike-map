@@ -43,17 +43,27 @@ def get_video_codec(input_mp4):
 
 def correct_timestamp(input_mp4, output_mp4, start_time, codec):
     timestamp_str = start_time.strftime("%Y-%m-%dT%H:%M:%S")
-    encoder = "hevc_nvenc" if codec == "h265" else "h264_nvenc"
+
+    if codec == "h265":
+        encoder = "hevc_nvenc"
+        pix_fmt = "p010le"
+    else:
+        encoder = "h264_nvenc"
+        pix_fmt = "yuv420p"
 
     cmd = [
         "ffmpeg", "-hwaccel", "cuda",
         "-i", input_mp4,
         "-metadata", f"creation_time={timestamp_str}",
-        "-c:v", encoder, "-c:a", "copy",
+        "-c:v", encoder,
+        "-pix_fmt", pix_fmt,
+        "-c:a", "copy",
         "-y", str(output_mp4)
     ]
+
     print("Executing:", ' '.join(cmd))
     subprocess.run(cmd, check=True)
+
 
 def process_directory(input_dir, output_dir):
     for subdir in Path(input_dir).iterdir():
