@@ -9,6 +9,9 @@ import json
 from datetime import datetime, timedelta
 
 def find_files(directory):
+    print(f"\nChecking directory: {directory}")
+    print("Files:", os.listdir(directory))
+
     mp4_file = gpx_file = csv_file = None
     for file in os.listdir(directory):
         path = os.path.join(directory, file)
@@ -20,6 +23,7 @@ def find_files(directory):
         elif lower.endswith(".csv") and not csv_file:
             csv_file = path
     return mp4_file, gpx_file, csv_file
+
 
 
 def get_first_gpx_time(gpx_file):
