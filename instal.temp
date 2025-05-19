@@ -1,0 +1,4 @@
+sudo apt install -y build-essential cmake ninja-build git libopenblas-dev \
+     libblas-dev m4 libffi-dev python3-dev python3-pip \
+     libtool libssl-dev autoconf automake libxml2-dev \
+     libjpeg-dev zlib1g-dev libpng-dev libprotobuf-dev protobuf-compiler

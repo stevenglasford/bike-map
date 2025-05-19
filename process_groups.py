@@ -1,125 +1,142 @@
-import os
-import cv2
+#!/usr/bin/env python3
+
 import argparse
+import cv2
+import torch
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from datetime import datetime
 from ultralytics import YOLO
 from deep_sort_realtime.deepsort_tracker import DeepSort
-from norfair import Detection, Tracker
-import gpxpy
-import gpxpy.gpx
-import math
+from collections import defaultdict
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
+def load_merged_csv(csv_path):
+    df = pd.read_csv(csv_path)
+    df = df.set_index("second")
+    return df
 
-def haversine(lat1, lon1, lat2, lon2):
-    R = 3958.8  # miles
-    phi1, phi2 = math.radians(lat1), math.radians(lat2)
-    d_phi = math.radians(lat2 - lat1)
-    d_lambda = math.radians(lon2 - lon1)
-    a = math.sin(d_phi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(d_lambda/2)**2
-    return R * (2 * math.atan2(math.sqrt(a), math.sqrt(1 - a)))
+def get_gps_data(df, sec):
+    try:
+        row = df.loc[sec]
+        return row['gpx_lat'], row['gpx_lon'], row['gpx_speed'], row['gpx_time']
+    except KeyError:
+        return None, None, None, None
 
+def compute_centroid(bbox):
+    x1, y1, x2, y2 = bbox
+    return np.array([(x1 + x2) / 2, (y1 + y2) / 2])
 
-def load_gpx(gpx_path):
-    with open(gpx_path, 'r') as f:
-        gpx = gpxpy.parse(f)
-    return [(pt.time, pt.latitude, pt.longitude)
-            for track in gpx.tracks
-            for seg in track.segments
-            for pt in seg.points]
+def pixel_to_mph(pixel_dist, ref_speed, ref_pixels=100):
+    if ref_pixels == 0:
+        return 0
+    return (pixel_dist / ref_pixels) * ref_speed
 
+def process_group(directory, model_path):
+    dir_path = Path(directory)
+    video_file = next((f for f in dir_path.iterdir() if f.suffix.lower() == ".mp4"), None)
+    merged_csv = dir_path / "merged_output.csv"
 
-def map_gps_to_seconds(csv_df, gpx_points):
-    gps_map = {}
-    for _, row in csv_df.iterrows():
-        sec = int(row['seconds'])
-        target_time = datetime.utcfromtimestamp(row['seconds'])
-        closest = min(gpx_points, key=lambda x: abs((x[0] - target_time).total_seconds()))
-        gps_map[sec] = {"lat": closest[1], "lon": closest[2], "time": closest[0].isoformat()}
-    return gps_map
+    if not video_file or not merged_csv.exists():
+        print(f"Missing .mp4 or merged_output.csv in {dir_path}")
+        return
 
-
-def process_group(group_path, model_path="yolo11x.pt"):
-    group_path = Path(group_path)
-    video_file = next(group_path.glob("*.mp4"))
-    gpx_file = next(group_path.glob("*.gpx"))
-    csv_file = next(group_path.glob("*.csv"))
-    video_name = video_file.stem
-
-    gps_df = pd.read_csv(csv_file)
-    gps_map = map_gps_to_seconds(gps_df, load_gpx(gpx_file))
-
+    gps_df = load_merged_csv(merged_csv)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     model = YOLO(model_path)
-    deepsort = DeepSort()
-    bytetrack = Tracker(distance_function='euclidean', distance_threshold=30)
+    model.to(device)
+    deepsort = DeepSort(max_age=30)
 
     cap = cv2.VideoCapture(str(video_file))
     fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_idx = 0
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    previous_centroids = defaultdict(lambda: None)
     output_rows = []
 
-    while cap.isOpened():
+    for frame_idx in range(frame_count):
         ret, frame = cap.read()
         if not ret:
             break
 
-        sec = int(frame_idx / fps)
-        if sec not in gps_map:
-            frame_idx += 1
+        second = int(frame_idx // fps)
+        lat, lon, ref_speed, timestamp = get_gps_data(gps_df, second)
+        if lat is None:
             continue
 
-        yolo_out = model(frame)[0]
-        bboxes, confs = [], []
+        results = model(frame, verbose=False)[0]
+        detections = results.boxes
+        if detections is None or detections.xyxy is None or len(detections) == 0:
+            continue
 
-        for det in yolo_out.boxes:
-            x1, y1, x2, y2 = map(int, det.xyxy[0])
-            confs.append(float(det.conf[0]))
-            bboxes.append([x1, y1, x2 - x1, y2 - y1])
+        try:
+            bboxes = detections.xyxy.cpu().numpy()
+            confs = detections.conf.cpu().numpy()
 
-        tracks = deepsort.update_tracks(bboxes, confs, frame=frame)
+            if bboxes.ndim == 1:
+                bboxes = np.expand_dims(bboxes, axis=0)
+            if confs.ndim == 0:
+                confs = np.expand_dims(confs, axis=0)
 
-        norfair_detections = []
-        for box in bboxes:
-            xc, yc = box[0] + box[2] / 2, box[1] + box[3] / 2
-            norfair_detections.append(Detection(points=np.array([[xc, yc]])))
-
-        tracked_objs = bytetrack.update(detections=norfair_detections)
-
-        for t in tracks:
-            if not t.is_confirmed():
+            if bboxes.shape[1] != 4 or bboxes.shape[0] != confs.shape[0]:
+                print(f"Skipping malformed detections at frame {frame_idx}")
                 continue
 
-            tid = t.track_id
-            speed = 0.0
-            for obj in tracked_objs:
-                if obj.id == tid and obj.vel is not None:
-                    speed = obj.vel
-                    break
+            detections_list = []
+            for bbox, conf in zip(bboxes, confs):
+                if isinstance(bbox, np.ndarray) and bbox.size == 4:
+                    x1, y1, x2, y2 = bbox
+                    detections_list.append([
+                        float(x1), float(y1), float(x2), float(y2), float(conf)
+                    ])
 
-            row = {
-                "Seconds": sec,
-                "Object id": tid,
-                "Object speed": round(speed, 2),
-                "Lat": gps_map[sec]['lat'],
-                "Long": gps_map[sec]['lon'],
-                "Time": gps_map[sec]['time']
-            }
-            output_rows.append(row)
+            if not detections_list:
+                continue
 
-        frame_idx += 1
+            assert all(isinstance(d, list) and len(d) == 5 for d in detections_list), "Bad detection structure"
+
+            tracks = deepsort.update_tracks(detections_list, frame=frame)
+
+        except Exception as e:
+            print(f"Detection formatting error at frame {frame_idx}: {e}")
+            continue
+
+        for track in tracks:
+            if not track.is_confirmed():
+                continue
+            obj_id = track.track_id
+            x1, y1, x2, y2 = track.to_ltrb()
+            centroid = compute_centroid((x1, y1, x2, y2))
+
+            prev = previous_centroids[obj_id]
+            pixel_dist = np.linalg.norm(centroid - prev) if prev is not None else 0
+            previous_centroids[obj_id] = centroid
+
+            speed_mph = pixel_to_mph(pixel_dist, ref_speed)
+
+            output_rows.append({
+                "Frame": frame_idx,
+                "Seconds": second,
+                "Object ID": obj_id,
+                "Object Speed (mph)": round(speed_mph, 2),
+                "Lat": lat,
+                "Long": lon,
+                "Time": timestamp
+            })
+
+        print(f"Processed frame {frame_idx + 1}/{frame_count}", end='\r')
 
     cap.release()
-    out_csv = group_path / f"speed_table_{video_name}.csv"
-    pd.DataFrame(output_rows).to_csv(out_csv, index=False)
-    print(f"Saved: {out_csv}")
-
+    df_out = pd.DataFrame(output_rows)
+    output_file = dir_path / f"speed_table_{video_file.stem}.csv"
+    df_out.to_csv(output_file, index=False)
+    print(f"\nSaved: {output_file}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Track and analyze object speeds using video, GPX, and metadata.")
-    parser.add_argument("-d", "--directory", type=str, required=True, help="Directory containing .mp4, .gpx, and .csv")
-    parser.add_argument("-m", "--model", type=str, default="yolo11x.pt", help="YOLO model path (default: yolo11x.pt)")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--directory", required=True, help="Directory with .mp4 and merged_output.csv")
+    parser.add_argument("-m", "--model", required=False, default="yolo11x.pt", help="Path to YOLOv11x model")
     args = parser.parse_args()
 
     process_group(args.directory, args.model)
