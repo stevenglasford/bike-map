@@ -1,0 +1,1 @@
+python merge_gpx_csv.py -c dtemp_video_249173973948960768/aligned_output.csv -g  dtemp_video_249173973948960768/10002082192.gpx -o dtemp_video_249173973948960768/merged_output.csv

@@ -46,7 +46,7 @@ def process_group(directory, model_path):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = YOLO(model_path)
     model.to(device)
-    deepsort = DeepSort(max_age=30)
+    deepsort = DeepSort(max_age=30, n_init=2)  # confirm tracks quickly
 
     cap = cv2.VideoCapture(str(video_file))
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -63,14 +63,18 @@ def process_group(directory, model_path):
         second = int(frame_idx // fps)
         lat, lon, ref_speed, timestamp = get_gps_data(gps_df, second)
         if lat is None:
+            print(f"No GPS data for second {second}")
             continue
 
-        results = model(frame, verbose=False)[0]
+        results = model(frame, verbose=False, conf=0.1)[0]
         detections = results.boxes
+        print(f"Frame {frame_idx}: {len(detections) if detections else 0} detections")
+
         if detections is None or detections.xyxy is None or len(detections) == 0:
             continue
 
         try:
+            # Attempt to extract bboxes and confs
             bboxes = detections.xyxy.cpu().numpy()
             confs = detections.conf.cpu().numpy()
 
@@ -83,20 +87,65 @@ def process_group(directory, model_path):
                 print(f"Skipping malformed detections at frame {frame_idx}")
                 continue
 
-            detections_list = []
-            for bbox, conf in zip(bboxes, confs):
-                if isinstance(bbox, np.ndarray) and bbox.size == 4:
-                    x1, y1, x2, y2 = bbox
-                    detections_list.append([
-                        float(x1), float(y1), float(x2), float(y2), float(conf)
-                    ])
+            print(f"Raw bboxes: {bboxes}")
+            print(f"Type of bbox at index {i}: {type(bbox)} - value: {bbox}")
+            print(f"Raw confs: {confs}")
+            print(f"Frame {frame_idx}: {len(bboxes)} bboxes, {len(confs)} confidences")
 
+        
+            detections_list = []
+
+            try:
+                bboxes = detections.xyxy.cpu().numpy()
+                confs = detections.conf.cpu().numpy()
+            
+                if bboxes.ndim == 1:
+                    bboxes = np.expand_dims(bboxes, axis=0)
+                if confs.ndim == 0:
+                    confs = np.expand_dims(confs, axis=0)
+            
+                if bboxes.shape[1] != 4 or bboxes.shape[0] != confs.shape[0]:
+                    print(f"Skipping malformed detections at frame {frame_idx}")
+                    continue
+            
+                print(f"Raw bboxes: {bboxes}")
+                print(f"Raw confs: {confs}")
+                print(f"Frame {frame_idx}: {len(bboxes)} bboxes, {len(confs)} confidences")
+            
+                for i in range(len(bboxes)):
+                    try:
+                        bbox = bboxes[i]
+                        conf = confs[i]
+            
+                        if isinstance(bbox, (float, int)):
+                            print(f"Skipped non-iterable bbox at frame {frame_idx}, index {i}: {bbox}")
+                            continue
+            
+                        if isinstance(bbox, np.ndarray) and bbox.shape == (4,):
+                            x1, y1, x2, y2 = map(float, bbox)
+                        elif isinstance(bbox, (list, tuple)) and len(bbox) == 4:
+                            x1, y1, x2, y2 = map(float, bbox)
+                        else:
+                            print(f"Invalid bbox structure at frame {frame_idx}, index {i}: {bbox}")
+                            continue
+            
+                        detections_list.append([x1, y1, x2, y2, float(conf)])
+            
+                    except Exception as e:
+                        print(f"Error parsing individual bbox at frame {frame_idx}, index {i}: {e}")
+                        continue
+            
+            except Exception as e:
+                print(f"Detection formatting error at frame {frame_idx}: {e}")
+                continue
+        
             if not detections_list:
+                print(f"No valid detections after parsing at frame {frame_idx}")
                 continue
 
-            assert all(isinstance(d, list) and len(d) == 5 for d in detections_list), "Bad detection structure"
-
             tracks = deepsort.update_tracks(detections_list, frame=frame)
+            confirmed = [t for t in tracks if t.is_confirmed()]
+            print(f"Frame {frame_idx}: {len(confirmed)} confirmed tracks")
 
         except Exception as e:
             print(f"Detection formatting error at frame {frame_idx}: {e}")
