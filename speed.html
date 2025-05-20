@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSV Map Visualizer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <style>
+    #map { height: 90vh; width: 100%; }
+    .control-panel { padding: 10px; background: white; }
+    .emoji-label { font-size: 20px; position: absolute; transform: translate(-50%, -50%); }
+    .compass { transform: translate(-50%, -50%) rotate(0deg); }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label><input type="checkbox" id="toggleHeatmap"> Speed Heatmap</label>
+    <label><input type="checkbox" id="toggleType"> Object Type</label>
+    <label><input type="checkbox" id="toggleBearing"> Bearing</label>
+    <label><input type="checkbox" id="toggleSpeed"> Object Speed</label>
+    <input type="file" id="csvFile" accept=".csv">
+  </div>
+  <div id="map"></div>
+
+  <script>
+    const map = L.map('map').setView([44.9778, -93.2650], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let heatLayer, objectMarkers = [];
+
+    function clearMap() {
+      if (heatLayer) map.removeLayer(heatLayer);
+      objectMarkers.forEach(m => map.removeLayer(m));
+      objectMarkers = [];
+    }
+
+    function parseCSV(content) {
+      const lines = content.trim().split('\n');
+      const headers = lines[0].split(',');
+      const rows = lines.slice(1).map(l => Object.fromEntries(l.split(',').map((v, i) => [headers[i], v])));
+      return rows;
+    }
+
+    function getEmoji(type) {
+      const emojiMap = { Person: '🚶', Car: '🚗', Bike: '🚴', Bus: '🚌' };
+      return emojiMap[type] || '❓';
+    }
+
+    function updateMap(data) {
+      clearMap();
+
+      if (document.getElementById('toggleHeatmap').checked) {
+        const heatPoints = {};
+        data.forEach(d => {
+          const key = d['Cam Lat'] + ',' + d['Cam Lon'];
+          heatPoints[key] = heatPoints[key] || [];
+          heatPoints[key].push(parseFloat(d['Object Speed (mph)']));
+        });
+        const heatData = Object.entries(heatPoints).map(([k, speeds]) => {
+          const [lat, lon] = k.split(',').map(Number);
+          const avg = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+          return [lat, lon, avg / 50];
+        });
+        heatLayer = L.heatLayer(heatData, { radius: 25, gradient: { 0.0: 'green', 1.0: 'red' } }).addTo(map);
+      }
+
+      if (document.getElementById('toggleType').checked || document.getElementById('toggleBearing').checked || document.getElementById('toggleSpeed').checked) {
+        data.forEach(d => {
+          const lat = parseFloat(d['Object Lat']);
+          const lon = parseFloat(d['Object Lon']);
+          const marker = L.marker([lat, lon], { icon: L.divIcon({ className: 'emoji-label', html: getEmoji(d['Object Type']) }) }).addTo(map);
+
+          let popupContent = `<strong>${d['Object Type']}</strong>`;
+          if (document.getElementById('toggleBearing').checked) {
+            popupContent += `<br>Bearing: ${d['Bearing (deg)']}°`;
+          }
+          if (document.getElementById('toggleSpeed').checked) {
+            popupContent += `<br>Speed: ${d['Object Speed (mph)']} mph`;
+          }
+          marker.bindPopup(popupContent);
+
+          objectMarkers.push(marker);
+        });
+      }
+    }
+
+    document.getElementById('csvFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const data = parseCSV(event.target.result);
+          updateMap(data);
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    ['toggleHeatmap', 'toggleType', 'toggleBearing', 'toggleSpeed'].forEach(id => {
+      document.getElementById(id).addEventListener('change', () => {
+        const fileInput = document.getElementById('csvFile');
+        if (fileInput.files.length > 0) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const data = parseCSV(event.target.result);
+            updateMap(data);
+          };
+          reader.readAsText(fileInput.files[0]);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
