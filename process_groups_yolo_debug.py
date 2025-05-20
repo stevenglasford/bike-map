@@ -20,7 +20,7 @@ def load_merged_csv(csv_path):
 def get_gps_data(df, sec):
     try:
         row = df.loc[sec]
-        return row['lat'], row['long'], row['speed_mph'], row['gpx_time']
+        return row['gpx_lat'], row['gpx_lon'], row['gpx_speed'], row['gpx_time']
     except KeyError:
         return None, None, None, None
 
@@ -66,8 +66,6 @@ def process_group(directory, model_path):
             print(f"Skipping frame {frame_idx} — missing GPS data at second {second}")
             continue
 
-        print(f"Frame {frame_idx}: GPS ref_speed={ref_speed:.2f}, GPS=({lat},{lon})")
-
         results = model.track(source=frame, persist=True, verbose=False, conf=0.1)[0]
         if results is None or results.boxes is None or len(results.boxes) == 0:
             print(f"Frame {frame_idx}: 0 detections")
@@ -94,8 +92,6 @@ def process_group(directory, model_path):
 
                 speed_mph = pixel_to_mph(pixel_dist, ref_speed)
 
-                print(f"  Obj {obj_id}: prev={prev}, curr={centroid}, pixel_dist={pixel_dist:.2f}, speed={speed_mph:.2f} mph")
-
                 output_rows.append({
                     "Frame": frame_idx,
                     "Seconds": second,
@@ -105,6 +101,8 @@ def process_group(directory, model_path):
                     "Long": lon,
                     "Time": timestamp
                 })
+
+                print(f"Row: Frame {frame_idx}, Obj {obj_id}, Speed {speed_mph:.2f}, GPS ({lat}, {lon})")
 
             except Exception as e:
                 print(f"Error processing track at frame {frame_idx}, index {i}: {e}")

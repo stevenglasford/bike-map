@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 
 import argparse
@@ -20,7 +21,7 @@ def load_merged_csv(csv_path):
 def get_gps_data(df, sec):
     try:
         row = df.loc[sec]
-        return row['lat'], row['long'], row['speed_mph'], row['gpx_time']
+        return row['gpx_lat'], row['gpx_lon'], row['gpx_speed'], row['gpx_time']
     except KeyError:
         return None, None, None, None
 
@@ -89,7 +90,10 @@ def process_group(directory, model_path):
                 centroid = compute_centroid((x1, y1, x2, y2))
 
                 prev = previous_centroids[obj_id]
-                pixel_dist = np.linalg.norm(centroid - prev) if prev is not None else 0
+                if prev is not None:
+                    pixel_dist = np.linalg.norm(centroid - prev)
+                else:
+                    pixel_dist = 0.0
                 previous_centroids[obj_id] = centroid
 
                 speed_mph = pixel_to_mph(pixel_dist, ref_speed)
@@ -114,7 +118,7 @@ def process_group(directory, model_path):
 
     cap.release()
     df_out = pd.DataFrame(output_rows)
-    output_file = dir_path / f"speed_table_{video_file.stem}.csv"
+    output_file = dir_path / f"speed_table_{video_file.stem}_debug.csv"
     df_out.to_csv(output_file, index=False)
     print(f"\nSaved: {output_file} ({len(output_rows)} rows)")
 
