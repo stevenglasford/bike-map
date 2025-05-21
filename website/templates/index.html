@@ -1,0 +1,29 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload GPX + MP4</title>
+</head>
+<body>
+  <h2>Upload GPX and MP4</h2>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <form method="post" enctype="multipart/form-data">
+    <label for="gpx_file">GPX File:</label><br>
+    <input type="file" name="gpx_file" accept=".gpx" required><br><br>
+
+    <label for="mp4_file">MP4 File:</label><br>
+    <input type="file" name="mp4_file" accept=".mp4" required><br><br>
+
+    <input type="submit" value="Upload">
+  </form>
+</body>
+</html>
