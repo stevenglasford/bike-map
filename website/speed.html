@@ -21,6 +21,7 @@
     <label><input type="checkbox" id="toggleBearing"> Bearing</label>
     <label><input type="checkbox" id="toggleSpeed"> Object Speed</label>
     <input type="file" id="csvFile" accept=".csv">
+    <button id="runButton">Run</button>
   </div>
   <div id="map"></div>
 
@@ -31,6 +32,7 @@
     }).addTo(map);
 
     let heatLayer, objectMarkers = [];
+    let currentCSVData = null;
 
     function clearMap() {
       if (heatLayer) map.removeLayer(heatLayer);
@@ -40,8 +42,11 @@
 
     function parseCSV(content) {
       const lines = content.trim().split('\n');
-      const headers = lines[0].split(',');
-      const rows = lines.slice(1).map(l => Object.fromEntries(l.split(',').map((v, i) => [headers[i], v])));
+      const headers = lines[0].split(',').map(h => h.trim());
+      const rows = lines.slice(1).map(l => {
+        const values = l.split(',').map(v => v.trim());
+        return Object.fromEntries(values.map((v, i) => [headers[i], v]));
+      });
       return rows;
     }
 
@@ -51,6 +56,7 @@
     }
 
     function updateMap(data) {
+      console.log('Updating map with data:', data);
       clearMap();
 
       if (document.getElementById('toggleHeatmap').checked) {
@@ -63,8 +69,10 @@
         const heatData = Object.entries(heatPoints).map(([k, speeds]) => {
           const [lat, lon] = k.split(',').map(Number);
           const avg = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-          return [lat, lon, avg / 50];
-        });
+          if (!isNaN(lat) && !isNaN(lon) && !isNaN(avg)) {
+            return [lat, lon, avg / 50];
+          }
+        }).filter(Boolean);
         heatLayer = L.heatLayer(heatData, { radius: 25, gradient: { 0.0: 'green', 1.0: 'red' } }).addTo(map);
       }
 
@@ -72,6 +80,7 @@
         data.forEach(d => {
           const lat = parseFloat(d['Object Lat']);
           const lon = parseFloat(d['Object Lon']);
+          if (isNaN(lat) || isNaN(lon)) return;
           const marker = L.marker([lat, lon], { icon: L.divIcon({ className: 'emoji-label', html: getEmoji(d['Object Type']) }) }).addTo(map);
 
           let popupContent = `<strong>${d['Object Type']}</strong>`;
@@ -93,24 +102,24 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function(event) {
-          const data = parseCSV(event.target.result);
-          updateMap(data);
+          currentCSVData = parseCSV(event.target.result);
+          console.log('Parsed CSV Data:', currentCSVData);
         };
         reader.readAsText(file);
       }
     });
 
+    document.getElementById('runButton').addEventListener('click', () => {
+      if (currentCSVData) {
+        updateMap(currentCSVData);
+      } else {
+        console.warn('No CSV data loaded. Please upload a file first.');
+      }
+    });
+
     ['toggleHeatmap', 'toggleType', 'toggleBearing', 'toggleSpeed'].forEach(id => {
       document.getElementById(id).addEventListener('change', () => {
-        const fileInput = document.getElementById('csvFile');
-        if (fileInput.files.length > 0) {
-          const reader = new FileReader();
-          reader.onload = function(event) {
-            const data = parseCSV(event.target.result);
-            updateMap(data);
-          };
-          reader.readAsText(fileInput.files[0]);
-        }
+        if (currentCSVData) updateMap(currentCSVData);
       });
     });
   </script>
