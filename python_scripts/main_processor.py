@@ -242,6 +242,26 @@ def process_video_pipeline(video_path, gpx_paths, input_dir, noise_profile=None)
     except Exception as e:
         logging.error(f"Failed to process {video_path.name}: {e}", exc_info=True)
 
+def is_fully_processed(video_path, matched_dir):
+    video_name = video_path.stem
+    out_dir = matched_dir / f"d{video_name}"
+    expected_files = [
+        video_path.name,
+        f"aligned_output.csv",
+        f"merged_output.csv",
+        f"{video_path.stem}.gpx",
+        f"{video_path.stem}.MP4",  # fallback if extension case differs
+        "object_counts.csv",  # output from counter.py
+        "group_summary.csv",  # output from process_groups_yolo_enhanced.py
+        "noise_profile.csv",  # output from process_noise.py
+        "stoplight_summary.csv",  # output from stoplight.py
+    ]
+    if not out_dir.exists():
+        return False  # Directory missing = not processed at all
+
+    existing_files = {f.name for f in out_dir.glob("*")}
+    return all(name in existing_files for name in expected_files)
+
 def main():
     parser = argparse.ArgumentParser(description="Parallel video-GPX processing pipeline.")
     parser.add_argument("input_dir", help="Directory with unsorted .mp4 and .gpx files")
@@ -253,7 +273,7 @@ def main():
         logging.error(f"Input directory not found: {input_dir}")
         sys.exit(1)
 
-    # Find video and GPX files
+    # Collect all video and GPX files
     video_paths = sorted(input_dir.rglob("*.mp4")) + sorted(input_dir.rglob("*.MP4"))
     gpx_paths = sorted(input_dir.rglob("*.gpx")) + sorted(input_dir.rglob("*.GPX"))
     if not video_paths:
@@ -262,51 +282,48 @@ def main():
     if not gpx_paths:
         logging.error("No .gpx files found.")
         sys.exit(1)
-    logging.info(f"Found {len(video_paths)} videos and {len(gpx_paths)} GPX files.")
 
-    # Prepare matched output directory
+    logging.info(f"Found {len(video_paths)} videos and {len(gpx_paths)} GPX files.")
     matched_dir = input_dir / "matched"
     matched_dir.mkdir(exist_ok=True)
 
-    # GPU parallel processing: one video per GPU
+    # GPU parallelism
     num_gpus = 2
-    processes = {}  # gpu_id -> process
+    processes = {}
     video_iter = iter(video_paths)
 
     while True:
-        # Launch processes if GPUs free and videos remain
         for gpu_id in range(num_gpus):
             if gpu_id not in processes:
                 try:
-                    video_path = next(video_iter)
+                    while True:
+                        video_path = next(video_iter)
+                        if not is_fully_processed(video_path, matched_dir):
+                            break
+                        logging.info(f"Skipping fully processed video: {video_path.name}")
                 except StopIteration:
                     break
-                logging.info(f"Starting processing {video_path.name} on GPU {gpu_id}")
-                # set environment for GPU usage
+
+                logging.info(f"Assigning {video_path.name} to GPU {gpu_id}")
                 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
                 p = Process(target=process_video_pipeline, args=(video_path, gpx_paths, input_dir, args.noise_profile))
                 p.start()
                 processes[gpu_id] = p
 
-        # Remove finished processes
         for gpu_id, proc in list(processes.items()):
             if not proc.is_alive():
                 proc.join()
                 logging.info(f"GPU {gpu_id} finished its task")
                 processes.pop(gpu_id, None)
 
-        # Break if all videos assigned and all processes done
         if not processes:
             try:
-                # If there's another video, continue loop
                 _ = next(video_iter)
-                # If no exception, loop continues to assign remaining videos
-                video_iter = iter([_])  # push back one and continue
+                video_iter = iter([_])
                 continue
             except StopIteration:
                 break
 
-        # Sleep briefly to avoid busy wait
         time.sleep(1)
 
     logging.info("All processing complete.")

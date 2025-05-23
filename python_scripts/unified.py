@@ -13,6 +13,88 @@ from collections import defaultdict
 from geopy.distance import distance as geopy_distance
 from geopy import Point
 from multiprocessing import Process, Lock
+import time
+import logging
+import subprocess
+from multiprocessing import Process, Queue, cpu_count
+from queue import Empty
+
+# --------------------- GPU Multitasking ----------------------
+
+def detect_num_gpus():
+    try:
+        output = subprocess.check_output(["nvidia-smi", "-L"]).decode("utf-8")
+        return len(output.strip().splitlines())
+    except Exception as e:
+        logging.warning(f"Could not detect GPUs with nvidia-smi: {e}")
+        return 1
+
+def gpu_worker(gpu_id, task_queue, retry_queue, gpx_paths, input_dir, noise_profile, cooldown_sec=30):
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    while True:
+        try:
+            video_path = task_queue.get(timeout=10)
+        except Empty:
+            break
+        if video_path is None:
+            break
+        try:
+            logging.info(f"[GPU {gpu_id}] Processing {video_path.name}")
+            process_video_pipeline(video_path, gpx_paths, input_dir, noise_profile)
+        except RuntimeError as e:
+            if "out of memory" in str(e).lower():
+                logging.warning(f"[GPU {gpu_id}] OOM error on {video_path.name}. Cooling down for {cooldown_sec}s and retrying later.")
+                retry_queue.put(video_path)
+                time.sleep(cooldown_sec)
+            else:
+                logging.error(f"[GPU {gpu_id}] Runtime error on {video_path.name}: {e}")
+        except Exception as e:
+            logging.error(f"[GPU {gpu_id}] Unexpected error on {video_path.name}: {e}")
+
+def retry_handler(task_queue, retry_queue, delay=60):
+    """Tries to reinsert failed tasks after a cooldown."""
+    while True:
+        try:
+            video_path = retry_queue.get(timeout=60)
+            logging.info(f"Retrying failed task: {video_path.name}")
+            task_queue.put(video_path)
+            time.sleep(delay)
+        except Empty:
+            break
+
+def launch_gpu_task_scheduler(video_paths, gpx_paths, input_dir, noise_profile):
+    num_gpus = detect_num_gpus()
+    total_cpus = cpu_count()
+    workers_per_gpu = max(2, total_cpus // (num_gpus * 2))
+
+    logging.info(f"Detected {num_gpus} GPUs, launching {workers_per_gpu} workers per GPU")
+
+    task_queue = Queue()
+    retry_queue = Queue()
+
+    for video_path in video_paths:
+        task_queue.put(video_path)
+
+    for _ in range(num_gpus * workers_per_gpu):
+        task_queue.put(None)
+
+    processes = []
+
+    # Start retry manager
+    retry_process = Process(target=retry_handler, args=(task_queue, retry_queue))
+    retry_process.start()
+    processes.append(retry_process)
+
+    for gpu_id in range(num_gpus):
+        for _ in range(workers_per_gpu):
+            p = Process(target=gpu_worker, args=(gpu_id, task_queue, retry_queue, gpx_paths, input_dir, noise_profile))
+            p.start()
+            processes.append(p)
+
+    for p in processes:
+        p.join()
+
+    logging.info("All tasks (including retries) have completed.")
 
 # --------------------- Utility Functions ---------------------
 
@@ -225,65 +307,72 @@ def main(video_dir, gpx_dir):
     matched_dir = video_dir / "matched"
     matched_dir.mkdir(exist_ok=True)
     log_file = matched_dir / "processed_videos.txt"
+
     # Load processed log
     processed = set()
     if log_file.exists():
         processed = set(line.strip() for line in open(log_file))
+
     # Collect video and GPX files
     video_files = sorted(video_dir.rglob("*.mp4")) + sorted(video_dir.rglob("*.MP4"))
     gpx_files = sorted(gpx_dir.rglob("*.gpx")) + sorted(gpx_dir.rglob("*.GPX"))
     tasks = []
+
     # Phase 1: Match videos to GPX
     for video_path in video_files:
         video_stem = video_path.stem
         if video_path.name in processed or (matched_dir / f"d{video_stem}").exists():
             print(f"Skipping already-processed video: {video_path.name}")
             continue
+
         print(f"Matching for video: {video_path.name}")
-        # Compute video acceleration
         vid_accel = compute_motion_accel(video_path)
         if not vid_accel:
             print(f"Failed to compute motion for {video_path.name}, skipping.")
             continue
-        # Find best matching GPX
+
         best_score = -np.inf
         best_offset = 0
         best_gpx = None
         best_gpx_df = None
+
         for gpx_path in gpx_files:
             try:
                 gpx_df = parse_gpx(gpx_path)
             except Exception as e:
                 print(f"Error parsing GPX {gpx_path.name}: {e}")
                 continue
+
             gpx_accel = gpx_df['accel'].tolist()
             if len(gpx_accel) < 2 or len(vid_accel) < 2:
                 continue
+
             offset = align_by_accel(vid_accel, gpx_accel)
             corr_len = min(len(vid_accel), len(gpx_accel) - offset)
             if corr_len <= 10:
                 continue
-            score = np.corrcoef(vid_accel[:corr_len], 
-                                gpx_accel[offset:offset+corr_len])[0, 1]
-            if not np.isnan(score) and corr_len > 0 and score > best_score:
+
+            score = np.corrcoef(vid_accel[:corr_len], gpx_accel[offset:offset + corr_len])[0, 1]
+            if not np.isnan(score) and score > best_score:
                 best_score = score
                 best_offset = offset
                 best_gpx = gpx_path
                 best_gpx_df = gpx_df
+
         if best_gpx is None:
             print(f"No suitable GPX match for {video_path.name}, skipping.")
             continue
-        # Prepare output directory
+
         new_dir = matched_dir / f"d{video_stem}"
         new_dir.mkdir(exist_ok=True)
-        # Copy video and GPX into the matched folder
         video_copy = new_dir / video_path.name
         gpx_copy = new_dir / best_gpx.name
+
         if not video_copy.exists():
             os.system(f"cp \"{video_path}\" \"{video_copy}\"")
         if not gpx_copy.exists():
             os.system(f"cp \"{best_gpx}\" \"{gpx_copy}\"")
-        # Create merged_output.csv
+
         merged_rows = []
         offset = best_offset
         for sec, a in enumerate(vid_accel):
@@ -297,38 +386,31 @@ def main(video_dir, gpx_dir):
                     "speed_mph": row["speed"],
                     "gpx_time": row["gpx_time"].strftime("%Y-%m-%dT%H:%M:%S")
                 })
+
         merged_df = pd.DataFrame(merged_rows)
         merged_df.to_csv(new_dir / "merged_output.csv", index=False)
         print(f"Matched {video_path.name} -> {best_gpx.name} (score={best_score:.3f})")
+
         tasks.append((video_copy, new_dir / "merged_output.csv", new_dir))
-    # Phase 2: Process matched videos in parallel (2 GPUs)
-    processes = []
-    gpu_ids = [0, 1]
-    next_task = 0
-    lock = Lock()
-    # Helper to start a process with GPU assignment
-    def start_task(task, gpu):
-        p = Process(target=process_video, args=(task[0], task[1], task[2], gpu))
-        p.start()
-        return p
-    while next_task < len(tasks) or processes:
-        # Launch up to 2 tasks
-        while len(processes) < 2 and next_task < len(tasks):
-            gpu = gpu_ids[next_task % 2]
-            task = tasks[next_task]
-            p = start_task(task, gpu)
-            processes.append((p, gpu, task))
-            next_task += 1
-        # Check for finished processes
-        for p, gpu, task in processes:
-            if not p.is_alive():
-                p.join()
-                print(f"Completed processing for {task[0].name} on GPU {gpu}")
-                with lock:
-                    with open(log_file, "a") as f:
-                        f.write(f"{task[0].name}\n")
-        # Remove joined processes
-        processes = [(p,g,t) for (p,g,t) in processes if p.is_alive()]
+
+    if not tasks:
+        print("No new tasks to process.")
+        return
+
+    # Phase 2: Dynamically dispatch video processing across GPUs
+    print(f"Dispatching {len(tasks)} video tasks to dynamic GPU scheduler...")
+    launch_gpu_task_scheduler(
+        video_paths=[task[0] for task in tasks],
+        gpx_paths=[task[1] for task in tasks],
+        input_dir=[task[2] for task in tasks],
+        noise_profile=None  # or provide the actual noise profile if needed
+    )
+
+    # Log completed videos
+    with open(log_file, "a") as f:
+        for task in tasks:
+            f.write(f"{task[0].name}\n")
+
     print("All processing complete.")
 
 if __name__ == "__main__":

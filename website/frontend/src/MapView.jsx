@@ -1,7 +1,8 @@
 // frontend/src/MapView.jsx
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Tooltip, Popup } from 'react-leaflet';
-import { HeatmapLayer } from 'react-leaflet-heatmap-layer';
+import HeatmapLayer from './HeatmapLayer';
+import L from 'leaflet';  // <-- Required for using L.Icon
 
 function MapView() {
   const [data, setData] = useState(null);
