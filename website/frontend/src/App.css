@@ -1,0 +1,16 @@
+/* frontend/src/App.css */
+body {
+  background-color: #c0c0c0;
+  font-family: 'Courier New', Courier, monospace;
+  color: #000;
+}
+h2, label {
+  font-weight: bold;
+}
+button {
+  background: #00ff00;
+  border: 2px outset #ffffff;
+  padding: 5px 10px;
+  font-size: 1em;
+  cursor: pointer;
+}
