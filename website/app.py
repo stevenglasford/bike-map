@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = '/mnt/penis/uploads'
 ALLOWED_EXTENSIONS = {'gpx', 'mp4'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -33,3 +33,7 @@ def upload_file():
         return redirect(url_for('upload_file'))
 
     return render_template('index.html')
+ 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
