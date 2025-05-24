@@ -14,7 +14,7 @@ function UploadForm() {
     if (gpxFile)   formData.append("gpx", gpxFile);
     if (email)     formData.append("email", email);
 
-    const response = await fetch('http://localhost:5000/api/upload', {
+    const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData
     });

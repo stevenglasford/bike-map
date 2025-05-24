@@ -6,6 +6,10 @@ from datetime import datetime
 import subprocess
 from apscheduler.schedulers.background import BackgroundScheduler
 
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
+CORS(app)  # Allow cross-origin requests [oai_citation:2‡stackoverflow.com](https://stackoverflow.com/questions/25594893/how-to-enable-cors-in-flask#:~:text=I%20resolved%20this%20same%20problem,py)
+
+
 def cleanup_orphans():
     for uid in os.listdir(UPLOAD_BASE):
         user_dir = os.path.join(UPLOAD_BASE, uid)
@@ -23,6 +27,17 @@ scheduler = BackgroundScheduler()
 # Schedule cleanup at midnight every day (server time)
 scheduler.add_job(cleanup_orphans, 'cron', hour=0, minute=0)
 scheduler.start()
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>")
+def serve_static_file(path):
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
@@ -137,9 +152,9 @@ def upload_files():
     resp.set_cookie('user_id', uid, max_age=30*24*3600)  # expire in 30 days
     return resp
 
-app = Flask(__name__)
-CORS(app)  # Allow cross-origin requests [oai_citation:2‡stackoverflow.com](https://stackoverflow.com/questions/25594893/how-to-enable-cors-in-flask#:~:text=I%20resolved%20this%20same%20problem,py)
-
 # Directory to store uploads and processing output
 UPLOAD_BASE = '/mnt/penis/uploads'
 os.makedirs(UPLOAD_BASE, exist_ok=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, ssl_context=('/mnt/penis/cert.pem', '/mnt/penis/key.pem'))

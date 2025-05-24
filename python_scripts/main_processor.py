@@ -269,64 +269,78 @@ def main():
     args = parser.parse_args()
 
     input_dir = Path(args.input_dir)
+    matched_dir = input_dir / "matched"
+    matched_dir.mkdir(exist_ok=True)
+
     if not input_dir.exists():
         logging.error(f"Input directory not found: {input_dir}")
         sys.exit(1)
 
-    # Collect all video and GPX files
-    video_paths = sorted(input_dir.rglob("*.mp4")) + sorted(input_dir.rglob("*.MP4"))
-    gpx_paths = sorted(input_dir.rglob("*.gpx")) + sorted(input_dir.rglob("*.GPX"))
-    if not video_paths:
-        logging.error("No .mp4 files found.")
-        sys.exit(1)
-    if not gpx_paths:
-        logging.error("No .gpx files found.")
-        sys.exit(1)
-
-    logging.info(f"Found {len(video_paths)} videos and {len(gpx_paths)} GPX files.")
-    matched_dir = input_dir / "matched"
-    matched_dir.mkdir(exist_ok=True)
-
-    # GPU parallelism
     num_gpus = 2
     processes = {}
-    video_iter = iter(video_paths)
+    active_videos = set()
 
-    while True:
-        for gpu_id in range(num_gpus):
-            if gpu_id not in processes:
-                try:
-                    while True:
-                        video_path = next(video_iter)
-                        if not is_fully_processed(video_path, matched_dir):
-                            break
-                        logging.info(f"Skipping fully processed video: {video_path.name}")
-                except StopIteration:
-                    break
+    logging.info("Starting FIFO video-GPX processing loop with priority support...")
 
-                logging.info(f"Assigning {video_path.name} to GPU {gpu_id}")
-                os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
-                p = Process(target=process_video_pipeline, args=(video_path, gpx_paths, input_dir, args.noise_profile))
-                p.start()
-                processes[gpu_id] = p
+    try:
+        while True:
+            def get_sorted_videos(directory):
+                return sorted(
+                    list(directory.rglob("*.mp4")) + list(directory.rglob("*.MP4")),
+                    key=lambda x: x.stat().st_mtime
+                )
 
-        for gpu_id, proc in list(processes.items()):
-            if not proc.is_alive():
-                proc.join()
-                logging.info(f"GPU {gpu_id} finished its task")
-                processes.pop(gpu_id, None)
+            def get_sorted_gpx(directory):
+                return sorted(
+                    list(directory.rglob("*.gpx")) + list(directory.rglob("*.GPX")),
+                    key=lambda x: x.stat().st_mtime
+                )
 
-        if not processes:
-            try:
-                _ = next(video_iter)
-                video_iter = iter([_])
+            priority_dir = input_dir / "priority"
+            if priority_dir.exists():
+                video_paths = get_sorted_videos(priority_dir)
+                gpx_paths = get_sorted_gpx(priority_dir) or get_sorted_gpx(input_dir)
+            else:
+                video_paths = get_sorted_videos(input_dir)
+                gpx_paths = get_sorted_gpx(input_dir)
+
+            if not gpx_paths:
+                logging.warning("No GPX files found. Waiting...")
+                time.sleep(10)
                 continue
-            except StopIteration:
-                break
 
-        time.sleep(1)
+            # Assign available GPUs to new tasks
+            for gpu_id in range(num_gpus):
+                if gpu_id not in processes:
+                    for video_path in video_paths:
+                        if video_path.name in active_videos:
+                            continue
+                        if not is_fully_processed(video_path, matched_dir):
+                            logging.info(f"Assigning {video_path.name} to GPU {gpu_id}")
+                            os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+                            p = Process(
+                                target=process_video_pipeline,
+                                args=(video_path, gpx_paths, input_dir, args.noise_profile)
+                            )
+                            p.start()
+                            processes[gpu_id] = p
+                            active_videos.add(video_path.name)
+                            break
 
-    logging.info("All processing complete.")
 
+            for gpu_id, proc in list(processes.items()):
+                if not proc.is_alive():
+                    proc.join()
+                    logging.info(f"GPU {gpu_id} finished its task")
+                    processes.pop(gpu_id)
+
+            time.sleep(5)  # Poll interval
+
+    except KeyboardInterrupt:
+        logging.info("Interrupted. Cleaning up child processes...")
+        for proc in processes.values():
+            proc.terminate()
+        logging.info("Shutdown complete.")
+        
 if __name__ == "__main__":
     main()

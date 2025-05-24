@@ -13,7 +13,7 @@ function MapView() {
   }, [personal]);
 
   const fetchData = async () => {
-    const url = 'http://localhost:5000/api/data' + (personal ? '?personal=1' : '');
+    const url = '/api/data' + (personal ? '?personal=1' : '');
     const res = await fetch(url);
     const json = await res.json();
     setData(json);
