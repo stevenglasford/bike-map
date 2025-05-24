@@ -1,8 +1,8 @@
-// frontend/src/MapView.jsx
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Tooltip, Popup } from 'react-leaflet';
 import HeatmapLayer from './HeatmapLayer';
-import L from 'leaflet';  // <-- Required for using L.Icon
+import L from 'leaflet';
+import UploadForm from './UploadForm';
 
 function MapView() {
   const [data, setData] = useState(null);
@@ -21,12 +21,10 @@ function MapView() {
 
   if (!data) return <div>Loading map data...</div>;
 
-  // Determine one map center (e.g., first point)
   const center = data.speed_points.length > 0 
-      ? [data.speed_points[0][0], data.speed_points[0][1]] 
-      : [0, 0];
+    ? [data.speed_points[0][0], data.speed_points[0][1]] 
+    : [44.9778, -93.2650];  // Minneapolis
 
-  // Example custom icons (in a real app use actual images)
   const icons = {
     pedestrian: new L.Icon({iconUrl: 'pedestrian.png', iconSize: [25, 25]}),
     car: new L.Icon({iconUrl: 'car.png', iconSize: [25, 25]}),
@@ -40,16 +38,29 @@ function MapView() {
       <h2 style={{ backgroundColor:'#000080', color:'#fff', padding:'5px' }}>
         Map View ({personal ? "My Data" : "All Data"})
       </h2>
-      <button onClick={() => setPersonal(!personal)}>
+      <button onClick={() => setPersonal(!personal)} style={{ marginBottom: '10px' }}>
         {personal ? "Show All Data" : "Show My Data"}
       </button>
-      <MapContainer center={center} zoom={16} style={{ height: "600px", margin: '10px' }}>
-        {/* OpenStreetMap tiles */}
+
+      {personal && data.speed_points.length === 0 && (
+        <div style={{ margin: '10px', padding: '10px', backgroundColor: '#ffe', border: '1px solid #aaa' }}>
+          <strong>No personal data found.</strong><br />
+          Upload a video and GPX file to begin visualizing your own movement and map interactions:
+        </div>
+      )}
+
+      {personal && (
+        <div style={{ margin: '10px', padding: '10px', backgroundColor: '#f0f0f0' }}>
+          <UploadForm />
+        </div>
+      )}
+
+      <MapContainer center={center} zoom={13} style={{ height: "600px", margin: '10px' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
-        {/* Speed heatmap (green=slow, red=fast gradient) */}
+
         <HeatmapLayer
           fitBoundsOnLoad
           fitBoundsOnUpdate
@@ -61,7 +72,7 @@ function MapView() {
           radius={25}
           blur={15}
         />
-        {/* Sound heatmap (green=quiet, red=loud) */}
+
         <HeatmapLayer
           points={data.sound_points.map(p => ({lat: p[0], lng: p[1], intensity: p[2]}))}
           longitudeExtractor={p => p.lng}
@@ -71,13 +82,12 @@ function MapView() {
           radius={20}
           blur={15}
         />
-        {/* Object icons */}
+
         {data.markers.map((obj, idx) => (
           <Marker 
             key={idx} 
             position={[obj.lat, obj.lon]} 
             icon={icons[obj.type] || icons['pedestrian']}
-            // Optionally rotate icon by direction (advanced: use a rotated DivIcon)
           >
             <Tooltip>
               {obj.type.charAt(0).toUpperCase() + obj.type.slice(1)}<br/>
@@ -86,7 +96,7 @@ function MapView() {
             </Tooltip>
           </Marker>
         ))}
-        {/* Traffic lights */}
+
         {data.traffic_lights.map((light, i) => (
           <Marker key={i} position={[light.lat, light.lon]} icon={icons['light']}>
             <Popup>

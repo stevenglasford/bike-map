@@ -5,3 +5,4 @@ testvideo
 *.pt
 dtemp_video*
 gputools-env/
+package-lock.json
