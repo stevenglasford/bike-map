@@ -9,6 +9,7 @@ function MapView() {
   const [data, setData] = useState(null);
   const [personal, setPersonal] = useState(false);
   const [localMarkers, setLocalMarkers] = useState([]);
+  const [alignedOutput, setAlignedOutput] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -25,7 +26,8 @@ function MapView() {
       setError("Failed to load data from server.");
     } finally {
       setLoading(false);
-      setLocalMarkers([]); // reset local markers on toggle
+      setLocalMarkers([]);
+      setAlignedOutput([]);
     }
   };
 
@@ -34,12 +36,19 @@ function MapView() {
   }, [personal]);
 
   const handleUploadComplete = () => {
-    setTimeout(() => fetchData(), 10000); // delay to allow backend processing
+    setTimeout(() => fetchData(), 10000);
+  };
+
+  const handleCsvData = ({ type, data }) => {
+    if (type === "aligned_output") setAlignedOutput(data);
+    else if (type === "markers") setLocalMarkers(data);
   };
 
   const center = data?.speed_points?.[0]
     ? [data.speed_points[0][0], data.speed_points[0][1]]
-    : [44.9778, -93.2650]; // Default to Minneapolis
+    : alignedOutput[0]
+      ? [alignedOutput[0].lat, alignedOutput[0].lon]
+      : [44.9778, -93.2650];
 
   const icons = {
     pedestrian: new L.Icon({ iconUrl: 'pedestrian.png', iconSize: [25, 25] }),
@@ -60,7 +69,7 @@ function MapView() {
       </button>
 
       {personal ? (
-        <CsvLocalLoader onDataLoaded={setLocalMarkers} />
+        <CsvLocalLoader onDataLoaded={handleCsvData} />
       ) : (
         <div style={{ margin: '10px', padding: '10px', backgroundColor: '#f0f0f0' }}>
           <UploadForm onUploadComplete={handleUploadComplete} />
@@ -76,14 +85,15 @@ function MapView() {
           attribution="&copy; OpenStreetMap contributors"
         />
 
+        {/* Server-based data */}
         {!personal && data && (
           <>
             <HeatmapLayer
               fitBoundsOnLoad
               fitBoundsOnUpdate
               points={data.speed_points.map(p => ({ lat: p[0], lng: p[1], intensity: p[2] }))}
-              longitudeExtractor={p => p.lng}
               latitudeExtractor={p => p.lat}
+              longitudeExtractor={p => p.lng}
               intensityExtractor={p => p.intensity}
               gradient={{ 0.4: 'green', 0.65: 'yellow', 1: 'red' }}
               radius={25}
@@ -91,8 +101,8 @@ function MapView() {
             />
             <HeatmapLayer
               points={data.sound_points.map(p => ({ lat: p[0], lng: p[1], intensity: p[2] }))}
-              longitudeExtractor={p => p.lng}
               latitudeExtractor={p => p.lat}
+              longitudeExtractor={p => p.lng}
               intensityExtractor={p => p.intensity}
               gradient={{ 0.2: 'blue', 0.5: 'lime', 1: 'red' }}
               radius={20}
@@ -122,7 +132,39 @@ function MapView() {
           </>
         )}
 
-        {personal && localMarkers.map((obj, idx) => (
+        {/* Local CSV: aligned_output */}
+        {personal && alignedOutput.length > 0 && (
+          <>
+            <HeatmapLayer
+              points={alignedOutput.map(p => ({ lat: p.lat, lng: p.lon, intensity: p.speed }))}
+              latitudeExtractor={p => p.lat}
+              longitudeExtractor={p => p.lng}
+              intensityExtractor={p => p.intensity}
+              gradient={{ 0.2: 'green', 0.5: 'yellow', 1: 'red' }}
+              radius={25}
+              blur={15}
+            />
+            {alignedOutput.map((point, idx) => (
+              <Marker
+                key={`aligned-${idx}`}
+                position={[point.lat, point.lon]}
+                icon={L.divIcon({ className: 'invisible-icon' })}
+              >
+                <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+                  <div style={{ fontSize: '0.8em' }}>
+                    <b>Second:</b> {point.second}<br />
+                    <b>Lat:</b> {point.lat.toFixed(5)}<br />
+                    <b>Lon:</b> {point.lon.toFixed(5)}<br />
+                    <b>Speed:</b> {point.speed.toFixed(2)} mph
+                  </div>
+                </Tooltip>
+              </Marker>
+            ))}
+          </>
+        )}
+
+        {/* Local CSV: markers */}
+        {personal && localMarkers.length > 0 && localMarkers.map((obj, idx) => (
           <Marker
             key={`local-${idx}`}
             position={[obj.lat, obj.lon]}

@@ -26,28 +26,56 @@ function CsvLocalLoader({ onDataLoaded }) {
           return Object.fromEntries(values.map((v, i) => [headers[i], v]));
         });
 
-        const markers = rows
-          .filter(row =>
-            row.lat && row.lon &&
-            !isNaN(parseFloat(row.lat)) &&
-            !isNaN(parseFloat(row.lon))
-          )
-          .map(row => ({
-            lat: parseFloat(row.lat),
-            lon: parseFloat(row.lon),
-            speed: parseFloat(row.speed_mph || 0),
-            direction: parseFloat(row.direction || 0),
-            type: (row.type || 'pedestrian').toLowerCase()
-          }));
+        // -------- Aligned Output CSV --------
+        if (headers.includes("second") && headers.includes("lat") && headers.includes("lon") && headers.includes("speed_mph")) {
+          const points = rows
+            .filter(row =>
+              row.lat && row.lon && row.speed_mph &&
+              !isNaN(parseFloat(row.lat)) &&
+              !isNaN(parseFloat(row.lon)) &&
+              !isNaN(parseFloat(row.speed_mph))
+            )
+            .map(row => ({
+              lat: parseFloat(row.lat),
+              lon: parseFloat(row.lon),
+              speed: parseFloat(row.speed_mph),
+              second: parseInt(row.second)
+            }));
 
-        if (markers.length === 0) throw new Error("No valid location data found");
+          if (points.length === 0) throw new Error("No valid speed data found");
+          onDataLoaded({ type: "aligned_output", data: points });
+          setError(null);
+          return;
+        }
 
-        onDataLoaded(markers);
-        setError(null);
+        // -------- Generic Marker CSV --------
+        if (headers.includes("lat") && headers.includes("lon")) {
+          const markers = rows
+            .filter(row =>
+              row.lat && row.lon &&
+              !isNaN(parseFloat(row.lat)) &&
+              !isNaN(parseFloat(row.lon))
+            )
+            .map(row => ({
+              lat: parseFloat(row.lat),
+              lon: parseFloat(row.lon),
+              speed: parseFloat(row.speed_mph || 0),
+              direction: parseFloat(row.direction || 0),
+              type: (row.type || 'pedestrian').toLowerCase()
+            }));
+
+          if (markers.length === 0) throw new Error("No valid marker data found");
+          onDataLoaded({ type: "markers", data: markers });
+          setError(null);
+          return;
+        }
+
+        throw new Error("Unrecognized CSV format.");
+
       } catch (err) {
         console.error(err);
         setError("Failed to parse CSV file: " + err.message);
-        onDataLoaded([]);  // clear previous markers
+        onDataLoaded({ type: "error", data: [] });
       }
     };
 
