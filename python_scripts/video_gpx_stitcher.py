@@ -8,6 +8,18 @@ from datetime import timedelta
 import argparse
 import os
 
+def dtw_align(signal1, signal2):
+    from fastdtw import fastdtw
+    from scipy.spatial.distance import euclidean
+
+    distance, path = fastdtw(signal1, signal2, dist=euclidean)
+    if not path:
+        return 0, 0.0
+    offsets = [j - i for i, j in path]
+    offset = int(np.median(offsets))
+    score = 1 / (1 + distance / len(path))  # Higher is better
+    return offset, score
+
 def haversine(lat1, lon1, lat2, lon2):
     R = 3958.8  # miles
     phi1, phi2 = np.radians([lat1, lat2])

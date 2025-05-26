@@ -2,16 +2,24 @@ import React, { useState } from 'react';
 
 function CsvLocalLoader({ onDataLoaded }) {
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState(null);
 
   const handleFileChange = e => {
-    const file = e.target.files[0];
-    if (!file || !file.name.toLowerCase().endsWith('.csv')) {
+    const selected = e.target.files[0];
+    if (!selected || !selected.name.toLowerCase().endsWith('.csv')) {
       setError("Only .csv files are supported.");
       return;
     }
 
-    setFileName(file.name);
+    setFile(selected);
+    setFileName(selected.name);
+    setError(null);
+  };
+
+  const parseAndLoadFile = () => {
+    if (!file) return;
+
     const reader = new FileReader();
 
     reader.onload = e => {
@@ -20,13 +28,11 @@ function CsvLocalLoader({ onDataLoaded }) {
         if (lines.length < 2) throw new Error("CSV has no data");
 
         const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-
         const rows = lines.slice(1).map(line => {
           const values = line.split(',').map(v => v.trim());
           return Object.fromEntries(values.map((v, i) => [headers[i], v]));
         });
 
-        // -------- Aligned Output CSV --------
         if (headers.includes("second") && headers.includes("lat") && headers.includes("lon") && headers.includes("speed_mph")) {
           const points = rows
             .filter(row =>
@@ -44,11 +50,9 @@ function CsvLocalLoader({ onDataLoaded }) {
 
           if (points.length === 0) throw new Error("No valid speed data found");
           onDataLoaded({ type: "aligned_output", data: points });
-          setError(null);
           return;
         }
 
-        // -------- Generic Marker CSV --------
         if (headers.includes("lat") && headers.includes("lon")) {
           const markers = rows
             .filter(row =>
@@ -66,12 +70,10 @@ function CsvLocalLoader({ onDataLoaded }) {
 
           if (markers.length === 0) throw new Error("No valid marker data found");
           onDataLoaded({ type: "markers", data: markers });
-          setError(null);
           return;
         }
 
         throw new Error("Unrecognized CSV format.");
-
       } catch (err) {
         console.error(err);
         setError("Failed to parse CSV file: " + err.message);
@@ -86,7 +88,10 @@ function CsvLocalLoader({ onDataLoaded }) {
     <div style={{ margin: '10px', padding: '10px', backgroundColor: '#eef', border: '1px solid #ccc' }}>
       <h4>Load Local CSV Data</h4>
       <input type="file" accept=".csv" onChange={handleFileChange} />
-      {fileName && <p style={{ fontSize: '0.9em' }}>Loaded file: {fileName}</p>}
+      {fileName && <p style={{ fontSize: '0.9em' }}>Selected file: {fileName}</p>}
+      <button onClick={parseAndLoadFile} disabled={!file}>
+        Load CSV to Map
+      </button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
