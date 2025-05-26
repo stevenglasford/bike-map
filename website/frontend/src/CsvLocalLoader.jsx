@@ -72,7 +72,35 @@ function CsvLocalLoader({ onDataLoaded }) {
           onDataLoaded({ type: "markers", data: markers });
           return;
         }
-
+        
+        // Detect merged_output.csv
+        if (
+          headers.includes("second") &&
+          headers.includes("lat") &&
+          (headers.includes("lon") || headers.includes("long")) &&
+          headers.includes("speed_mph") &&
+          headers.includes("gpx_time")
+        ) {
+          const points = rows
+            .filter(row =>
+              row.lat && (row.lon || row.long) && row.speed_mph &&
+              !isNaN(parseFloat(row.lat)) &&
+              !isNaN(parseFloat(row.lon || row.long)) &&
+              !isNaN(parseFloat(row.speed_mph))
+            )
+            .map(row => ({
+              lat: parseFloat(row.lat),
+              lon: parseFloat(row.lon || row.long),
+              speed: parseFloat(row.speed_mph),
+              second: parseInt(row.second),
+              gpx_time: row.gpx_time
+            }));
+        
+          if (points.length === 0) throw new Error("No valid merged_output data found");
+          onDataLoaded({ type: "merged_output", data: points });
+          return;
+        }
+        
         throw new Error("Unrecognized CSV format.");
       } catch (err) {
         console.error(err);

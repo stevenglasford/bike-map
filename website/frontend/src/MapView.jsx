@@ -23,6 +23,7 @@ function MapView() {
   const [personal, setPersonal] = useState(false);
   const [localMarkers, setLocalMarkers] = useState([]);
   const [alignedOutput, setAlignedOutput] = useState([]);
+  const [mergedOutput, setMergedOutput] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -56,6 +57,11 @@ function MapView() {
     if (payload.type === "aligned_output") {
       alert(`Loaded ${payload.data.length} aligned points`);
       setAlignedOutput(payload.data);
+      setMergedOutput([]);
+    } else if (payload.type === "merged_output") {
+      alert(`Loaded ${payload.data.length} merged points`);
+      setMergedOutput(payload.data);
+      setAlignedOutput([]);
     } else if (payload.type === "markers") {
       alert(`Loaded ${payload.data.length} markers`);
       setLocalMarkers(payload.data);
@@ -63,7 +69,7 @@ function MapView() {
       alert("CSV format not recognized.");
     }
   };
-
+  
   const center = data?.speed_points?.[0]
     ? [data.speed_points[0][0], data.speed_points[0][1]]
     : alignedOutput[0]
@@ -104,9 +110,9 @@ function MapView() {
     attribution="&copy; OpenStreetMap contributors"
   />
 
-  {/* Auto-fit aligned CSV data when it loads */}
-  {personal && alignedOutput.length > 0 && (
-    <FitMapToAligned points={alignedOutput} />
+  {/* Auto-fit for aligned or merged output */}
+  {personal && (alignedOutput.length > 0 || mergedOutput.length > 0) && (
+    <FitMapToAligned points={alignedOutput.length > 0 ? alignedOutput : mergedOutput} />
   )}
 
   {/* Server-based data (All Data mode) */}
@@ -172,8 +178,8 @@ function MapView() {
         longitudeExtractor={p => p.lng}
         intensityExtractor={p => p.intensity}
         gradient={{ 0: 'green', 0.5: 'yellow', 1: 'red' }}
-        radius={10}  // smaller = more precise line
-        blur={10}    // less blur = cleaner shape
+        radius={10}
+        blur={10}
       />
       {alignedOutput.map((point, idx) => (
         <Marker
@@ -184,6 +190,45 @@ function MapView() {
           <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
             <div style={{ fontSize: '0.8em' }}>
               <b>Second:</b> {point.second}<br />
+              <b>Lat:</b> {point.lat.toFixed(5)}<br />
+              <b>Lon:</b> {point.lon.toFixed(5)}<br />
+              <b>Speed:</b> {point.speed.toFixed(2)} mph
+            </div>
+          </Tooltip>
+        </Marker>
+      ))}
+    </>
+  )}
+
+  {/* Merged Output (CSV) */}
+  {personal && mergedOutput.length > 0 && (
+    <>
+      <HeatmapLayer
+        points={(() => {
+          const maxSpeed = Math.max(...mergedOutput.map(d => d.speed));
+          return mergedOutput.map(p => ({
+            lat: p.lat,
+            lng: p.lon,
+            intensity: maxSpeed > 0 ? p.speed / maxSpeed : 0
+          }));
+        })()}
+        latitudeExtractor={p => p.lat}
+        longitudeExtractor={p => p.lng}
+        intensityExtractor={p => p.intensity}
+        gradient={{ 0: 'green', 0.5: 'yellow', 1: 'red' }}
+        radius={10}
+        blur={10}
+      />
+      {mergedOutput.map((point, idx) => (
+        <Marker
+          key={`merged-${idx}`}
+          position={[point.lat, point.lon]}
+          icon={L.divIcon({ className: 'invisible-icon' })}
+        >
+          <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+            <div style={{ fontSize: '0.8em' }}>
+              <b>Second:</b> {point.second}<br />
+              <b>Time:</b> {point.gpx_time}<br />
               <b>Lat:</b> {point.lat.toFixed(5)}<br />
               <b>Lon:</b> {point.lon.toFixed(5)}<br />
               <b>Speed:</b> {point.speed.toFixed(2)} mph
