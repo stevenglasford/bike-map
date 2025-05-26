@@ -24,6 +24,7 @@ function MapView() {
   const [localMarkers, setLocalMarkers] = useState([]);
   const [alignedOutput, setAlignedOutput] = useState([]);
   const [mergedOutput, setMergedOutput] = useState([]);
+  const [soundPoints, setSoundPoints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -65,6 +66,9 @@ function MapView() {
     } else if (payload.type === "markers") {
       alert(`Loaded ${payload.data.length} markers`);
       setLocalMarkers(payload.data);
+    } else if (payload.type === "sound_heatmap") {
+      alert(`Loaded ${payload.data.length} sound points`);
+      setSoundPoints(payload.data);
     } else {
       alert("CSV format not recognized.");
     }
@@ -157,6 +161,50 @@ function MapView() {
             Avg wait: {light.avg_wait}s<br />
             Green success: {light.green_success}%
           </Popup>
+        </Marker>
+      ))}
+    </>
+  )}
+  
+  {personal && soundPoints.length > 0 && (
+    <>
+      <FitMapToAligned points={soundPoints} />
+  
+      <HeatmapLayer
+        points={(() => {
+          const minNoise = Math.min(...soundPoints.map(p => p.noise));
+          const maxNoise = Math.max(...soundPoints.map(p => p.noise));
+          return soundPoints.map(p => ({
+            lat: p.lat,
+            lng: p.lon,
+            intensity: maxNoise !== minNoise
+              ? 1 - (p.noise - minNoise) / (maxNoise - minNoise)  // inverse scale
+              : 0.5
+          }));
+        })()}
+        latitudeExtractor={p => p.lat}
+        longitudeExtractor={p => p.lng}
+        intensityExtractor={p => p.intensity}
+        gradient={{ 0: 'green', 0.5: 'yellow', 1: 'red' }}
+        radius={15}
+        blur={12}
+      />
+  
+      {soundPoints.map((p, idx) => (
+        <Marker
+          key={`noise-${idx}`}
+          position={[p.lat, p.lon]}
+          icon={L.divIcon({ className: 'invisible-icon' })}
+        >
+          <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+            <div style={{ fontSize: '0.8em' }}>
+              <b>{p.index >= 0 ? "Index" : "Second"}:</b> {p.index}<br />
+              <b>Time:</b> {p.time}<br />
+              <b>Lat:</b> {p.lat.toFixed(5)}<br />
+              <b>Lon:</b> {p.lon.toFixed(5)}<br />
+              <b>Noise:</b> {p.noise.toFixed(2)} dB
+            </div>
+          </Tooltip>
         </Marker>
       ))}
     </>

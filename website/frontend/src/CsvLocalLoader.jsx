@@ -101,6 +101,35 @@ function CsvLocalLoader({ onDataLoaded }) {
           return;
         }
         
+        // Detect sound heatmap CSV
+        if (
+          (headers.includes("frame") || headers.includes("second")) &&
+          headers.includes("gpx_time") &&
+          headers.includes("lat") &&
+          (headers.includes("lon") || headers.includes("long")) &&
+          headers.includes("noise")
+        ) {
+          const keyField = headers.includes("frame") ? "frame" : "second";
+          const points = rows
+            .filter(row =>
+              row.lat && (row.lon || row.long) && row.noise &&
+              !isNaN(parseFloat(row.lat)) &&
+              !isNaN(parseFloat(row.lon || row.long)) &&
+              !isNaN(parseFloat(row.noise))
+            )
+            .map(row => ({
+              lat: parseFloat(row.lat),
+              lon: parseFloat(row.lon || row.long),
+              noise: parseFloat(row.noise),
+              time: row.gpx_time,
+              index: parseInt(row[keyField])
+            }));
+        
+          if (points.length === 0) throw new Error("No valid noise points found");
+          onDataLoaded({ type: "sound_heatmap", data: points });
+          return;
+        }
+              
         throw new Error("Unrecognized CSV format.");
       } catch (err) {
         console.error(err);
