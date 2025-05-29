@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-05-26T23:12:42.710359",
+  "total_videos": 53,
+  "successful_correlations": 0,
+  "failed_correlations": 53,
+  "score_distribution": [],
+  "confidence_levels": {
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "very_low": 0
+  },
+  "detailed_results": []
+}

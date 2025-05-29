@@ -6,3 +6,4 @@ testvideo
 dtemp_video*
 gputools-env/
 package-lock.json
+*.pkl

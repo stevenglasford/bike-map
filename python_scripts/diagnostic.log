@@ -1,0 +1,146 @@
+2025-05-27 15:32:57,623 - INFO - Testing with 5 videos and 100 GPX files
+2025-05-27 15:32:57,970 - INFO - Using device: cuda
+2025-05-27 15:32:57,971 - INFO - Analyzing video: /mnt/penis/panoramics/playground/temp_video_257228761450156032.MP4
+2025-05-27 15:32:57,976 - INFO - Video stats: FPS=29.97002997002997, Frames=14146, Duration=472.00s
+2025-05-27 15:33:38,432 - INFO - Extracted 130 motion samples from 131 frames
+2025-05-27 15:33:38,432 - INFO - Motion stats: mean=27.51, std=7.25
+2025-05-27 15:33:38,432 - INFO - Analyzing video: /mnt/penis/panoramics/playground/temp_video_249942089528250368.MP4
+2025-05-27 15:33:38,435 - INFO - Video stats: FPS=29.97002997002997, Frames=19115, Duration=637.80s
+2025-05-27 15:37:03,447 - INFO - Extracted 659 motion samples from 660 frames
+2025-05-27 15:37:03,447 - INFO - Motion stats: mean=29.71, std=11.63
+2025-05-27 15:37:03,448 - INFO - Analyzing video: /mnt/penis/panoramics/playground/temp_video_257851342414938112.MP4
+2025-05-27 15:37:03,454 - INFO - Video stats: FPS=29.97002997002997, Frames=35481, Duration=1183.88s
+2025-05-27 15:42:57,846 - INFO - Extracted 1223 motion samples from 1224 frames
+2025-05-27 15:42:57,846 - INFO - Motion stats: mean=30.43, std=10.97
+2025-05-27 15:42:57,848 - INFO - Analyzing video: /mnt/penis/panoramics/playground/temp_video_249592507485130752.MP4
+2025-05-27 15:42:57,861 - INFO - Video stats: FPS=29.97002997002997, Frames=102365, Duration=3415.58s
+2025-05-27 16:01:23,899 - INFO - Extracted 3529 motion samples from 3530 frames
+2025-05-27 16:01:23,899 - INFO - Motion stats: mean=26.93, std=13.25
+2025-05-27 16:01:23,901 - INFO - Analyzing video: /mnt/penis/panoramics/playground/temp_video_258120956227092480.MP4
+2025-05-27 16:01:23,903 - ERROR - Cannot open video: /mnt/penis/panoramics/playground/temp_video_258120956227092480.MP4
+2025-05-27 16:01:23,903 - WARNING - Failed to analyze video: /mnt/penis/panoramics/playground/temp_video_258120956227092480.MP4
+2025-05-27 16:01:23,903 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12565238590.gpx
+2025-05-27 16:01:23,927 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12533250173.gpx
+2025-05-27 16:01:23,928 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12377593907.gpx
+2025-05-27 16:01:23,963 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13737726959.gpx
+2025-05-27 16:01:24,011 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11277404692.gpx
+2025-05-27 16:01:24,116 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12952255782.gpx
+2025-05-27 16:01:24,134 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10202036890.gpx
+2025-05-27 16:01:24,265 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10727565854.gpx
+2025-05-27 16:01:24,292 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12616103162.gpx
+2025-05-27 16:01:24,616 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11297136467.gpx
+2025-05-27 16:01:24,635 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11399137612.gpx
+2025-05-27 16:01:24,650 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10831071651.gpx
+2025-05-27 16:01:24,815 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11708969520.gpx
+2025-05-27 16:01:24,838 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12496466068.gpx
+2025-05-27 16:01:25,037 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12545136550.gpx
+2025-05-27 16:01:25,054 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11768996406.gpx
+2025-05-27 16:01:25,070 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10115044245.gpx
+2025-05-27 16:01:25,094 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9906883810.gpx
+2025-05-27 16:01:25,220 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9864385859.gpx
+2025-05-27 16:01:25,234 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9921219871.gpx
+2025-05-27 16:01:25,876 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10820395977.gpx
+2025-05-27 16:01:25,897 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10275372272.gpx
+2025-05-27 16:01:25,927 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/14417111462.gpx
+2025-05-27 16:01:25,941 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13378635686.gpx
+2025-05-27 16:01:25,959 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10667690803.gpx
+2025-05-27 16:01:25,991 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/14350241495.gpx
+2025-05-27 16:01:26,010 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13588040624.gpx
+2025-05-27 16:01:26,032 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12238098535.gpx
+2025-05-27 16:01:26,033 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10983320484.gpx
+2025-05-27 16:01:26,086 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13525488554.gpx
+2025-05-27 16:01:26,104 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9415459258.gpx
+2025-05-27 16:01:26,344 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10932335856.gpx
+2025-05-27 16:01:26,396 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10392362009.gpx
+2025-05-27 16:01:26,415 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11751676073.gpx
+2025-05-27 16:01:26,415 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9818677554.gpx
+2025-05-27 16:01:26,575 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10698227297.gpx
+2025-05-27 16:01:26,668 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9734282307.gpx
+2025-05-27 16:01:26,716 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11044737161.gpx
+2025-05-27 16:01:26,769 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10625899461.gpx
+2025-05-27 16:01:26,790 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11962580231.gpx
+2025-05-27 16:01:26,807 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9869592252.gpx
+2025-05-27 16:01:27,013 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11668317076.gpx
+2025-05-27 16:01:27,043 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12251668729.gpx
+2025-05-27 16:01:27,104 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9725643901.gpx
+2025-05-27 16:01:27,127 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12807049156.gpx
+2025-05-27 16:01:27,146 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9443430875.gpx
+2025-05-27 16:01:27,403 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12032682661.gpx
+2025-05-27 16:01:27,500 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10731022804.gpx
+2025-05-27 16:01:27,503 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10345016669.gpx
+2025-05-27 16:01:27,532 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13246980828.gpx
+2025-05-27 16:01:27,554 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12607303840.gpx
+2025-05-27 16:01:27,644 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11199187090.gpx
+2025-05-27 16:01:27,759 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11314915924.gpx
+2025-05-27 16:01:27,775 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9914329134.gpx
+2025-05-27 16:01:27,844 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12582291297.gpx
+2025-05-27 16:01:27,844 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11061645178.gpx
+2025-05-27 16:01:27,863 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12610132118.gpx
+2025-05-27 16:01:27,904 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/14120392460.gpx
+2025-05-27 16:01:28,002 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10132712544.gpx
+2025-05-27 16:01:28,033 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10908510451.gpx
+2025-05-27 16:01:28,119 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10846515923.gpx
+2025-05-27 16:01:28,134 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10107749915.gpx
+2025-05-27 16:01:28,165 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10604671563.gpx
+2025-05-27 16:01:28,249 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11182154681.gpx
+2025-05-27 16:01:28,287 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10526906720.gpx
+2025-05-27 16:01:28,320 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12214719454.gpx
+2025-05-27 16:01:28,334 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10966633168.gpx
+2025-05-27 16:01:28,355 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/14436683685.gpx
+2025-05-27 16:01:28,381 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10039996986.gpx
+2025-05-27 16:01:28,490 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11321534833.gpx
+2025-05-27 16:01:28,490 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11895763106.gpx
+2025-05-27 16:01:28,511 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12028009206.gpx
+2025-05-27 16:01:28,522 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10776541509.gpx
+2025-05-27 16:01:28,537 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11657727229.gpx
+2025-05-27 16:01:28,538 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12319755922.gpx
+2025-05-27 16:01:28,598 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11013376385.gpx
+2025-05-27 16:01:28,620 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10195945183.gpx
+2025-05-27 16:01:28,651 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12702022880.gpx
+2025-05-27 16:01:28,670 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12128651609.gpx
+2025-05-27 16:01:28,684 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10623149728.gpx
+2025-05-27 16:01:28,719 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12727858546.gpx
+2025-05-27 16:01:28,759 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12915743100.gpx
+2025-05-27 16:01:28,784 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11064647171.gpx
+2025-05-27 16:01:28,809 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9995831121.gpx
+2025-05-27 16:01:28,840 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11000315235.gpx
+2025-05-27 16:01:28,865 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13561255792.gpx
+2025-05-27 16:01:28,898 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11639419791.gpx
+2025-05-27 16:01:29,016 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/9705285008.gpx
+2025-05-27 16:01:29,044 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10324884767.gpx
+2025-05-27 16:01:29,135 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13461658188.gpx
+2025-05-27 16:01:29,151 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13110758763.gpx
+2025-05-27 16:01:29,181 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11653722603.gpx
+2025-05-27 16:01:29,209 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11259994063.gpx
+2025-05-27 16:01:29,226 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10729704049.gpx
+2025-05-27 16:01:29,260 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/12052257350.gpx
+2025-05-27 16:01:29,275 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13067451949.gpx
+2025-05-27 16:01:29,297 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/11250340292.gpx
+2025-05-27 16:01:29,433 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13309649179.gpx
+2025-05-27 16:01:29,453 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/13016982533.gpx
+2025-05-27 16:01:29,469 - DEBUG - Analyzing GPX: /mnt/penis/panoramics/playground/10354509101.gpx
+2025-05-27 16:01:29,571 - INFO - Successfully analyzed 4 videos and 94 GPX files
+2025-05-27 16:01:29,571 - INFO - 
+Testing correlations for temp_video_257228761450156032.MP4
+2025-05-27 16:01:29,574 - INFO - Top 3 matches for temp_video_257228761450156032.MP4:
+2025-05-27 16:01:29,574 - INFO -   1. 13378635686.gpx - Score: 0.310
+2025-05-27 16:01:29,574 - INFO -   2. 9864385859.gpx - Score: 0.228
+2025-05-27 16:01:29,574 - INFO -   3. 14417111462.gpx - Score: 0.219
+2025-05-27 16:01:29,574 - INFO - 
+Testing correlations for temp_video_249942089528250368.MP4
+2025-05-27 16:01:29,579 - INFO - Top 3 matches for temp_video_249942089528250368.MP4:
+2025-05-27 16:01:29,579 - INFO -   1. 10820395977.gpx - Score: 0.175
+2025-05-27 16:01:29,579 - INFO -   2. 12028009206.gpx - Score: 0.147
+2025-05-27 16:01:29,579 - INFO -   3. 10966633168.gpx - Score: 0.136
+2025-05-27 16:01:29,579 - INFO - 
+Testing correlations for temp_video_257851342414938112.MP4
+2025-05-27 16:01:29,582 - INFO - Top 3 matches for temp_video_257851342414938112.MP4:
+2025-05-27 16:01:29,582 - INFO -   1. 10107749915.gpx - Score: 0.214
+2025-05-27 16:01:29,582 - INFO -   2. 10667690803.gpx - Score: 0.198
+2025-05-27 16:01:29,582 - INFO -   3. 11182154681.gpx - Score: 0.179
+2025-05-27 16:01:29,582 - INFO - 
+Testing correlations for temp_video_249592507485130752.MP4
+2025-05-27 16:01:29,583 - INFO - Top 3 matches for temp_video_249592507485130752.MP4:
+2025-05-27 16:01:29,583 - INFO -   1. 13737726959.gpx - Score: 0.229
+2025-05-27 16:01:29,583 - INFO -   2. 10324884767.gpx - Score: 0.127
+2025-05-27 16:01:29,583 - INFO -   3. 11277404692.gpx - Score: 0.067

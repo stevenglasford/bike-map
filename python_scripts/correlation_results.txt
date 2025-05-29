@@ -1,0 +1,6 @@
+{
+  "video_path": "../dtemp_video_249173973948960768/temp_video_249173973948960768.MP4",
+  "analysis_timestamp": "2025-05-26T18:49:21.766828",
+  "video_duration": 285.15153333333336,
+  "matches": []
+}

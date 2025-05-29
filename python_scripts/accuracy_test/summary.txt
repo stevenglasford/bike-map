@@ -1,0 +1,13 @@
+Video-GPX Correlation Accuracy Report
+==================================================
+
+Generated: 2025-05-26T22:55:42.871642
+Total Videos: 53
+Successful: 0
+Failed: 53
+
+Confidence Distribution:
+  high: 0 (0.0%)
+  medium: 0 (0.0%)
+  low: 0 (0.0%)
+  very_low: 0 (0.0%)
