@@ -1,0 +1,1947 @@
+{
+  "timestamp": "2025-06-01T13:28:22.256272",
+  "total_videos": 53,
+  "successful_correlations": 52,
+  "failed_correlations": 1,
+  "score_distribution": [
+    0.47301582531604275,
+    0.4311812099672908,
+    0.42301133781340705,
+    0.41453393545808914,
+    0.43247822402298775,
+    0.45466119255656096,
+    0.49862738000166873,
+    0.49369850218622385,
+    0.44779592275941266,
+    0.4330649298757943,
+    0.43510964326033597,
+    0.4286112723322968,
+    0.4012980323837203,
+    0.4456340473596708,
+    0.45058241652867503,
+    0.42114737555691084,
+    0.46271730101354447,
+    0.4151183356929235,
+    0.4018953287254044,
+    0.4065005696642499,
+    0.3652796874116191,
+    0.40611627705027803,
+    0.48193491720739895,
+    0.4341516719169474,
+    0.4797103097044623,
+    0.42678790008964695,
+    0.40864850808123193,
+    0.4267816161377362,
+    0.43126219412572064,
+    0.4118388727385075,
+    0.45398747401658396,
+    0.4285252229490876,
+    0.4758764543826661,
+    0.4319654486996804,
+    0.44793065404453086,
+    0.4785155590742515,
+    0.4769513965178684,
+    0.41792457216869167,
+    0.40567266623688897,
+    0.40024345358754965,
+    0.4344609430919288,
+    0.42971587588225507,
+    0.4394545543842906,
+    0.46457581087817545,
+    0.45978732033200226,
+    0.4791583000233741,
+    0.4416202496108527,
+    0.4396283444557472,
+    0.4255861636699511,
+    0.45610500854367914,
+    0.4306652869206529,
+    0.44371944274157443
+  ],
+  "confidence_levels": {
+    "high": 52,
+    "medium": 0,
+    "low": 0,
+    "very_low": 0
+  },
+  "detailed_results": [
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257734894283657216.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12958475925.gpx",
+      "score": 0.47301582531604275,
+      "sub_scores": {
+        "fft": 0.7746613621711731,
+        "dtw": 0.626854659822482,
+        "stats": 0.013474378069525526,
+        "neural": 0.9448738694190979,
+        "temporal": 0.7949070117274293
+      },
+      "duration_ratio": 0.8748440074906367,
+      "time_offset": 75,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12958475925.gpx",
+          "score": 0.47301582531604275
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12789394130.gpx",
+          "score": 0.46516056434853015
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12272773577.gpx",
+          "score": 0.4638599380839301
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14571121632.gpx",
+          "score": 0.453270997222955
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11058311599.gpx",
+          "score": 0.4470259736267544
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249942245577330688.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13870992775.gpx",
+      "score": 0.4311812099672908,
+      "sub_scores": {
+        "fft": 0.8150125741958618,
+        "dtw": 0.622648414168113,
+        "stats": 0.025789907104851247,
+        "neural": 0.8240121006965637,
+        "temporal": 0.7513018464697657
+      },
+      "duration_ratio": 0.9054628978878075,
+      "time_offset": -35,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13870992775.gpx",
+          "score": 0.4311812099672908
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.41949603530769364
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14494416358.gpx",
+          "score": 0.4126129773431414
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11878039247.gpx",
+          "score": 0.4114603823775836
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11535094431.gpx",
+          "score": 0.3983135344836693
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249942089528250368.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12590894131.gpx",
+      "score": 0.42301133781340705,
+      "sub_scores": {
+        "fft": 0.8122794032096863,
+        "dtw": 0.6187751629710689,
+        "stats": 0.01573429622020695,
+        "neural": 0.9637695550918579,
+        "temporal": 0.7574206565196842
+      },
+      "duration_ratio": 0.844773289183223,
+      "time_offset": -116,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12590894131.gpx",
+          "score": 0.42301133781340705
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14097879108.gpx",
+          "score": 0.41655218779324027
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11359364664.gpx",
+          "score": 0.414606038142835
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12425902249.gpx",
+          "score": 0.4129239838843842
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11511800724.gpx",
+          "score": 0.41062697846822493
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249173973948960768.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11183708536.gpx",
+      "score": 0.41453393545808914,
+      "sub_scores": {
+        "fft": 0.7358567714691162,
+        "dtw": 0.668953918820842,
+        "stats": 0.025798129955100314,
+        "neural": 0.7256158590316772,
+        "temporal": 0.7986641074569011
+      },
+      "duration_ratio": 0.88023373771092,
+      "time_offset": -1,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11183708536.gpx",
+          "score": 0.41453393545808914
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10093406792.gpx",
+          "score": 0.4107056824387715
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10718502387.gpx",
+          "score": 0.4095728163865848
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+          "score": 0.40920202934372646
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12164248490.gpx",
+          "score": 0.3913870653134077
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743651008942080.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+      "score": 0.43247822402298775,
+      "sub_scores": {
+        "fft": 0.8324949741363525,
+        "dtw": 0.6437353835854247,
+        "stats": 0.01509745663406652,
+        "neural": 0.8236621022224426,
+        "temporal": 0.7668794863957671
+      },
+      "duration_ratio": 0.6542598796891819,
+      "time_offset": -33,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+          "score": 0.43247822402298775
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10944326979.gpx",
+          "score": 0.40980333022872933
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14457324539.gpx",
+          "score": 0.40519893816169883
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11345106360.gpx",
+          "score": 0.40505619174719776
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14571507135.gpx",
+          "score": 0.40018512597056094
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743398239211520.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14457324539.gpx",
+      "score": 0.45466119255656096,
+      "sub_scores": {
+        "fft": 0.7866736352443695,
+        "dtw": 0.6504377083397258,
+        "stats": 0.02569013940769105,
+        "neural": 0.8932635188102722,
+        "temporal": 0.7822937639046232
+      },
+      "duration_ratio": 0.809944967132144,
+      "time_offset": 70,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14457324539.gpx",
+          "score": 0.45466119255656096
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12221725461.gpx",
+          "score": 0.4301105123604589
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12052257350.gpx",
+          "score": 0.4297723653852282
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13194909465.gpx",
+          "score": 0.42494818633625653
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11517600060.gpx",
+          "score": 0.42269972288137014
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257773012462342144.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14118444635.gpx",
+      "score": 0.49862738000166873,
+      "sub_scores": {
+        "fft": 0.8306428790092468,
+        "dtw": 0.6312347894307875,
+        "stats": 0.03628237245157104,
+        "neural": 0.7485072016716003,
+        "temporal": 0.6785339489329738
+      },
+      "duration_ratio": 0.9897005312084994,
+      "time_offset": -6,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14118444635.gpx",
+          "score": 0.49862738000166873
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10247643503.gpx",
+          "score": 0.41535243298191493
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13761682251.gpx",
+          "score": 0.4018350492228749
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14377484166.gpx",
+          "score": 0.39848812443289544
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14390512181.gpx",
+          "score": 0.39778482799880965
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257851359343149056.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10326336667.gpx",
+      "score": 0.49369850218622385,
+      "sub_scores": {
+        "fft": 0.7628475725650787,
+        "dtw": 0.6425409241626773,
+        "stats": 0.007872585488545521,
+        "neural": 0.9981377124786377,
+        "temporal": 0.7696530358656772
+      },
+      "duration_ratio": 0.6191491775325376,
+      "time_offset": 149,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10326336667.gpx",
+          "score": 0.49369850218622385
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12172726201.gpx",
+          "score": 0.4851058315623505
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11606665672.gpx",
+          "score": 0.46337414669153826
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14292608296.gpx",
+          "score": 0.46098588533511625
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9950258441.gpx",
+          "score": 0.4513013068630612
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249941772178817024.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13889868533.gpx",
+      "score": 0.44779592275941266,
+      "sub_scores": {
+        "fft": 0.7826837301254272,
+        "dtw": 0.6155623250658179,
+        "stats": 0.008310899827465171,
+        "neural": 0.9124861359596252,
+        "temporal": 0.7169516126421378
+      },
+      "duration_ratio": 0.7574658773527626,
+      "time_offset": -41,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13889868533.gpx",
+          "score": 0.44779592275941266
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12940623150.gpx",
+          "score": 0.44538443605661054
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14488589578.gpx",
+          "score": 0.43996133343195576
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13777864135.gpx",
+          "score": 0.4380247956234592
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12186875007.gpx",
+          "score": 0.4294431739137799
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743331197456384.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14138031537.gpx",
+      "score": 0.4330649298757943,
+      "sub_scores": {
+        "fft": 0.7730598747730255,
+        "dtw": 0.6246209857251219,
+        "stats": 0.008847428005272901,
+        "neural": 0.9625644683837891,
+        "temporal": 0.7404886599177536
+      },
+      "duration_ratio": 0.7228495449374289,
+      "time_offset": -61,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14138031537.gpx",
+          "score": 0.4330649298757943
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+          "score": 0.4240469496465681
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12685758548.gpx",
+          "score": 0.4092223603380761
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14384963016.gpx",
+          "score": 0.40660386393589076
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10996206428.gpx",
+          "score": 0.3998708681467563
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257851438967816192.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12844790306.gpx",
+      "score": 0.43510964326033597,
+      "sub_scores": {
+        "fft": 0.7283960282802582,
+        "dtw": 0.6385046632306709,
+        "stats": 0.008423109885041264,
+        "neural": 0.9302926659584045,
+        "temporal": 0.7419320388077456
+      },
+      "duration_ratio": 0.5750405756731662,
+      "time_offset": -74,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12844790306.gpx",
+          "score": 0.43510964326033597
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+          "score": 0.4291195922620203
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12187715431.gpx",
+          "score": 0.4274525071070273
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12306654502.gpx",
+          "score": 0.42675025116799997
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13175809420.gpx",
+          "score": 0.42561031892872336
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249409997794967552.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13327101653.gpx",
+      "score": 0.4286112723322968,
+      "sub_scores": {
+        "fft": 0.7974618375301361,
+        "dtw": 0.61852600631493,
+        "stats": 0.010756303873964718,
+        "neural": 0.9410219192504883,
+        "temporal": 0.7323780377624594
+      },
+      "duration_ratio": 0.9069549549549549,
+      "time_offset": 85,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13327101653.gpx",
+          "score": 0.4286112723322968
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12272773577.gpx",
+          "score": 0.4234073800279384
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11839027410.gpx",
+          "score": 0.40986103972411175
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12119948188.gpx",
+          "score": 0.4071153002463024
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12516552384.gpx",
+          "score": 0.4054375844544954
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_245977170369839104.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10363439375.gpx",
+      "score": 0.4012980323837203,
+      "sub_scores": {
+        "fft": 0.7784728109836578,
+        "dtw": 0.619843370286867,
+        "stats": 0.04110199196400832,
+        "neural": 0.9897134304046631,
+        "temporal": 0.7475772084612493
+      },
+      "duration_ratio": 0.622594985956838,
+      "time_offset": 175,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10363439375.gpx",
+          "score": 0.4012980323837203
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11668317076.gpx",
+          "score": 0.39729611229964684
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9724954270.gpx",
+          "score": 0.3892363448275157
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13515377379.gpx",
+          "score": 0.38745283618647663
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14292608296.gpx",
+          "score": 0.38701247307104086
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249941923572224000.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11712364061.gpx",
+      "score": 0.4456340473596708,
+      "sub_scores": {
+        "fft": 0.8066156208515167,
+        "dtw": 0.591598134947437,
+        "stats": 0.00794072219024789,
+        "neural": 0.894702136516571,
+        "temporal": 0.8087747334753654
+      },
+      "duration_ratio": 0.7260936170212766,
+      "time_offset": 63,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11712364061.gpx",
+          "score": 0.4456340473596708
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9907431596.gpx",
+          "score": 0.44526655894151274
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11855398653.gpx",
+          "score": 0.42486752785174897
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11673729011.gpx",
+          "score": 0.4236615751346784
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12940623150.gpx",
+          "score": 0.4149120000372586
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257228896406081536.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11887345556.gpx",
+      "score": 0.45058241652867503,
+      "sub_scores": {
+        "fft": 0.7849518954753876,
+        "dtw": 0.6002655087763176,
+        "stats": 0.04977497623780898,
+        "neural": 0.980564534664154,
+        "temporal": 0.7819640642678664
+      },
+      "duration_ratio": 0.9323485294117647,
+      "time_offset": 12,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11887345556.gpx",
+          "score": 0.45058241652867503
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14445506948.gpx",
+          "score": 0.43576963288108117
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13282201872.gpx",
+          "score": 0.4320765994102802
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11406567708.gpx",
+          "score": 0.43070793753114495
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11375747195.gpx",
+          "score": 0.42680305985918365
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257735046302011392.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+      "score": 0.42114737555691084,
+      "sub_scores": {
+        "fft": 0.8059098720550537,
+        "dtw": 0.6371780039214432,
+        "stats": 0.0182797472035377,
+        "neural": 0.8405455946922302,
+        "temporal": 0.710791723782783
+      },
+      "duration_ratio": 0.7111739467376498,
+      "time_offset": 57,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+          "score": 0.42114737555691084
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14571121632.gpx",
+          "score": 0.4170923046815389
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14424911343.gpx",
+          "score": 0.41526039855016156
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12564415129.gpx",
+          "score": 0.4126981607692958
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14377484166.gpx",
+          "score": 0.40870433597970846
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257229067357523968.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14494416358.gpx",
+      "score": 0.46271730101354447,
+      "sub_scores": {
+        "fft": 0.7359017431735992,
+        "dtw": 0.633662622435669,
+        "stats": 0.006911043637816869,
+        "neural": 0.8822887539863586,
+        "temporal": 0.7191744844724477
+      },
+      "duration_ratio": 0.985725,
+      "time_offset": -30,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14494416358.gpx",
+          "score": 0.46271730101354447
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11183708536.gpx",
+          "score": 0.4508725001696657
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11635378054.gpx",
+          "score": 0.44718032509153
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13843152378.gpx",
+          "score": 0.4469649395354663
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9907431596.gpx",
+          "score": 0.4435032656625925
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_250330889232318464.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14384963016.gpx",
+      "score": 0.4151183356929235,
+      "sub_scores": {
+        "fft": 0.8189263641834259,
+        "dtw": 0.6393526937124681,
+        "stats": 0.02177632244078295,
+        "neural": 0.8527920246124268,
+        "temporal": 0.6553067772732772
+      },
+      "duration_ratio": 0.994256605424322,
+      "time_offset": -45,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14384963016.gpx",
+          "score": 0.4151183356929235
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.4103843833699315
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14494416358.gpx",
+          "score": 0.40991354940641095
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12616610439.gpx",
+          "score": 0.40482190485101244
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11535094431.gpx",
+          "score": 0.40006749751821147
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257773356021977088.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11115833094.gpx",
+      "score": 0.4018953287254044,
+      "sub_scores": {
+        "fft": 0.9023680090904236,
+        "dtw": 0.6557535587962208,
+        "stats": 0.054594430463533725,
+        "neural": 0.5486246347427368,
+        "temporal": 0.502332381280111
+      },
+      "duration_ratio": 0.989109900000989,
+      "time_offset": 7,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11115833094.gpx",
+          "score": 0.4018953287254044
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13330460402.gpx",
+          "score": 0.38953910572301265
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12849131388.gpx",
+          "score": 0.388368848806684
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13595893165.gpx",
+          "score": 0.3756201098722467
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9794431854.gpx",
+          "score": 0.3649157780936436
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_245977240184033280.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/9667108544.gpx",
+      "score": 0.4065005696642499,
+      "sub_scores": {
+        "fft": 0.8032671511173248,
+        "dtw": 0.625256947264578,
+        "stats": 0.004087689286682979,
+        "neural": 0.969499945640564,
+        "temporal": 0.838283214425855
+      },
+      "duration_ratio": 0.39918235422305237,
+      "time_offset": 56,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9667108544.gpx",
+          "score": 0.4065005696642499
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9712162301.gpx",
+          "score": 0.4044036560625359
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9762927309.gpx",
+          "score": 0.40351436986961825
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9787621784.gpx",
+          "score": 0.39230388902949687
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10803413806.gpx",
+          "score": 0.392267188012737
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_258120635975204864.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11505795046.gpx",
+      "score": 0.3652796874116191,
+      "sub_scores": {
+        "fft": 0.7614998817443848,
+        "dtw": 0.6332743735994846,
+        "stats": 0.029637065749563655,
+        "neural": 0.6590208411216736,
+        "temporal": 0.5264501737863285
+      },
+      "duration_ratio": 0.4746384836882574,
+      "time_offset": 20,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11505795046.gpx",
+          "score": 0.3652796874116191
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13761682251.gpx",
+          "score": 0.3528211372183932
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9778269147.gpx",
+          "score": 0.3517014543940305
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11505792248.gpx",
+          "score": 0.3384252718384865
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10464573185.gpx",
+          "score": 0.3359880290576596
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_252688633415340032.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11094256280.gpx",
+      "score": 0.40611627705027803,
+      "sub_scores": {
+        "fft": 0.7781834304332733,
+        "dtw": 0.6360475953994601,
+        "stats": 0.004768856933198267,
+        "neural": 0.9952074885368347,
+        "temporal": 0.7193281974794887
+      },
+      "duration_ratio": 0.6510825073071547,
+      "time_offset": 135,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11094256280.gpx",
+          "score": 0.40611627705027803
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12666657139.gpx",
+          "score": 0.40039530954084573
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10650810643.gpx",
+          "score": 0.3986349339942161
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10698227297.gpx",
+          "score": 0.3946891964266257
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10582551557.gpx",
+          "score": 0.39136413662939395
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257851342414938112.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10735625102.gpx",
+      "score": 0.48193491720739895,
+      "sub_scores": {
+        "fft": 0.8078194856643677,
+        "dtw": 0.6244473190248501,
+        "stats": 0.00821268530032176,
+        "neural": 0.992339015007019,
+        "temporal": 0.7511805289334548
+      },
+      "duration_ratio": 0.6622277696937373,
+      "time_offset": 133,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10735625102.gpx",
+          "score": 0.48193491720739895
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12172726201.gpx",
+          "score": 0.4810388036645788
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10820395977.gpx",
+          "score": 0.47110728538711505
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10766398687.gpx",
+          "score": 0.4669053272731843
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10943536810.gpx",
+          "score": 0.4609668694106884
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249942306101137408.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+      "score": 0.4341516719169474,
+      "sub_scores": {
+        "fft": 0.781327486038208,
+        "dtw": 0.6389542310652807,
+        "stats": 0.024082360714523667,
+        "neural": 0.9004453420639038,
+        "temporal": 0.7740331883145792
+      },
+      "duration_ratio": 0.5848646332030017,
+      "time_offset": -20,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+          "score": 0.4341516719169474
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.42597014111259573
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12638050524.gpx",
+          "score": 0.4234800256650277
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12247319805.gpx",
+          "score": 0.42027110575427684
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13634342118.gpx",
+          "score": 0.40714674133366174
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_250331930711560192.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11386887619.gpx",
+      "score": 0.4797103097044623,
+      "sub_scores": {
+        "fft": 0.8405840992927551,
+        "dtw": 0.613837505654921,
+        "stats": 0.028504387236647284,
+        "neural": 0.813938319683075,
+        "temporal": 0.8510947736667303
+      },
+      "duration_ratio": 0.790784728804634,
+      "time_offset": 70,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11386887619.gpx",
+          "score": 0.4797103097044623
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12221725461.gpx",
+          "score": 0.47739508452300156
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11058311599.gpx",
+          "score": 0.47380244990065606
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13564244479.gpx",
+          "score": 0.465658976842446
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11535094431.gpx",
+          "score": 0.4622615332466641
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14355878315.gpx",
+      "score": 0.42678790008964695,
+      "sub_scores": {
+        "fft": 0.7266588509082794,
+        "dtw": 0.6338894252487571,
+        "stats": 0.008456314981107165,
+        "neural": 0.9629961848258972,
+        "temporal": 0.8411505904761609
+      },
+      "duration_ratio": 0.6561303690260133,
+      "time_offset": -100,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14355878315.gpx",
+          "score": 0.42678790008964695
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14384963016.gpx",
+          "score": 0.41898464426362125
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14551737324.gpx",
+          "score": 0.4177028287257576
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.41726897017932796
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+          "score": 0.4143765635373431
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257773285935157248.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+      "score": 0.40864850808123193,
+      "sub_scores": {
+        "fft": 0.803530752658844,
+        "dtw": 0.6407502844324446,
+        "stats": 0.010324642626423804,
+        "neural": 0.8716855049133301,
+        "temporal": 0.7226699092775388
+      },
+      "duration_ratio": 0.9905914832876952,
+      "time_offset": -47,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+          "score": 0.40864850808123193
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11526484304.gpx",
+          "score": 0.3918025506706471
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.38635754165154435
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10247643503.gpx",
+          "score": 0.38305118925669507
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9900632232.gpx",
+          "score": 0.38202632142223203
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257734469832671232.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10292679346.gpx",
+      "score": 0.4267816161377362,
+      "sub_scores": {
+        "fft": 0.8029669523239136,
+        "dtw": 0.6123393628745972,
+        "stats": 0.008797801708852861,
+        "neural": 0.9990794658660889,
+        "temporal": 0.7887277345656506
+      },
+      "duration_ratio": 0.5398817930653406,
+      "time_offset": -25,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10292679346.gpx",
+          "score": 0.4267816161377362
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11520517643.gpx",
+          "score": 0.4239659842786511
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10943536810.gpx",
+          "score": 0.41941893771717126
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9886269824.gpx",
+          "score": 0.40880029097742915
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11534754686.gpx",
+          "score": 0.40758868637298673
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249941901552128000.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11855398653.gpx",
+      "score": 0.43126219412572064,
+      "sub_scores": {
+        "fft": 0.8211475908756256,
+        "dtw": 0.6106022164968722,
+        "stats": 0.014568688346557421,
+        "neural": 0.9551751613616943,
+        "temporal": 0.72432672364664
+      },
+      "duration_ratio": 0.7911763326925781,
+      "time_offset": 50,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11855398653.gpx",
+          "score": 0.43126219412572064
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12030420566.gpx",
+          "score": 0.42188219253198705
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11782636908.gpx",
+          "score": 0.42054609305015705
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13510869688.gpx",
+          "score": 0.41644026174969695
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13175809420.gpx",
+          "score": 0.41505640973336594
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257773083790675968.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10069755258.gpx",
+      "score": 0.4118388727385075,
+      "sub_scores": {
+        "fft": 0.6615524590015411,
+        "dtw": 0.6095562452204046,
+        "stats": 0.004964851378192461,
+        "neural": 0.9738743305206299,
+        "temporal": 0.7015170332929854
+      },
+      "duration_ratio": 0.4577121568627451,
+      "time_offset": -27,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10069755258.gpx",
+          "score": 0.4118388727385075
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9951405528.gpx",
+          "score": 0.4114719711462543
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11183708536.gpx",
+          "score": 0.397425513586361
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12844790306.gpx",
+          "score": 0.38726193396813047
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11919780594.gpx",
+          "score": 0.3841556020975617
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_258120726022717440.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10022123625.gpx",
+      "score": 0.45398747401658396,
+      "sub_scores": {
+        "fft": 0.8169503211975098,
+        "dtw": 0.6362795449359889,
+        "stats": 0.023900150639580297,
+        "neural": 0.9959020018577576,
+        "temporal": 0.7864864035126333
+      },
+      "duration_ratio": 0.5756802621764718,
+      "time_offset": -5,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10022123625.gpx",
+          "score": 0.45398747401658396
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12115917542.gpx",
+          "score": 0.4534181428316453
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12048426379.gpx",
+          "score": 0.4290184595390393
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13349089295.gpx",
+          "score": 0.4253363816962195
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13877099019.gpx",
+          "score": 0.42037493584073476
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743136959238144.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12221725461.gpx",
+      "score": 0.4285252229490876,
+      "sub_scores": {
+        "fft": 0.7637174427509308,
+        "dtw": 0.6214754648838241,
+        "stats": 0.024480034370101912,
+        "neural": 0.9083554148674011,
+        "temporal": 0.8197155805146227
+      },
+      "duration_ratio": 0.9127087791495199,
+      "time_offset": 138,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12221725461.gpx",
+          "score": 0.4285252229490876
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12508319919.gpx",
+          "score": 0.42737214380747485
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14424911343.gpx",
+          "score": 0.4257602272828865
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11058311599.gpx",
+          "score": 0.4189992883031409
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10482148173.gpx",
+          "score": 0.41788586460782845
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743588501229568.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13175809420.gpx",
+      "score": 0.4758764543826661,
+      "sub_scores": {
+        "fft": 0.7605578303337097,
+        "dtw": 0.6415124972490747,
+        "stats": 0.010252684435452398,
+        "neural": 0.9130246043205261,
+        "temporal": 0.7250696545313
+      },
+      "duration_ratio": 0.8498410230726171,
+      "time_offset": -91,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13175809420.gpx",
+          "score": 0.4758764543826661
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10718314563.gpx",
+          "score": 0.46263020145835276
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.461025143079539
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11580160778.gpx",
+          "score": 0.4342800044122868
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11553369521.gpx",
+          "score": 0.4339832832414629
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249942026068430848.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14571121632.gpx",
+      "score": 0.4319654486996804,
+      "sub_scores": {
+        "fft": 0.8094063401222229,
+        "dtw": 0.6298191693010409,
+        "stats": 0.016169596079066654,
+        "neural": 0.9278162121772766,
+        "temporal": 0.778643067714388
+      },
+      "duration_ratio": 0.7882513381047106,
+      "time_offset": 54,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14571121632.gpx",
+          "score": 0.4319654486996804
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12281053685.gpx",
+          "score": 0.42537252552464566
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11635378054.gpx",
+          "score": 0.4250816395831442
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14488589578.gpx",
+          "score": 0.41164226959989386
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.4066118316693011
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743518921920512.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14521109102.gpx",
+      "score": 0.44793065404453086,
+      "sub_scores": {
+        "fft": 0.830422431230545,
+        "dtw": 0.6317264336378261,
+        "stats": 0.011776176956448246,
+        "neural": 0.9865553379058838,
+        "temporal": 0.7199757127093191
+      },
+      "duration_ratio": 0.6560798669902389,
+      "time_offset": -136,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14521109102.gpx",
+          "score": 0.44793065404453086
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14363801313.gpx",
+          "score": 0.4335208459601703
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10348361915.gpx",
+          "score": 0.4309605394433193
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14273014522.gpx",
+          "score": 0.4222159430183888
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11898516302.gpx",
+          "score": 0.41707231970650255
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257743713122390016.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14424911343.gpx",
+      "score": 0.4785155590742515,
+      "sub_scores": {
+        "fft": 0.8428376317024231,
+        "dtw": 0.6269816349920074,
+        "stats": 0.01963385842765268,
+        "neural": 0.9569767117500305,
+        "temporal": 0.7627742393660685
+      },
+      "duration_ratio": 0.9493396776633771,
+      "time_offset": 83,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14424911343.gpx",
+          "score": 0.4785155590742515
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14571121632.gpx",
+          "score": 0.47366359771874694
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14514220628.gpx",
+          "score": 0.47019880955629867
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11816833522.gpx",
+          "score": 0.46536841721176153
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14456027053.gpx",
+          "score": 0.46088360059559375
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249409624610967552.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12186875007.gpx",
+      "score": 0.4769513965178684,
+      "sub_scores": {
+        "fft": 0.8076184689998627,
+        "dtw": 0.6394575007283098,
+        "stats": 0.019428852071574586,
+        "neural": 0.9529246687889099,
+        "temporal": 0.8194096208139705
+      },
+      "duration_ratio": 0.7396871969722983,
+      "time_offset": 31,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12186875007.gpx",
+          "score": 0.4769513965178684
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10966343553.gpx",
+          "score": 0.45255633507996057
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12140435254.gpx",
+          "score": 0.4409673240506741
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14363801313.gpx",
+          "score": 0.4398248640179149
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11839027410.gpx",
+          "score": 0.4390709937047319
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_258120568170090496.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+      "score": 0.41792457216869167,
+      "sub_scores": {
+        "fft": 0.6824836432933807,
+        "dtw": 0.6666758916998439,
+        "stats": 0.010979815510285148,
+        "neural": 0.8557939529418945,
+        "temporal": 0.765491184515597
+      },
+      "duration_ratio": 0.9355596172316429,
+      "time_offset": 17,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+          "score": 0.41792457216869167
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10857101141.gpx",
+          "score": 0.40842414450282544
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+          "score": 0.3977345228039547
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12272773577.gpx",
+          "score": 0.39035739043241663
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13380110724.gpx",
+          "score": 0.3882026283570043
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11550163557.gpx",
+      "score": 0.40567266623688897,
+      "sub_scores": {
+        "fft": 0.777716875076294,
+        "dtw": 0.6244132208812402,
+        "stats": 0.0014663771181825068,
+        "neural": 0.9903225302696228,
+        "temporal": 0.7417276469069205
+      },
+      "duration_ratio": 0.4798600998474002,
+      "time_offset": 356,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11550163557.gpx",
+          "score": 0.40567266623688897
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11094256280.gpx",
+          "score": 0.40349394715956804
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11278614066.gpx",
+          "score": 0.39731364508805783
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11550956016.gpx",
+          "score": 0.39291399608231803
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/9771663159.gpx",
+          "score": 0.384887729527963
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_245977211675348992.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13691600180.gpx",
+      "score": 0.40024345358754965,
+      "sub_scores": {
+        "fft": 0.8316548466682434,
+        "dtw": 0.6324246226438823,
+        "stats": 0.009862009772561645,
+        "neural": 0.9870837926864624,
+        "temporal": 0.6609504754661709
+      },
+      "duration_ratio": 0.8620572022673807,
+      "time_offset": -100,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13691600180.gpx",
+          "score": 0.40024345358754965
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11668317076.gpx",
+          "score": 0.3931922754141706
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13993419693.gpx",
+          "score": 0.3908273977223315
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11182154681.gpx",
+          "score": 0.3887269117086862
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10717583634.gpx",
+          "score": 0.3885273908617926
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249941993562574848.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+      "score": 0.4344609430919288,
+      "sub_scores": {
+        "fft": 0.8332951962947845,
+        "dtw": 0.6242689425687806,
+        "stats": 0.02015248826356408,
+        "neural": 0.9387581944465637,
+        "temporal": 0.7037811823591161
+      },
+      "duration_ratio": 0.7333209312681453,
+      "time_offset": 0,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14560815598.gpx",
+          "score": 0.4344609430919288
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12272773577.gpx",
+          "score": 0.4271565306792296
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11635378054.gpx",
+          "score": 0.42013416872230963
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12281053685.gpx",
+          "score": 0.4200620725782903
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11782636908.gpx",
+          "score": 0.4167381518182177
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257228723999215616.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+      "score": 0.42971587588225507,
+      "sub_scores": {
+        "fft": 0.8159193992614746,
+        "dtw": 0.6381952296137139,
+        "stats": 0.02150767164818057,
+        "neural": 0.8855888247489929,
+        "temporal": 0.6950244567809281
+      },
+      "duration_ratio": 0.737676853786173,
+      "time_offset": -4,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.42971587588225507
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12564415129.gpx",
+          "score": 0.4135918166090401
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13870992775.gpx",
+          "score": 0.413568923077437
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13388408018.gpx",
+          "score": 0.41085000588528403
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12221725461.gpx",
+          "score": 0.4103530414609222
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257851179575279616.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13208954979.gpx",
+      "score": 0.4394545543842906,
+      "sub_scores": {
+        "fft": 0.8168919384479523,
+        "dtw": 0.6149439872768951,
+        "stats": 0.03408574679975661,
+        "neural": 0.9350276589393616,
+        "temporal": 0.7698030529248464
+      },
+      "duration_ratio": 0.5992969745634992,
+      "time_offset": -3,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13208954979.gpx",
+          "score": 0.4394545543842906
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14118914467.gpx",
+          "score": 0.435016874370692
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11593883489.gpx",
+          "score": 0.4316218592748095
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12119948188.gpx",
+          "score": 0.430449153775001
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14508896441.gpx",
+          "score": 0.4287225711110199
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257851090437931008.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/13449061365.gpx",
+      "score": 0.46457581087817545,
+      "sub_scores": {
+        "fft": 0.8267070055007935,
+        "dtw": 0.632886008703607,
+        "stats": 0.014492774452874385,
+        "neural": 0.9642447233200073,
+        "temporal": 0.7555642788672571
+      },
+      "duration_ratio": 0.47330794780545676,
+      "time_offset": -39,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13449061365.gpx",
+          "score": 0.46457581087817545
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12171497388.gpx",
+          "score": 0.4604596820994967
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14551737324.gpx",
+          "score": 0.4551775456660257
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13769693851.gpx",
+          "score": 0.45330121711430343
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14452511016.gpx",
+          "score": 0.44322947700736437
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249942172042792960.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12485569838.gpx",
+      "score": 0.45978732033200226,
+      "sub_scores": {
+        "fft": 0.8214797675609589,
+        "dtw": 0.6447717996296991,
+        "stats": 0.020909884357283165,
+        "neural": 0.9693339467048645,
+        "temporal": 0.7596433988456059
+      },
+      "duration_ratio": 0.8381504659963503,
+      "time_offset": 20,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12485569838.gpx",
+          "score": 0.45978732033200226
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11134239572.gpx",
+          "score": 0.45511743204111027
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13592391947.gpx",
+          "score": 0.45304954945170856
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14155774768.gpx",
+          "score": 0.4442520216175546
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12654616193.gpx",
+          "score": 0.44198264658503167
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_250331087916498944.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11415088351.gpx",
+      "score": 0.4791583000233741,
+      "sub_scores": {
+        "fft": 0.810063898563385,
+        "dtw": 0.6089842869146205,
+        "stats": 0.008880778980640222,
+        "neural": 0.9695308804512024,
+        "temporal": 0.7632446564766531
+      },
+      "duration_ratio": 0.8804459066239171,
+      "time_offset": -142,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11415088351.gpx",
+          "score": 0.4791583000233741
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13530168270.gpx",
+          "score": 0.459518093287795
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11201852322.gpx",
+          "score": 0.45666803779227527
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13779526053.gpx",
+          "score": 0.4563623468230778
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14077686010.gpx",
+          "score": 0.450797503400349
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257772921898930176.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/10718502387.gpx",
+      "score": 0.4416202496108527,
+      "sub_scores": {
+        "fft": 0.8329306244850159,
+        "dtw": 0.6215501431779391,
+        "stats": 0.02729647152800227,
+        "neural": 0.8899602890014648,
+        "temporal": 0.6939846396983524
+      },
+      "duration_ratio": 0.43948847653504197,
+      "time_offset": 146,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10718502387.gpx",
+          "score": 0.4416202496108527
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+          "score": 0.43892122746232676
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.4380991108000757
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11479248533.gpx",
+          "score": 0.4323949108305967
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11862952248.gpx",
+          "score": 0.4230548740380836
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_249174044895608832.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11580160778.gpx",
+      "score": 0.4396283444557472,
+      "sub_scores": {
+        "fft": 0.8177652955055237,
+        "dtw": 0.6368940051445661,
+        "stats": 0.010378224957230979,
+        "neural": 0.8790042996406555,
+        "temporal": 0.6833489338171475
+      },
+      "duration_ratio": 0.7858244094488189,
+      "time_offset": -79,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11580160778.gpx",
+          "score": 0.4396283444557472
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12221725461.gpx",
+          "score": 0.4322928297389254
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10482148173.gpx",
+          "score": 0.42919066535324724
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11673729011.gpx",
+          "score": 0.4225981792911838
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12247319805.gpx",
+          "score": 0.41716831639215673
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_250331188558823424.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+      "score": 0.4255861636699511,
+      "sub_scores": {
+        "fft": 0.7090059220790863,
+        "dtw": 0.6758362053495547,
+        "stats": 0.015984039500211263,
+        "neural": 0.8884263634681702,
+        "temporal": 0.7914613896786308
+      },
+      "duration_ratio": 0.8047508047508047,
+      "time_offset": -129,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.4255861636699511
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+          "score": 0.423141040249006
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12645160326.gpx",
+          "score": 0.41707125374814463
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11569016844.gpx",
+          "score": 0.41506831907950015
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13870992775.gpx",
+          "score": 0.39824274081792627
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257228761450156032.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/14551737324.gpx",
+      "score": 0.45610500854367914,
+      "sub_scores": {
+        "fft": 0.7940843999385834,
+        "dtw": 0.6460369621737518,
+        "stats": 0.017952505726670204,
+        "neural": 0.9122227430343628,
+        "temporal": 0.7655176721679908
+      },
+      "duration_ratio": 0.6758404892152948,
+      "time_offset": -38,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14551737324.gpx",
+          "score": 0.45610500854367914
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.44892651015102264
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12907567956.gpx",
+          "score": 0.4427295082625344
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14494416358.gpx",
+          "score": 0.4358379447760756
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12721410442.gpx",
+          "score": 0.42938075409458454
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_250331270888820736.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/12532216495.gpx",
+      "score": 0.4306652869206529,
+      "sub_scores": {
+        "fft": 0.6824307143688202,
+        "dtw": 0.6356846857454321,
+        "stats": 0.005737526748070439,
+        "neural": 0.9370794892311096,
+        "temporal": 0.8550262021699456
+      },
+      "duration_ratio": 0.5996006655574043,
+      "time_offset": 81,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12532216495.gpx",
+          "score": 0.4306652869206529
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12273786176.gpx",
+          "score": 0.4269600484289292
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/10247643503.gpx",
+          "score": 0.42206458006450775
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14001970914.gpx",
+          "score": 0.41428806793398887
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11569016844.gpx",
+          "score": 0.4086126234473488
+        }
+      ]
+    },
+    {
+      "video": "/home/preston/penis/panoramics/playground/temp_video_257229013439746048.MP4",
+      "best_match": "/home/preston/penis/panoramics/playground/11517600060.gpx",
+      "score": 0.44371944274157443,
+      "sub_scores": {
+        "fft": 0.7554889619350433,
+        "dtw": 0.6169181832670503,
+        "stats": 0.009593971732286008,
+        "neural": 0.9395713806152344,
+        "temporal": 0.8475725447444731
+      },
+      "duration_ratio": 0.7122324681238615,
+      "time_offset": -135,
+      "all_matches": [
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11517600060.gpx",
+          "score": 0.44371944274157443
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/14244184649.gpx",
+          "score": 0.4404400380597858
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/12821635310.gpx",
+          "score": 0.4139162887487568
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/11134239572.gpx",
+          "score": 0.41383284539042664
+        },
+        {
+          "gpx": "/home/preston/penis/panoramics/playground/13165446286.gpx",
+          "score": 0.41375393434242097
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "mean_score": 0.4385627872913662,
+    "std_score": 0.02700946638242039,
+    "min_score": 0.3652796874116191,
+    "max_score": 0.49862738000166873,
+    "median_score": 0.43360830089637087
+  }
+}

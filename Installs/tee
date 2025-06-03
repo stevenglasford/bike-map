@@ -1,0 +1,159 @@
+🔍 CUDA Diagnostic Report
+==========================
+
+📍 Environment Variables:
+CUDA_HOME: 
+PATH: /home/preston/.local/bin:/home/preston/anaconda3/envs/bike-map/bin:/home/preston/anaconda3/condabin:/home/preston/.local/bin:/home/preston/anaconda3/bin:/home/preston/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+LD_LIBRARY_PATH: 
+
+📍 Which CUDA tools are being found:
+which nvcc: /usr/bin/nvcc
+which nvidia-smi: /usr/bin/nvidia-smi
+
+📍 NVCC version:
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2021 NVIDIA Corporation
+Built on Thu_Nov_18_09:45:30_PST_2021
+Cuda compilation tools, release 11.5, V11.5.119
+Build cuda_11.5.r11.5/compiler.30672275_0
+
+📍 All CUDA installations on system:
+/usr/lib/nvidia-cuda-toolkit/bin/nvcc
+/usr/local/cuda-12.9/bin/nvcc
+/usr/bin/nvcc
+/usr/local/cuda-12.9/bin/nvcc
+lrwxrwxrwx  1 root root    22 May 30 23:01 cuda -> /etc/alternatives/cuda
+lrwxrwxrwx  1 root root    25 May 30 23:01 cuda-12 -> /etc/alternatives/cuda-12
+drwxr-xr-x 15 root root  4096 May 30 23:01 cuda-12.9
+
+📍 CUDA libraries being found:
+/usr/lib/libcuda.so.1
+/usr/lib/x86_64-linux-gnu/libcudadebugger.so.575.51.02
+/usr/lib/x86_64-linux-gnu/libcudart.so.11.5.117
+/usr/lib/x86_64-linux-gnu/cuda-gdb/libcudacore.a
+/usr/lib/x86_64-linux-gnu/libcudadebugger.so.575.51.03
+/usr/lib/x86_64-linux-gnu/libcudart_static.a
+/usr/lib/x86_64-linux-gnu/libcuda.so
+/usr/lib/x86_64-linux-gnu/libcudadevrt.a
+/usr/lib/x86_64-linux-gnu/libcuda.so.575.51.03
+/usr/lib/x86_64-linux-gnu/libcudadebugger.so.1
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/libcudart.so.12
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/libcudart_static.a
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/cmake/libcudacxx
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/cmake/libcudacxx/libcudacxx-header-search.cmake
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/cmake/libcudacxx/libcudacxx-config-version.cmake
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/cmake/libcudacxx/libcudacxx-config.cmake
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/libcudadevrt.a
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/libcudart.so
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/libcudart.so.12.9.37
+/usr/local/cuda-12.9/targets/x86_64-linux/lib/stubs/libcuda.so
+
+📍 PKG_CONFIG_PATH:
+PKG_CONFIG_PATH: 
+cublas-12.9                 cublas - CUDA Basic Linear Algebra Subprograms
+cuda                        cuda - CUDA Driver Library
+cuda-12.9                   cuda - CUDA Driver Library
+cudart-12.9                 cudart - CUDA Runtime Library
+cufft-12.9                  cufft - CUDA Fast Fourier Transform
+cufftw-12.9                 cufftw - CUDA Fast Fourier Transform Wide
+cuinj64-12.9                cuinj64 - CUDA 64-bit Injection Library
+curand-12.9                 curand - CUDA Random Number Generation Library
+cusparse-12.9               cusparse - CUDA Sparse Matrix Library
+nvrtc-12.9                  nvrtc - A runtime compilation library for CUDA C++
+nvsandboxutils-12.9         nvsandboxutils - CUDA Sandbox Utilities
+
+📍 CMake CUDA detection test:
+
+📍 System package CUDA versions:
+ii  cuda-cccl-12-9                             12.9.27-1                                   amd64        CUDA CCCL
+ii  cuda-command-line-tools-12-9               12.9.0-1                                    amd64        CUDA command-line tools
+ii  cuda-compiler-12-9                         12.9.0-1                                    amd64        CUDA compiler
+ii  cuda-crt-12-9                              12.9.41-1                                   amd64        CUDA crt
+ii  cuda-cudart-12-9                           12.9.37-1                                   amd64        CUDA Runtime native Libraries
+ii  cuda-cudart-dev-12-9                       12.9.37-1                                   amd64        CUDA Runtime native dev links, headers
+ii  cuda-cuobjdump-12-9                        12.9.26-1                                   amd64        CUDA cuobjdump
+ii  cuda-cupti-12-9                            12.9.19-1                                   amd64        CUDA profiling tools runtime libs.
+ii  cuda-cupti-dev-12-9                        12.9.19-1                                   amd64        CUDA profiling tools interface.
+ii  cuda-cuxxfilt-12-9                         12.9.19-1                                   amd64        CUDA cuxxfilt
+ii  cuda-documentation-12-9                    12.9.43-1                                   amd64        CUDA documentation
+ii  cuda-driver-dev-12-9                       12.9.37-1                                   amd64        CUDA Driver native dev stub library
+ii  cuda-gdb-12-9                              12.9.19-1                                   amd64        CUDA-GDB
+ii  cuda-keyring                               1.1-1                                       all          GPG keyring for the CUDA repository
+ii  cuda-libraries-12-9                        12.9.0-1                                    amd64        CUDA Libraries 12.9 meta-package
+ii  cuda-libraries-dev-12-9                    12.9.0-1                                    amd64        CUDA Libraries 12.9 development meta-package
+ii  cuda-nsight-12-9                           12.9.19-1                                   amd64        CUDA nsight
+ii  cuda-nsight-compute-12-9                   12.9.0-1                                    amd64        NVIDIA Nsight Compute
+ii  cuda-nsight-systems-12-9                   12.9.0-1                                    amd64        NVIDIA Nsight Systems
+ii  cuda-nvcc-12-9                             12.9.41-1                                   amd64        CUDA nvcc
+ii  cuda-nvdisasm-12-9                         12.9.19-1                                   amd64        CUDA disassembler
+ii  cuda-nvml-dev-12-9                         12.9.40-1                                   amd64        NVML native dev links, headers
+ii  cuda-nvprof-12-9                           12.9.19-1                                   amd64        CUDA Profiler tools
+ii  cuda-nvprune-12-9                          12.9.19-1                                   amd64        CUDA nvprune
+ii  cuda-nvrtc-12-9                            12.9.41-1                                   amd64        NVRTC native runtime libraries
+ii  cuda-nvrtc-dev-12-9                        12.9.41-1                                   amd64        NVRTC native dev links, headers
+ii  cuda-nvtx-12-9                             12.9.19-1                                   amd64        NVIDIA Tools Extension
+ii  cuda-nvvm-12-9                             12.9.41-1                                   amd64        CUDA nvvm
+ii  cuda-nvvp-12-9                             12.9.19-1                                   amd64        CUDA Profiler tools
+ii  cuda-opencl-12-9                           12.9.19-1                                   amd64        CUDA OpenCL native Libraries
+ii  cuda-profiler-api-12-9                     12.9.19-1                                   amd64        CUDA Profiler API
+ii  cuda-sandbox-dev-12-9                      12.9.19-1                                   amd64        nvsandboxutils native dev links, headers
+ii  cuda-sanitizer-12-9                        12.9.27-1                                   amd64        CUDA Sanitizer
+ii  cuda-toolkit-12-9                          12.9.0-1                                    amd64        CUDA Toolkit 12.9 meta-package
+ii  cuda-toolkit-12-9-config-common            12.9.37-1                                   all          Common config package for CUDA Toolkit 12.9.
+ii  cuda-toolkit-12-config-common              12.9.37-1                                   all          Common config package for CUDA Toolkit 12.
+ii  cuda-toolkit-config-common                 12.9.37-1                                   all          Common config package for CUDA Toolkit.
+ii  cuda-tools-12-9                            12.9.0-1                                    amd64        CUDA Tools meta-package
+ii  cuda-visual-tools-12-9                     12.9.0-1                                    amd64        CUDA visual tools
+ii  cudnn9-cuda-12                             9.10.1.4-1                                  amd64        NVIDIA cuDNN for CUDA 12
+ii  cudnn9-cuda-12-9                           9.10.1.4-1                                  amd64        NVIDIA cuDNN for CUDA 12.9
+ii  libcub-dev                                 1.15.0-3                                    all          reusable software components for the CUDA programming model
+ii  libcudart11.0:amd64                        11.5.117~11.5.1-1ubuntu1                    amd64        NVIDIA CUDA Runtime Library
+ii  libcudnn8                                  8.9.7.29-1+cuda12.2                         amd64        cuDNN runtime libraries
+ii  libcudnn9-cuda-12                          9.10.1.4-1                                  amd64        cuDNN runtime libraries for CUDA 12.9
+ii  libcudnn9-dev-cuda-12                      9.10.1.4-1                                  amd64        cuDNN development libraries for CUDA 12.9
+ii  libcudnn9-headers-cuda-12                  9.10.1.4-1                                  amd64        cuDNN header files for CUDA 12.9
+ii  libcudnn9-static-cuda-12                   9.10.1.4-1                                  amd64        cuDNN static libraries for CUDA 12.9
+ii  libcufile-12-9                             1.14.0.30-1                                 amd64        Library for GPU Direct Storage with CUDA 12.9
+ii  libcupti-dev:amd64                         11.5.114~11.5.1-1ubuntu1                    amd64        NVIDIA CUDA Profiler Tools Interface development files
+ii  libcupti-doc                               11.5.114~11.5.1-1ubuntu1                    all          NVIDIA CUDA Profiler Tools Interface documentation
+ii  libcupti11.5:amd64                         11.5.114~11.5.1-1ubuntu1                    amd64        NVIDIA CUDA Profiler Tools Interface runtime library
+ii  libcusolver-12-9                           11.7.4.40-1                                 amd64        CUDA solver native runtime libraries
+ii  libcusolver-dev-12-9                       11.7.4.40-1                                 amd64        CUDA solver native dev links, headers
+ii  libnccl-dev                                2.26.5-1+cuda12.9                           amd64        NVIDIA Collective Communication Library (NCCL) Development Files
+ii  libnccl2                                   2.26.5-1+cuda12.9                           amd64        NVIDIA Collective Communication Library (NCCL) Runtime
+ii  libnvrtc-builtins11.5:amd64                11.5.119~11.5.1-1ubuntu1                    amd64        CUDA Runtime Compilation (NVIDIA NVRTC Builtins Library)
+ii  libnvrtc11.2:amd64                         11.5.119~11.5.1-1ubuntu1                    amd64        CUDA Runtime Compilation (NVIDIA NVRTC Library)
+ii  nvidia-cuda-dev:amd64                      11.5.1-1ubuntu1                             amd64        NVIDIA CUDA development files
+ii  nvidia-cuda-gdb                            11.5.114~11.5.1-1ubuntu1                    amd64        NVIDIA CUDA Debugger (GDB)
+ii  nvidia-cuda-toolkit                        11.5.1-1ubuntu1                             amd64        NVIDIA CUDA development toolkit
+ii  nvidia-cuda-toolkit-doc                    11.5.1-1ubuntu1                             all          NVIDIA CUDA and OpenCL documentation
+ii  nvidia-profiler                            11.5.114~11.5.1-1ubuntu1                    amd64        NVIDIA Profiler for CUDA and OpenCL
+ii  nvidia-visual-profiler                     11.5.114~11.5.1-1ubuntu1                    amd64        NVIDIA Visual Profiler for CUDA and OpenCL
+
+📍 Current symlinks:
+lrwxrwxrwx  1 root root   22 May 30 23:01 /usr/local/cuda -> /etc/alternatives/cuda
+lrwxrwxrwx  1 root root   25 May 30 23:01 /usr/local/cuda-12 -> /etc/alternatives/cuda-12
+
+/usr/local/cuda-12.9:
+total 136
+drwxr-xr-x 15 root root  4096 May 30 23:01 .
+drwxr-xr-x 11 root root  4096 May 30 23:01 ..
+drwxr-xr-x  3 root root  4096 May 30 23:01 bin
+drwxr-xr-x  5 root root  4096 May 30 22:58 compute-sanitizer
+drwxr-xr-x  3 root root  4096 May 30 23:00 doc
+-rw-r--r--  1 root root   160 Apr 11 21:43 DOCS
+-rw-r--r--  1 root root 63522 Apr 11 21:43 EULA.txt
+drwxr-xr-x  4 root root  4096 May 30 22:58 extras
+drwxr-xr-x  3 root root  4096 May 30 23:01 gds
+lrwxrwxrwx  1 root root    28 Mar 14 22:15 include -> targets/x86_64-linux/include
+lrwxrwxrwx  1 root root    24 Mar 14 22:15 lib64 -> targets/x86_64-linux/lib
+drwxr-xr-x  7 root root  4096 May 30 23:01 libnvvp
+drwxr-xr-x  2 root root  4096 May 30 23:01 nsightee_plugins
+drwxr-xr-x  3 root root  4096 May 30 23:01 nvml
+drwxr-xr-x  6 root root  4096 May 30 22:58 nvvm
+-rw-r--r--  1 root root   524 Apr 11 21:43 README
+drwxr-xr-x  3 root root  4096 May 30 22:58 share
+drwxr-xr-x  2 root root  4096 May 30 23:01 src
+drwxr-xr-x  3 root root  4096 May 30 22:58 targets
+drwxr-xr-x  2 root root  4096 May 30 22:58 tools
+-rw-r--r--  1 root root  3302 Apr 26 14:10 version.json

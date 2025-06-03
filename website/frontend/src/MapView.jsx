@@ -348,6 +348,10 @@ function MapView() {
             style={{ width: '300px' }}
           />
           <span> {timeFilter.min}s - {timeFilter.max}s</span>
+          <div style={{ marginTop: '5px', fontSize: '0.8em', color: '#666' }}>
+            Showing {Object.keys(objectPaths).length} objects with 
+            {' ' + Object.values(objectPaths).reduce((sum, positions) => sum + positions.length, 0)} total detections
+          </div>
         </div>
       )}
 
@@ -508,10 +512,20 @@ function MapView() {
 
         {/* Stoplight Visualizations */}
         {personal && showStoplights && stoplightGroups.map((group, idx) => {
-          const redCount = group.detections.filter(d => d.status === 'red').length;
-          const greenCount = group.detections.filter(d => d.status === 'green').length;
-          const yellowCount = group.detections.filter(d => d.status === 'yellow').length;
+          // Check what values we actually have in the data
+          const statusCounts = {};
+          group.detections.forEach(d => {
+            const status = d.status.toLowerCase();
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+          });
+          
           const total = group.detections.length;
+          
+          // Try to identify red/yellow/green from the status values
+          const redCount = statusCounts['red'] || statusCounts['stoplight_red'] || 0;
+          const greenCount = statusCounts['green'] || statusCounts['stoplight_green'] || 0;
+          const yellowCount = statusCounts['yellow'] || statusCounts['stoplight_yellow'] || 0;
+          const unknownCount = total - redCount - greenCount - yellowCount;
           
           return (
             <Marker
@@ -525,50 +539,81 @@ function MapView() {
                   <hr style={{ margin: '5px 0' }}/>
                   Total observations: {total}<br/>
                   <div style={{ marginTop: '5px' }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      marginBottom: '2px'
-                    }}>
+                    {redCount > 0 && (
                       <div style={{ 
-                        width: '15px', 
-                        height: '15px', 
-                        backgroundColor: 'red',
-                        marginRight: '5px',
-                        border: '1px solid #000'
-                      }}></div>
-                      Red: {redCount} ({(redCount/total*100).toFixed(1)}%)
-                    </div>
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      marginBottom: '2px'
-                    }}>
+                        display: 'flex', 
+                        alignItems: 'center',
+                        marginBottom: '2px'
+                      }}>
+                        <div style={{ 
+                          width: '15px', 
+                          height: '15px', 
+                          backgroundColor: 'red',
+                          marginRight: '5px',
+                          border: '1px solid #000',
+                          borderRadius: '50%'
+                        }}></div>
+                        Red: {redCount} ({(redCount/total*100).toFixed(1)}%)
+                      </div>
+                    )}
+                    {yellowCount > 0 && (
                       <div style={{ 
-                        width: '15px', 
-                        height: '15px', 
-                        backgroundColor: 'yellow',
-                        marginRight: '5px',
-                        border: '1px solid #000'
-                      }}></div>
-                      Yellow: {yellowCount} ({(yellowCount/total*100).toFixed(1)}%)
-                    </div>
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center'
-                    }}>
+                        display: 'flex', 
+                        alignItems: 'center',
+                        marginBottom: '2px'
+                      }}>
+                        <div style={{ 
+                          width: '15px', 
+                          height: '15px', 
+                          backgroundColor: 'yellow',
+                          marginRight: '5px',
+                          border: '1px solid #000',
+                          borderRadius: '50%'
+                        }}></div>
+                        Yellow: {yellowCount} ({(yellowCount/total*100).toFixed(1)}%)
+                      </div>
+                    )}
+                    {greenCount > 0 && (
                       <div style={{ 
-                        width: '15px', 
-                        height: '15px', 
-                        backgroundColor: 'green',
-                        marginRight: '5px',
-                        border: '1px solid #000'
-                      }}></div>
-                      Green: {greenCount} ({(greenCount/total*100).toFixed(1)}%)
-                    </div>
+                        display: 'flex', 
+                        alignItems: 'center',
+                        marginBottom: '2px'
+                      }}>
+                        <div style={{ 
+                          width: '15px', 
+                          height: '15px', 
+                          backgroundColor: 'green',
+                          marginRight: '5px',
+                          border: '1px solid #000',
+                          borderRadius: '50%'
+                        }}></div>
+                        Green: {greenCount} ({(greenCount/total*100).toFixed(1)}%)
+                      </div>
+                    )}
+                    {unknownCount > 0 && (
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center'
+                      }}>
+                        <div style={{ 
+                          width: '15px', 
+                          height: '15px', 
+                          backgroundColor: '#999',
+                          marginRight: '5px',
+                          border: '1px solid #000',
+                          borderRadius: '50%'
+                        }}></div>
+                        Detected: {unknownCount} ({(unknownCount/total*100).toFixed(1)}%)
+                      </div>
+                    )}
                   </div>
                   <hr style={{ margin: '5px 0' }}/>
-                  <small>Location: {group.lat.toFixed(5)}, {group.lon.toFixed(5)}</small>
+                  <small>
+                    Location: {group.lat.toFixed(5)}, {group.lon.toFixed(5)}<br/>
+                    {Object.keys(statusCounts).length > 0 && (
+                      <>Status types: {Object.keys(statusCounts).join(', ')}</>
+                    )}
+                  </small>
                 </div>
               </Popup>
             </Marker>

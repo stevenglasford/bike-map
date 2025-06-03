@@ -1,13 +1,23 @@
-Video-GPX Correlation Accuracy Report
-==================================================
+GPU-Optimized Video-GPX Correlation Report
+============================================================
 
-Generated: 2025-05-26T22:55:42.871642
-Total Videos: 53
-Successful: 0
-Failed: 53
+Generated: 2025-06-02T21:47:57.801246
+Version: 2.1.0
+Dual GPU Load Balanced: True
 
-Confidence Distribution:
-  high: 0 (0.0%)
-  medium: 0 (0.0%)
-  low: 0 (0.0%)
-  very_low: 0 (0.0%)
+Summary
+------------------------------
+Total Videos: 0
+Successful Matches: 0
+No Matches Found: 0
+Failed Processing: 0
+
+GPU Utilization
+------------------------------
+
+Confidence Distribution
+------------------------------
+High: 0 (0.0%)
+Medium: 0 (0.0%)
+Low: 0 (0.0%)
+Very_low: 0 (0.0%)

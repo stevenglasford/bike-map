@@ -224,3 +224,70 @@
 2025-05-29 01:58:08,559 - INFO - Processed and cached 2736 GPX files
 2025-05-29 01:58:08,559 - INFO - Performing correlation analysis...
 2025-05-29 01:58:08,560 - INFO - Correlating 53 videos with 2736 GPX files
+2025-05-29 09:35:43,083 - INFO - Found 53 videos and 2905 GPX files
+2025-05-29 09:35:43,270 - INFO - Using GPUs: [device(type='cuda', index=0), device(type='cuda', index=1)]
+2025-05-29 09:35:43,716 - INFO - Initialized 2 CUDA optical flow calculators
+2025-05-29 09:35:44,020 - INFO - Correlator using devices: [device(type='cuda', index=0), device(type='cuda', index=1)]
+2025-05-29 09:35:44,030 - INFO - Processing videos...
+2025-05-29 09:38:43,718 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4: 184 samples, 0 failed frames
+2025-05-29 09:42:26,311 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257734894283657216.MP4: 238 samples, 0 failed frames
+2025-05-29 09:44:39,539 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257773285935157248.MP4: 137 samples, 0 failed frames
+2025-05-29 09:47:42,198 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249942245577330688.MP4: 193 samples, 0 failed frames
+2025-05-29 09:58:10,923 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257734469832671232.MP4: 662 samples, 0 failed frames
+2025-05-29 10:02:13,286 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4: 1735 samples, 0 failed frames
+2025-05-29 10:03:05,695 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249942089528250368.MP4: 324 samples, 0 failed frames
+2025-05-29 10:05:42,797 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249941923572224000.MP4: 226 samples, 0 failed frames
+2025-05-29 10:06:35,023 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249941901552128000.MP4: 226 samples, 0 failed frames
+2025-05-29 10:08:54,702 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249173973948960768.MP4: 145 samples, 0 failed frames
+2025-05-29 10:10:24,033 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_245977211675348992.MP4: 657 samples, 0 failed frames
+2025-05-29 10:10:48,888 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257773083790675968.MP4: 119 samples, 0 failed frames
+2025-05-29 10:13:43,448 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743651008942080.MP4: 186 samples, 0 failed frames
+2025-05-29 10:15:50,615 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257228896406081536.MP4: 355 samples, 0 failed frames
+2025-05-29 10:17:12,652 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249941993562574848.MP4: 185 samples, 0 failed frames
+2025-05-29 10:19:52,531 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257735046302011392.MP4: 167 samples, 0 failed frames
+2025-05-29 10:21:41,951 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_258120726022717440.MP4: 528 samples, 0 failed frames
+2025-05-29 10:22:57,263 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257228723999215616.MP4: 200 samples, 0 failed frames
+2025-05-29 10:24:02,100 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257229067357523968.MP4: 155 samples, 0 failed frames
+2025-05-29 10:25:30,396 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743398239211520.MP4: 246 samples, 0 failed frames
+2025-05-29 10:28:39,929 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257851179575279616.MP4: 295 samples, 0 failed frames
+2025-05-29 10:28:59,794 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743136959238144.MP4: 226 samples, 0 failed frames
+2025-05-29 10:30:58,162 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257773012462342144.MP4: 127 samples, 0 failed frames
+2025-05-29 10:31:39,194 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_250330889232318464.MP4: 193 samples, 0 failed frames
+2025-05-29 10:33:28,139 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743588501229568.MP4: 165 samples, 0 failed frames
+2025-05-29 10:35:50,485 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257851090437931008.MP4: 271 samples, 0 failed frames
+2025-05-29 10:35:50,526 - ERROR - Error processing /home/preston/penis/panoramics/playground/temp_video_258120956227092480.MP4: Cannot open video: /home/preston/penis/panoramics/playground/temp_video_258120956227092480.MP4
+2025-05-29 10:40:39,967 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249942172042792960.MP4: 310 samples, 0 failed frames
+2025-05-29 10:40:59,831 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257773356021977088.MP4: 22 samples, 0 failed frames
+2025-05-29 10:42:42,642 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257851359343149056.MP4: 602 samples, 0 failed frames
+2025-05-29 10:44:05,834 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249942026068430848.MP4: 185 samples, 0 failed frames
+2025-05-29 10:45:33,204 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_250331087916498944.MP4: 292 samples, 0 failed frames
+2025-05-29 10:47:30,806 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249941772178817024.MP4: 212 samples, 0 failed frames
+2025-05-29 10:50:11,677 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_245977240184033280.MP4: 665 samples, 0 failed frames
+2025-05-29 10:52:37,094 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743518921920512.MP4: 337 samples, 0 failed frames
+2025-05-29 10:53:15,917 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257772921898930176.MP4: 198 samples, 0 failed frames
+2025-05-29 10:54:05,722 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_258120635975204864.MP4: 53 samples, 0 failed frames
+2025-05-29 10:55:58,301 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743331197456384.MP4: 216 samples, 0 failed frames
+2025-05-29 10:56:28,969 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249174044895608832.MP4: 153 samples, 0 failed frames
+2025-05-29 10:59:22,432 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257743713122390016.MP4: 220 samples, 0 failed frames
+2025-05-29 11:02:32,881 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257851438967816192.MP4: 210 samples, 0 failed frames
+2025-05-29 11:07:31,771 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249409624610967552.MP4: 321 samples, 0 failed frames
+2025-05-29 11:11:17,180 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249409997794967552.MP4: 239 samples, 0 failed frames
+2025-05-29 11:13:15,552 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_258120568170090496.MP4: 127 samples, 0 failed frames
+2025-05-29 11:17:35,595 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_245977170369839104.MP4: 607 samples, 0 failed frames
+2025-05-29 11:22:31,405 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_252688633415340032.MP4: 1735 samples, 0 failed frames
+2025-05-29 11:24:58,756 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_250331188558823424.MP4: 184 samples, 0 failed frames
+2025-05-29 11:32:13,779 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257851342414938112.MP4: 602 samples, 0 failed frames
+2025-05-29 11:35:55,447 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257228761450156032.MP4: 219 samples, 21 failed frames
+2025-05-29 11:37:08,274 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_249942306101137408.MP4: 208 samples, 0 failed frames
+2025-05-29 11:39:36,053 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_250331270888820736.MP4: 184 samples, 0 failed frames
+2025-05-29 11:42:57,433 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_250331930711560192.MP4: 255 samples, 0 failed frames
+2025-05-29 11:46:26,987 - INFO - Processed /home/preston/penis/panoramics/playground/temp_video_257229013439746048.MP4: 265 samples, 0 failed frames
+2025-05-29 11:46:27,387 - INFO - Processed and cached 53 videos
+2025-05-29 11:46:27,387 - INFO - Processing GPX files...
+2025-05-29 11:47:13,512 - INFO - Processed and cached 2736 GPX files
+2025-05-29 11:47:13,513 - INFO - Performing correlation analysis...
+2025-05-29 11:47:13,513 - INFO - Correlating 53 videos with 2736 GPX files
+2025-06-01 13:28:22,256 - WARNING - No matches for /home/preston/penis/panoramics/playground/temp_video_258120956227092480.MP4
+2025-06-01 13:28:22,266 - INFO - Accuracy report saved to accuracy_test/accuracy_report.json
+2025-06-01 13:28:22,266 - INFO - Summary saved to accuracy_test/summary.txt
+2025-06-01 13:28:22,269 - INFO - Analysis complete! Results saved to accuracy_test

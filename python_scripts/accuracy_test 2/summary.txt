@@ -1,0 +1,20 @@
+Video-GPX Correlation Accuracy Report
+==================================================
+
+Generated: 2025-06-01T13:28:22.256272
+Total Videos: 53
+Successful: 52
+Failed: 1
+
+Score Statistics:
+  Mean: 0.4386
+  Std: 0.0270
+  Min: 0.3653
+  Max: 0.4986
+  Median: 0.4336
+
+Confidence Distribution:
+  high: 52 (98.1%)
+  medium: 0 (0.0%)
+  low: 0 (0.0%)
+  very_low: 0 (0.0%)
