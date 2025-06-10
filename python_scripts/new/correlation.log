@@ -1,0 +1,28 @@
+2025-06-03 11:57:47,540 - INFO - Found 53 videos and 2905 GPX files
+2025-06-03 11:57:47,540 - INFO - Initialized GPU decoder on GPU 0
+2025-06-03 11:57:47,540 - INFO - Initialized GPU decoder on GPU 1
+2025-06-03 11:57:47,946 - INFO - Using CuPy for GPU-accelerated GPX processing
+2025-06-03 11:57:47,951 - INFO - Processing videos with optimized GPU pipeline...
+2025-06-03 11:57:47,970 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4: [11:57:47] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-03 11:57:47,982 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4: [11:57:47] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-03 12:47:30,783 - INFO - Found 53 videos and 2905 GPX files
+2025-06-03 12:47:30,783 - INFO - Initialized GPU decoder on GPU 0
+2025-06-03 12:47:30,783 - INFO - Initialized GPU decoder on GPU 1
+2025-06-03 12:47:31,162 - INFO - Using CuPy for GPU-accelerated GPX processing
+2025-06-03 12:47:31,167 - INFO - Processing videos with optimized GPU pipeline...
+2025-06-03 12:47:31,171 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4: [12:47:31] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-03 12:47:31,188 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4: [12:47:31] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-05 07:04:02,234 - INFO - Found 53 videos and 2905 GPX files
+2025-06-05 07:04:02,234 - INFO - Initialized GPU decoder on GPU 0
+2025-06-05 07:04:02,234 - INFO - Initialized GPU decoder on GPU 1
+2025-06-05 07:04:02,644 - INFO - Using CuPy for GPU-accelerated GPX processing
+2025-06-05 07:04:02,649 - INFO - Processing videos with optimized GPU pipeline...
+2025-06-05 07:04:02,750 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4: [07:04:02] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-05 07:04:02,794 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4: [07:04:02] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-05 07:07:08,895 - INFO - Found 53 videos and 2905 GPX files
+2025-06-05 07:07:08,896 - INFO - Initialized GPU decoder on GPU 0
+2025-06-05 07:07:08,896 - INFO - Initialized GPU decoder on GPU 1
+2025-06-05 07:07:09,278 - INFO - Using CuPy for GPU-accelerated GPX processing
+2025-06-05 07:07:09,283 - INFO - Processing videos with optimized GPU pipeline...
+2025-06-05 07:07:09,288 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4: [07:07:09] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).
+2025-06-05 07:07:09,304 - ERROR - Error decoding /home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4: [07:07:09] /github/workspace/src/video/video_reader.cc:167: CUDA not enabled. Requested context GPU(0).

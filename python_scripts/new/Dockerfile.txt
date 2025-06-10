@@ -1,0 +1,50 @@
+FROM nvidia/cuda:12.9.0-devel-ubuntu22.04
+
+# System setup
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    python3-setuptools \
+    python3-pip \
+    python3-venv \
+    git \
+    cmake \
+    ffmpeg \
+    libavcodec-dev \
+    libavfilter-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libswscale-dev \
+    libtbb-dev \
+    wget && \
+    apt-get clean
+
+# Python setup
+RUN python3 -m pip install --upgrade pip setuptools wheel numpy cython
+
+# Clone Decord
+WORKDIR /opt
+RUN git clone --recursive https://github.com/dmlc/decord.git
+WORKDIR /opt/decord
+
+# Copy the required NVDEC codec lib
+COPY libnvcuvid.so /usr/local/cuda/lib64/libnvcuvid.so
+
+
+# Symlink nvcuvid if missing
+RUN ln -s /usr/lib/x86_64-linux-gnu/libnvcuvid.so /usr/local/cuda/lib64/libnvcuvid.so || true
+
+# Build Decord with CUDA
+RUN mkdir build && cd build && \
+    cmake .. -DUSE_CUDA=ON -DCMAKE_BUILD_TYPE=Release && \
+    make -j$(nproc)
+
+# Install Python bindings
+WORKDIR /opt/decord/python
+RUN python3 setup.py install
+
+# Create test entrypoint
+WORKDIR /workspace
+ENTRYPOINT ["/bin/bash"]

@@ -1,0 +1,31 @@
+EXTREME GPU-ACCELERATED VIDEO-GPX CORRELATION REPORT
+======================================================================
+
+Generated: 2025-06-03T00:01:39.491079
+Total Videos Processed: 53
+Successful Correlations: 0
+Failed Correlations: 53
+CONFIDENCE LEVEL DISTRIBUTION:
+----------------------------------------
+EXCELLENT: 0 videos (0.0%)
+HIGH: 0 videos (0.0%)
+MEDIUM: 0 videos (0.0%)
+LOW: 0 videos (0.0%)
+VERY_LOW: 0 videos (0.0%)
+
+GPU UTILIZATION ANALYSIS:
+----------------------------------------
+GPU_0: NVIDIA Graphics Device
+  Memory Used: 11.62GB / 15.48GB
+  Utilization: 75.1%
+  Compute Capability: 12.0
+
+GPU_1: NVIDIA Graphics Device
+  Memory Used: 14.32GB / 15.48GB
+  Utilization: 92.5%
+  Compute Capability: 12.0
+
+PERFORMANCE ASSESSMENT:
+----------------------------------------
+✓ GPU_0: GOOD GPU utilization (75.1%)
+✓ GPU_1: EXCELLENT GPU utilization (92.5%)

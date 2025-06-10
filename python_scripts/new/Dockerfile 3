@@ -1,0 +1,48 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    python3-setuptools \
+    python3-pip \
+    python3-venv \
+    git \
+    cmake \
+    pkg-config \
+    ffmpeg \
+    libavcodec-dev \
+    libavfilter-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libavdevice-dev \
+    libswresample-dev \
+    libswscale-dev \
+    libtbb-dev \
+    wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=${CUDA_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
+
+RUN python3 -m pip install --upgrade pip setuptools wheel numpy cython
+
+WORKDIR /opt
+RUN git clone --recursive https://github.com/dmlc/decord.git
+
+COPY Nvidia-shit/libnvcuvid.so /tmp/libnvcuvid.so
+
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libavformat.so /usr/lib/libavformat.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libavcodec.so /usr/lib/libavcodec.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libavfilter.so /usr/lib/libavfilter.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libavutil.so /usr/lib/libavutil.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libavdevice.so /usr/lib/libavdevice.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libswresample.so /usr/lib/libswresample.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libswscale.so /usr/lib/libswscale.so
+
+WORKDIR /workspace

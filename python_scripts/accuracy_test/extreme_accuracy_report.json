@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-06-03T00:01:39.491079",
+  "total_videos": 53,
+  "successful_correlations": 0,
+  "failed_correlations": 53,
+  "score_distribution": [],
+  "confidence_levels": {
+    "excellent": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "very_low": 0
+  },
+  "detailed_results": [],
+  "gpu_utilization_analysis": {
+    "gpu_0": {
+      "name": "NVIDIA Graphics Device",
+      "memory_allocated_gb": 11.623571395874023,
+      "memory_total_gb": 15.477294921875,
+      "utilization_percent": 75.10079412808581,
+      "compute_capability": "12.0",
+      "multiprocessor_count": 36
+    },
+    "gpu_1": {
+      "name": "NVIDIA Graphics Device",
+      "memory_allocated_gb": 14.323572158813477,
+      "memory_total_gb": 15.477294921875,
+      "utilization_percent": 92.54570796198438,
+      "compute_capability": "12.0",
+      "multiprocessor_count": 36
+    }
+  }
+}
