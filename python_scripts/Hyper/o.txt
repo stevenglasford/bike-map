@@ -1,0 +1,175 @@
+=== Enhanced Video-GPX Correlation System ===
+Starting accuracy-optimized processing...
+Strategy 1: High-resolution feature extraction...
+2025-06-13 10:12:15,621 - INFO - Using temp directory: /home/preston/penis/temp
+2025-06-13 10:12:15,621 - INFO - Starting Production-Ready Video-GPX Correlation System [STRICT GPU MODE]
+2025-06-13 10:12:15,621 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-06-13 10:12:15,621 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-06-13 10:12:15,963 - ERROR - Production system failed: [Errno 2] No such file or directory: '~/penis/testingground/high_res'
+2025-06-13 10:12:15,963 - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Hyper/matcher39.py", line 2936, in main
+    output_dir.mkdir(exist_ok=True)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '~/penis/testingground/high_res'
+
+2025-06-13 10:12:15,963 - INFO - PowerSafe: Partial progress has been saved
+
+Error occurred: [Errno 2] No such file or directory: '~/penis/testingground/high_res'
+PowerSafe: Partial progress has been saved and can be resumed with --powersafe flag
+
+DEBUGGING SUGGESTIONS:
+   • Run with --debug for detailed error information
+   • Try --parallel_videos 1 to isolate GPU issues
+   • Reduce --max_frames to 100 for testing
+   • Check video file integrity with ffprobe
+   • Verify GPX files are valid XML
+   • Run --validation_only to check for corrupted videos
+   • Use --no_quarantine to keep corrupted videos in place
+Strategy 1 completed. Results in ~/penis/testingground/high_res
+Strategy 2: Dense temporal sampling...
+2025-06-13 10:12:17,662 - INFO - Using temp directory: /home/preston/penis/temp
+2025-06-13 10:12:17,662 - INFO - Starting Production-Ready Video-GPX Correlation System [STRICT GPU MODE]
+2025-06-13 10:12:17,662 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-06-13 10:12:17,662 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-06-13 10:12:17,941 - ERROR - Production system failed: [Errno 2] No such file or directory: '~/penis/testingground/dense_temporal'
+2025-06-13 10:12:17,941 - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Hyper/matcher39.py", line 2936, in main
+    output_dir.mkdir(exist_ok=True)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '~/penis/testingground/dense_temporal'
+
+2025-06-13 10:12:17,942 - INFO - PowerSafe: Partial progress has been saved
+
+Error occurred: [Errno 2] No such file or directory: '~/penis/testingground/dense_temporal'
+PowerSafe: Partial progress has been saved and can be resumed with --powersafe flag
+
+DEBUGGING SUGGESTIONS:
+   • Run with --debug for detailed error information
+   • Try --parallel_videos 1 to isolate GPU issues
+   • Reduce --max_frames to 100 for testing
+   • Check video file integrity with ffprobe
+   • Verify GPX files are valid XML
+   • Run --validation_only to check for corrupted videos
+   • Use --no_quarantine to keep corrupted videos in place
+Strategy 2 completed. Results in ~/penis/testingground/dense_temporal
+Strategy 3: Ultra-high quality processing...
+2025-06-13 10:12:19,619 - INFO - Using temp directory: /home/preston/penis/temp
+2025-06-13 10:12:19,619 - INFO - Starting Production-Ready Video-GPX Correlation System [STRICT GPU MODE]
+2025-06-13 10:12:19,619 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-06-13 10:12:19,619 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-06-13 10:12:19,968 - ERROR - Production system failed: [Errno 2] No such file or directory: '~/penis/testingground/ultra_quality'
+2025-06-13 10:12:19,969 - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Hyper/matcher39.py", line 2936, in main
+    output_dir.mkdir(exist_ok=True)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '~/penis/testingground/ultra_quality'
+
+2025-06-13 10:12:19,969 - INFO - PowerSafe: Partial progress has been saved
+
+Error occurred: [Errno 2] No such file or directory: '~/penis/testingground/ultra_quality'
+PowerSafe: Partial progress has been saved and can be resumed with --powersafe flag
+
+DEBUGGING SUGGESTIONS:
+   • Run with --debug for detailed error information
+   • Try --parallel_videos 1 to isolate GPU issues
+   • Reduce --max_frames to 100 for testing
+   • Check video file integrity with ffprobe
+   • Verify GPX files are valid XML
+   • Run --validation_only to check for corrupted videos
+   • Use --no_quarantine to keep corrupted videos in place
+Strategy 3 completed. Results in ~/penis/testingground/ultra_quality
+Strategy 4: Memory-optimized processing...
+2025-06-13 10:12:21,651 - INFO - Using temp directory: /home/preston/penis/temp
+2025-06-13 10:12:21,651 - INFO - Starting Production-Ready Video-GPX Correlation System [STRICT GPU MODE]
+2025-06-13 10:12:21,651 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-06-13 10:12:21,651 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-06-13 10:12:21,978 - ERROR - Production system failed: [Errno 2] No such file or directory: '~/penis/testingground/memory_optimized'
+2025-06-13 10:12:21,978 - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Hyper/matcher39.py", line 2936, in main
+    output_dir.mkdir(exist_ok=True)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '~/penis/testingground/memory_optimized'
+
+2025-06-13 10:12:21,978 - INFO - PowerSafe: Partial progress has been saved
+
+Error occurred: [Errno 2] No such file or directory: '~/penis/testingground/memory_optimized'
+PowerSafe: Partial progress has been saved and can be resumed with --powersafe flag
+
+DEBUGGING SUGGESTIONS:
+   • Run with --debug for detailed error information
+   • Try --parallel_videos 1 to isolate GPU issues
+   • Reduce --max_frames to 100 for testing
+   • Check video file integrity with ffprobe
+   • Verify GPX files are valid XML
+   • Run --validation_only to check for corrupted videos
+   • Use --no_quarantine to keep corrupted videos in place
+Strategy 4 completed. Results in ~/penis/testingground/memory_optimized
+Strategy 5: Fast preview mode...
+2025-06-13 10:12:23,657 - INFO - Using temp directory: /home/preston/penis/temp
+2025-06-13 10:12:23,657 - INFO - Starting Production-Ready Video-GPX Correlation System
+2025-06-13 10:12:23,657 - ERROR - Production system failed: [Errno 2] No such file or directory: '~/penis/testingground/fast_preview'
+2025-06-13 10:12:23,658 - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Hyper/matcher39.py", line 2936, in main
+    output_dir.mkdir(exist_ok=True)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '~/penis/testingground/fast_preview'
+
+2025-06-13 10:12:23,658 - INFO - PowerSafe: Partial progress has been saved
+
+Error occurred: [Errno 2] No such file or directory: '~/penis/testingground/fast_preview'
+PowerSafe: Partial progress has been saved and can be resumed with --powersafe flag
+
+DEBUGGING SUGGESTIONS:
+   • Run with --debug for detailed error information
+   • Try --parallel_videos 1 to isolate GPU issues
+   • Reduce --max_frames to 100 for testing
+   • Check video file integrity with ffprobe
+   • Verify GPX files are valid XML
+   • Run --validation_only to check for corrupted videos
+   • Use --no_quarantine to keep corrupted videos in place
+Strategy 5 completed. Results in ~/penis/testingground/fast_preview
+
+=== All Strategies Completed ===
+Compare results in:
+  - ~/penis/testingground/high_res/ (balanced quality)
+  - ~/penis/testingground/dense_temporal/ (temporal focus)
+  - ~/penis/testingground/ultra_quality/ (maximum quality)
+  - ~/penis/testingground/memory_optimized/ (efficient)
+  - ~/penis/testingground/fast_preview/ (quick test)
+
+Recommended: Check ultra_quality first for best correlation scores
+
+Running video validation check...
+2025-06-13 10:12:25,220 - INFO - Using temp directory: /home/preston/penis/temp
+2025-06-13 10:12:25,220 - INFO - Starting Production-Ready Video-GPX Correlation System [STRICT GPU MODE]
+2025-06-13 10:12:25,220 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-06-13 10:12:25,220 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-06-13 10:12:25,524 - ERROR - Production system failed: [Errno 2] No such file or directory: '~/penis/testingground/validation'
+2025-06-13 10:12:25,524 - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Hyper/matcher39.py", line 2936, in main
+    output_dir.mkdir(exist_ok=True)
+  File "/usr/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '~/penis/testingground/validation'
+
+
+DEBUGGING SUGGESTIONS:
+   • Run with --debug for detailed error information
+   • Try --parallel_videos 1 to isolate GPU issues
+   • Reduce --max_frames to 100 for testing
+   • Check video file integrity with ffprobe
+   • Verify GPX files are valid XML
+   • Run --validation_only to check for corrupted videos
+   • Use --no_quarantine to keep corrupted videos in place
+Validation completed. Check validation report for video quality issues.
