@@ -327,8 +327,6 @@ class Advanced360OpticalFlowExtractor:
             border_events = self._detect_border_crossings(gray_frames[i-1], gray_frames[i])
             features['border_crossing_events'][i] = border_events
         
-        return features
-    
     def _calculate_spherical_curvature(self, p1: np.ndarray, p2: np.ndarray, p3: np.ndarray) -> float:
         """Calculate curvature in spherical coordinates"""
         try:
@@ -679,8 +677,6 @@ class Advanced360OpticalFlowExtractor:
         except Exception as e:
             logger.debug(f"Tangent region extraction failed: {e}")
             return None
-    
-    def _extract_sparse_flow(self, gray_frames: List[np.ndarray]) -> Dict[str, np.ndarray]:
         """Extract sparse optical flow using Lucas-Kanade"""
         num_frames = len(gray_frames)
         
@@ -870,7 +866,7 @@ class Advanced360OpticalFlowExtractor:
 class Enhanced360CNNFeatureExtractor:
     """Enhanced CNN feature extraction optimized for 360° and panoramic videos"""
     
-    def __init__(self, gpu_manager, config: Enhanced360ProcessingConfig):
+    def __init__(self, gpu_manager, config: EnhancedProcessingConfig):
         self.gpu_manager = gpu_manager
         self.config = config
         self.feature_models = {}
@@ -1294,11 +1290,9 @@ class Enhanced360CNNFeatureExtractor:
         except Exception as e:
             logger.debug(f"Tangent plane creation failed: {e}")
             return None
-
-class EnhancedCNNFeatureExtractor:
     """Enhanced CNN feature extraction with pre-trained models"""
     
-    def __init__(self, gpu_manager, config: Enhanced360ProcessingConfig):
+    def __init__(self, gpu_manager, config: EnhancedProcessingConfig):
         self.gpu_manager = gpu_manager
         self.config = config
         self.feature_models = {}
@@ -1480,7 +1474,7 @@ class EnhancedCNNFeatureExtractor:
 class AdvancedGPSProcessor:
     """Advanced GPS processing with noise filtering and feature enhancement"""
     
-    def __init__(self, config: Enhanced360ProcessingConfig):
+    def __init__(self, config: EnhancedProcessingConfig):
         self.config = config
         self.scaler = StandardScaler()
         self.outlier_detector = IsolationForest(contamination=0.1, random_state=42)
@@ -1750,7 +1744,7 @@ class AdvancedGPSProcessor:
 class AdvancedDTWEngine:
     """Advanced Dynamic Time Warping with shape information and constraints"""
     
-    def __init__(self, config: Enhanced360ProcessingConfig):
+    def __init__(self, config: EnhancedProcessingConfig):
         self.config = config
         
     def compute_enhanced_dtw(self, seq1: np.ndarray, seq2: np.ndarray) -> float:
@@ -1908,7 +1902,7 @@ class AdvancedDTWEngine:
 class EnsembleSimilarityEngine:
     """Ensemble similarity engine with multiple correlation methods"""
     
-    def __init__(self, config: Enhanced360ProcessingConfig):
+    def __init__(self, config: EnhancedProcessingConfig):
         self.config = config
         self.dtw_engine = AdvancedDTWEngine(config)
         
@@ -2396,17 +2390,6 @@ def main():
     parser.add_argument("--force-360-mode", action='store_true', help="Force 360° processing for all videos")
     parser.add_argument("--test-setup", action='store_true', help="Test system setup and dependencies")
     
-    # Standard arguments from runner.sh
-    parser.add_argument("--max_frames", type=int, default=600, help="Maximum frames to process")
-    parser.add_argument("--video_size", nargs=2, type=int, default=[720, 480], help="Video resize dimensions")
-    parser.add_argument("--sample_rate", type=float, default=2.0, help="Video sampling rate")
-    parser.add_argument("--debug", action='store_true', help="Enable debug mode")
-    parser.add_argument("--strict", action='store_true', help="Enable strict mode")
-    parser.add_argument("--powersafe", action='store_true', help="Enable power safe mode")
-    parser.add_argument("--enable_preprocessing", action='store_true', help="Enable preprocessing")
-    parser.add_argument("--ram_cache", type=float, default=48.0, help="RAM cache size in GB")
-    parser.add_argument("--force", action='store_true', help="Force processing")
-    
     args = parser.parse_args()
     
     # Test setup mode
@@ -2435,15 +2418,10 @@ def main():
         print(f"\n🎯 System ready for enhanced video-GPS correlation!")
         return
     
+    args = parser.parse_args()
+    
     # Create enhanced 360° configuration
     config = Enhanced360ProcessingConfig(
-        max_frames=args.max_frames,
-        target_size=tuple(args.video_size),
-        sample_rate=args.sample_rate,
-        powersafe=args.powersafe,
-        strict=args.strict,
-        enable_preprocessing=args.enable_preprocessing,
-        ram_cache_gb=args.ram_cache,
         use_optical_flow=not args.disable_optical_flow,
         use_pretrained_features=not args.disable_pretrained_cnn,
         use_attention_mechanism=not args.disable_attention,
@@ -2516,11 +2494,6 @@ def main():
     logger.info("   - Panoramic videos: Enhanced optical flow + CNN features")
     logger.info("   - Border handling: Automatic longitude wrap-around detection")
     logger.info("   - Quality scores: More reliable for spherical content")
-    
-    # For now, just print that the system would run here
-    logger.info("✅ Configuration validated - system ready to process videos")
-    logger.info(f"📁 Input directory: {args.directory}")
-    logger.info(f"📁 Output directory: {args.output}")
 
 if __name__ == "__main__":
     main()

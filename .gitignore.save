@@ -1,0 +1,17 @@
+*.MP4
+*.csv
+__pycache__
+testvideo
+*.pt
+dtemp_video*
+gputools-env/
+package-lock.json
+*.pkl
+python_scripts/VideoProcessingFramework/
+*.deb
+Installs/opencv
+Installs/opencv_contrib
+Installs/opencv_build/opencv
+Installs/opencv_build/opencv_contrib
+*.whl
+*.db
