@@ -1,0 +1,90 @@
+You still have another instance of the `kwargs` error at line 8539. Let me search for all the problematic `kwargs` references to fix them all:​​​​​​​​​​​​​​​​
+
+I can see the problem! There are **multiple instances** of the `kwargs` issue in your code. The function `complete_turbo_video_gpx_correlation_system(args, config)` doesn’t accept `**kwargs` as a parameter, but the code inside is trying to use `kwargs`.
+
+## **Here are ALL the locations you need to fix:**
+
+### **Fix 1: Around line 8539 (the current error)**
+
+Find this code:
+
+```python
+gpu_processors = get_gpu_processors(
+    turbo_mode=config.turbo_mode,
+    gpu_batch_size=gpu_batch_size,
+    max_gpus=kwargs.get('max_gpus', None),
+    min_memory_mb=kwargs.get('min_memory_mb', 2048)
+)
+```
+
+**Replace with:**
+
+```python
+gpu_processors = get_gpu_processors(
+    turbo_mode=config.turbo_mode,
+    gpu_batch_size=getattr(config, 'gpu_batch_size', 32),
+    max_gpus=None,
+    min_memory_mb=2048
+)
+```
+
+### **Fix 2: Any other similar instances**
+
+Search your file for **ALL instances** of:
+
+- `kwargs.get('max_gpus', None)`
+- `kwargs.get('min_memory_mb', 2048)`
+
+And replace them with:
+
+- `None` (for max_gpus)
+- `2048` (for min_memory_mb)
+
+## **Quick Search and Replace:**
+
+1. **Search for:** `kwargs.get('max_gpus', None)`
+   **Replace with:** `None`
+1. **Search for:** `kwargs.get('min_memory_mb', 2048)`
+   **Replace with:** `2048`
+
+## **Alternative: Complete GPU Cleanup Replacement**
+
+Or, better yet, find the **entire GPU cleanup section** and replace it with the simple version I gave you earlier:
+
+```python
+# ========== CLEANUP GPU PROCESSORS ==========
+logger.info("🎮 Cleaning up GPU processors...")
+
+# Simple GPU cleanup without re-initialization
+try:
+    for gpu_id in [0, 1]:  # Your GPU IDs
+        try:
+            torch.cuda.set_device(gpu_id)
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize(gpu_id)
+            logger.debug(f"🎮 GPU {gpu_id} cleaned up")
+        except Exception as e:
+            logger.debug(f"🎮 GPU {gpu_id} cleanup warning: {e}")
+    
+    logger.info("🎮 GPU memory cleanup completed")
+    
+except Exception as e:
+    logger.warning(f"GPU cleanup failed: {e}")
+```
+
+This completely eliminates the need for `get_gpu_processors()` call and the `kwargs` issue.
+
+## **Root Cause:**
+
+Your function signature is:
+
+```python
+def complete_turbo_video_gpx_correlation_system(args, config):
+```
+
+But the code inside expects `kwargs` to exist. You need to either:
+
+1. **Remove all `kwargs` references** (recommended)
+1. **Change function signature** to `def complete_turbo_video_gpx_correlation_system(args, config, **kwargs):`
+
+**Option 1** is better since you’re not actually using the `kwargs` for anything important.​​​​​​​​​​​​​​​​

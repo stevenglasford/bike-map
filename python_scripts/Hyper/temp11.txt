@@ -1,0 +1,102 @@
+Perfect! Now I can see the exact issue. The error is clear:
+
+**`❌ 360°-aware feature extraction failed: No feature models available for GPU 1`**
+
+Your models claim to be “loaded and ready for reuse” but they’re not accessible when feature extraction runs. This is a **model loading/storage issue**, not a 360° processing issue.
+
+Perfect! The error is crystal clear now. Your models say they’re “loaded and ready for reuse” but when extraction runs, it can’t find them. This is a **model storage/access issue**.
+
+## **🚨 IMMEDIATE DEBUG STEP:**
+
+Add this debug call right before your feature extraction to see what’s happening:
+
+```python
+# Add this temporarily in your code where the error occurs
+debug_your_model_issue(self, gpu_id)
+```
+
+This will show you exactly what’s in your `feature_models` and why GPU 1/0 can’t access them.
+
+## **🔍 Most Likely Causes:**
+
+1. **Key Type Mismatch**: Models stored as `feature_models[0]` but accessing with string `feature_models['0']`
+1. **Attribute Name Issue**: Models stored in different attribute (like `self.models` vs `self.feature_models`)
+1. **Initialization Race Condition**: Models loaded but not properly stored
+1. **GPU ID Mismatch**: Models loaded for different GPU IDs than expected
+
+## **⚡ QUICK FIX OPTIONS:**
+
+### **Option 1: Debug First (Recommended)**
+
+```python
+# In your extract_enhanced_features function, add at the top:
+def extract_enhanced_features(self, frames_tensor: torch.Tensor, gpu_id: int):
+    # DEBUG: Check what's actually available
+    print(f"🔍 Debug GPU {gpu_id}:")
+    print(f"  - Has feature_models: {hasattr(self, 'feature_models')}")
+    if hasattr(self, 'feature_models'):
+        print(f"  - Type: {type(self.feature_models)}")
+        if isinstance(self.feature_models, dict):
+            print(f"  - Keys: {list(self.feature_models.keys())}")
+            print(f"  - GPU {gpu_id} in keys: {gpu_id in self.feature_models}")
+            print(f"  - GPU '{gpu_id}' in keys: {str(gpu_id) in self.feature_models}")
+    
+    # Continue with your existing code...
+```
+
+### **Option 2: Quick Model Access Fix**
+
+```python
+# Replace the model access part in your function:
+# OLD:
+# models = self.feature_models[gpu_id]
+
+# NEW:
+models = None
+if hasattr(self, 'feature_models'):
+    if isinstance(self.feature_models, dict):
+        # Try integer key first
+        if gpu_id in self.feature_models:
+            models = self.feature_models[gpu_id]
+        # Try string key
+        elif str(gpu_id) in self.feature_models:
+            models = self.feature_models[str(gpu_id)]
+        # Use any available as fallback
+        elif len(self.feature_models) > 0:
+            fallback_key = list(self.feature_models.keys())[0]
+            models = self.feature_models[fallback_key]
+            logging.warning(f"⚠️ Using fallback models from {fallback_key} for GPU {gpu_id}")
+
+if models is None:
+    logger.error(f"❌ No feature models available for GPU {gpu_id}")
+    return {}
+```
+
+### **Option 3: Complete Replacement**
+
+Replace your `extract_enhanced_features` with my `fixed_extract_enhanced_features_with_model_debug` from the artifact above - it has comprehensive model loading fixes and fallbacks.
+
+## **🎯 My Prediction:**
+
+Based on your logs, I bet the issue is **key type mismatch**. Your models are probably stored as:
+
+```python
+self.feature_models = {0: models_gpu0, 1: models_gpu1}  # Integer keys
+```
+
+But your check is looking for:
+
+```python
+if gpu_id in self.feature_models:  # This fails if gpu_id is string "0" vs int 0
+```
+
+## **🚀 Try This First:**
+
+Run the debug function and paste the output. It will tell us exactly what’s wrong:
+
+```python
+debug_your_model_issue(self, 1)  # Debug GPU 1
+debug_your_model_issue(self, 0)  # Debug GPU 0
+```
+
+Then we can apply the exact fix needed! The output will show us the keys, types, and structure so we know exactly how to fix the model access.​​​​​​​​​​​​​​​​

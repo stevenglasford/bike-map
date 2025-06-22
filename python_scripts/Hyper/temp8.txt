@@ -1,0 +1,183 @@
+# 🔍 360° Feature Extraction Error - Need Better Debug Info
+
+**The Issue:** The error message `"360°-aware feature extraction failed: 0"` and `"360°-aware feature extraction failed: 1"` doesn’t tell us what’s actually failing. The GPU usage is very low (0-1.7GB) which suggests the models aren’t even loading.
+
+-----
+
+## 🛠️ **Quick Fix: Add Better Error Logging**
+
+We need to see the **actual error message**. Find this section in your code:
+
+### **Step 1: Find the Enhanced360OpticalFlowExtractor error handling**
+
+Look for this line:
+
+```python
+logger.error(f"360°-aware feature extraction failed: {e}")
+```
+
+**Replace it with:**
+
+```python
+logger.error(f"360°-aware optical flow extraction failed on GPU {gpu_id}: {str(e)}")
+if args.debug:
+    import traceback
+    logger.error(f"Full traceback:\n{traceback.format_exc()}")
+```
+
+### **Step 2: Find the Enhanced360CNNFeatureExtractor error handling**
+
+Look for this line:
+
+```python
+logger.error(f"360°-aware feature extraction failed: {e}")
+```
+
+**Replace it with:**
+
+```python
+logger.error(f"360°-aware CNN feature extraction failed on GPU {gpu_id}: {str(e)}")
+if args.debug:
+    import traceback
+    logger.error(f"Full CNN extraction traceback:\n{traceback.format_exc()}")
+```
+
+### **Step 3: Add Debug to the main feature extraction**
+
+Find the `extract_optical_flow_features` function and add debug logging:
+
+```python
+def extract_optical_flow_features(self, frames_tensor: torch.Tensor, gpu_id: int) -> Dict[str, np.ndarray]:
+    """PRESERVED: Extract 360°-aware optical flow features with turbo optimizations"""
+    try:
+        logger.debug(f"🌊 GPU {gpu_id}: Starting optical flow extraction")
+        
+        # Convert to numpy and prepare for OpenCV
+        frames_np = frames_tensor.detach().cpu().numpy()
+        batch_size, num_frames, channels, height, width = frames_np.shape
+        frames_np = frames_np[0]  # Take first batch
+        
+        logger.debug(f"🌊 GPU {gpu_id}: Frame shape: {frames_np.shape}, {num_frames} frames")
+        
+        # ... rest of the function ...
+        
+    except Exception as e:
+        logger.error(f"🌊 GPU {gpu_id}: Optical flow extraction failed: {str(e)}")
+        logger.error(f"🌊 GPU {gpu_id}: Frames tensor shape: {frames_tensor.shape if frames_tensor is not None else 'None'}")
+        if hasattr(args, 'debug') and args.debug:
+            import traceback
+            logger.error(f"🌊 Full optical flow traceback:\n{traceback.format_exc()}")
+        return self._create_empty_flow_features(frames_tensor.shape[1] if frames_tensor is not None else 10)
+```
+
+-----
+
+## 🎯 **Even Simpler: Disable 360° Features Temporarily**
+
+If you want to get it working quickly, try **disabling the problematic 360° features**:
+
+```bash
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+python matcher50.py \
+    -d ~/penis/panoramics/playground/ \
+    -o ~/penis/testingground/ \
+    --turbo-mode \
+    --debug \
+    --strict \
+    --powersafe \
+    --force \
+    --cuda-streams \
+    --vectorized-ops \
+    --parallel_videos 2 \
+    --no-enable-360-detection \
+    --no-enable-spherical-processing \
+    --no-enable-optical-flow
+```
+
+**This will skip the failing 360° features and just do basic correlation.**
+
+-----
+
+## 🔍 **Quick Debug: Check if Videos are Actually 360°**
+
+Run this quick test to see what’s in your video directory:
+
+```bash
+# Check video resolutions
+for file in ~/penis/panoramics/playground/*.mp4; do
+    ffprobe -v quiet -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$file" 2>/dev/null | head -1
+    echo " <- $(basename "$file")"
+done
+```
+
+**Expected output:**
+
+- **360° videos:** `3840,1920` or `4096,2048` (2:1 aspect ratio)
+- **Standard videos:** `1920,1080` or `1280,720` (16:9 aspect ratio)
+
+-----
+
+## 🚀 **Most Likely Causes & Quick Fixes**
+
+### **Cause 1: Not Actually 360° Videos**
+
+If your videos aren’t 360°, the detection might be failing. Try:
+
+```bash
+--no-enable-360-detection --no-enable-spherical-processing
+```
+
+### **Cause 2: OpenCV Issue**
+
+The optical flow might be failing due to frame format issues. Try:
+
+```bash
+--no-enable-optical-flow
+```
+
+### **Cause 3: Model Loading Issue**
+
+The CNN models might not be loading. Try:
+
+```bash
+--no-enable-pretrained-cnn --no-enable-attention
+```
+
+### **Cause 4: Memory Management**
+
+Even though GPU usage is low, there might be memory fragmentation. Try:
+
+```bash
+--max_frames 30 --video_size 480 320
+```
+
+-----
+
+## 🎯 **Recommended Next Step**
+
+**Run this minimal version to isolate the issue:**
+
+```bash
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+python matcher50.py \
+    -d ~/penis/panoramics/playground/ \
+    -o ~/penis/testingground/ \
+    --debug \
+    --parallel_videos 2 \
+    --max_frames 20 \
+    --video_size 320 240 \
+    --no-enable-360-detection \
+    --no-enable-optical-flow \
+    --no-enable-pretrained-cnn
+```
+
+**If this works**, gradually add back features:
+
+1. Add `--enable-optical-flow`
+1. Add `--enable-pretrained-cnn`
+1. Add `--enable-360-detection`
+1. Add `--turbo-mode`
+
+**This will help us identify which specific feature is causing the “0” and “1” errors.**
+
+Can you try the minimal version first and let me know what specific error messages you get with `--debug`?​​​​​​​​​​​​​​​​

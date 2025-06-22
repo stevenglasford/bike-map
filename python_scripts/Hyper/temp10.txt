@@ -1,0 +1,69 @@
+I’ll create a comprehensive `gpu_processors` initialization function for your video processing system. Here’s a robust implementation:​​​​​​​​​​​​​​​​
+
+I’ve created a comprehensive GPU processors initialization system for your video processing pipeline. Here’s how to integrate it:
+
+## **Quick Integration:**
+
+Replace the problematic line in your `matcher50.py` at line 5689:
+
+```python
+# Instead of this (which causes the error):
+for gpu_id, processor in gpu_processors.items():
+
+# Use this:
+gpu_processors = get_gpu_processors(
+    turbo_mode=True,  # or your turbo_mode variable
+    gpu_batch_size=gpu_batch_size,  # if you have this parameter
+    max_gpus=4,  # limit number of GPUs (optional)
+    min_memory_mb=2048  # minimum GPU memory required
+)
+
+for gpu_id, processor in gpu_processors.items():
+    # your existing processing code
+```
+
+## **Key Features:**
+
+- **Auto-detection**: Finds NVIDIA and AMD GPUs automatically
+- **Memory filtering**: Only uses GPUs with sufficient memory
+- **Fallback safety**: Gracefully handles no-GPU scenarios
+- **Thread-safe**: Includes GPU allocation/release management
+- **Comprehensive logging**: Shows exactly what GPUs are found/used
+
+## **Installation Dependencies:**
+
+For best GPU detection, install:
+
+```bash
+pip install nvidia-ml-py  # For NVIDIA GPUs (optional but recommended)
+```
+
+## **Usage Examples:**
+
+```python
+# Basic usage (in your main function)
+gpu_processors = get_gpu_processors(turbo_mode=True)
+
+# Advanced configuration
+gpu_processors = get_gpu_processors(
+    turbo_mode=True,
+    max_gpus=2,           # Use only 2 GPUs max
+    min_memory_mb=4096,   # Require 4GB+ GPU memory
+    prefer_high_memory=True  # Prioritize GPUs with more memory
+)
+
+# Check what you got
+if gpu_processors:
+    print(f"Using {len(gpu_processors)} GPU(s) for processing")
+else:
+    print("Falling back to CPU processing")
+```
+
+The system will automatically handle cases where:
+
+- No GPUs are available
+- GPUs don’t meet memory requirements
+- GPU libraries aren’t installed
+- Turbo mode is disabled
+
+This should resolve your `NameError` and give you a robust GPU processing foundation!​​​​​​​​​​​​​​​​

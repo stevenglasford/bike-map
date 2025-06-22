@@ -1,0 +1,171 @@
+# Process missing videos with PROPER DUAL-GPU UTILIZATION
+        if videos_to_process:
+            mode_desc = "🚀 TURBO + RAM CACHE" if config.turbo_mode else "⚡ ENHANCED + RAM CACHE"
+            logger.info(f"Processing {len(videos_to_process)} videos with {mode_desc} DUAL-GPU support...")
+            
+            # ========== SIMPLE DUAL-GPU APPROACH ==========
+            logger.info("🎮 Setting up DUAL-GPU processing (GPU 0 and GPU 1 working simultaneously)...")
+            
+            # Split videos between the two GPUs
+            gpu_0_videos = []
+            gpu_1_videos = []
+            
+            for i, video_path in enumerate(videos_to_process):
+                if i % 2 == 0:
+                    gpu_0_videos.append(video_path)
+                else:
+                    gpu_1_videos.append(video_path)
+            
+            logger.info(f"🎮 GPU 0: will process {len(gpu_0_videos)} videos")
+            logger.info(f"🎮 GPU 1: will process {len(gpu_1_videos)} videos")
+            
+            # ========== DUAL-GPU WORKER FUNCTIONS ==========
+            def process_videos_on_specific_gpu(gpu_id, video_list, results_dict, lock):
+                """Process videos on a specific GPU - runs in separate thread"""
+                logger.info(f"🎮 GPU {gpu_id}: Starting worker thread with {len(video_list)} videos")
+                
+                try:
+                    # Force this thread to use specific GPU
+                    torch.cuda.set_device(gpu_id)
+                    device = torch.device(f'cuda:{gpu_id}')
+                    
+                    # Create processor for this GPU
+                    processor = CompleteTurboVideoProcessor(gpu_manager, config)
+                    
+                    for i, video_path in enumerate(video_list):
+                        try:
+                            logger.info(f"🎮 GPU {gpu_id}: Processing {i+1}/{len(video_list)}: {Path(video_path).name}")
+                            
+                            # Check RAM cache first
+                            if ram_cache_manager:
+                                cached_features = ram_cache_manager.get_video_features(video_path)
+                                if cached_features is not None:
+                                    logger.debug(f"🎮 GPU {gpu_id}: RAM cache hit")
+                                    with lock:
+                                        results_dict[video_path] = cached_features
+                                    continue
+                            
+                            # Force processing on this specific GPU
+                            with torch.cuda.device(gpu_id):
+                                features = processor._process_single_video_complete(video_path)
+                            
+                            if features is not None:
+                                features['processing_gpu'] = gpu_id
+                                features['dual_gpu_mode'] = True
+                                
+                                # Cache results
+                                if ram_cache_manager:
+                                    ram_cache_manager.cache_video_features(video_path, features)
+                                
+                                if powersafe_manager:
+                                    powersafe_manager.mark_video_features_done(video_path)
+                                
+                                with lock:
+                                    results_dict[video_path] = features
+                                
+                                video_type = "360°" if features.get('is_360_video', False) else "STD"
+                                logger.info(f"✅ GPU {gpu_id}: {Path(video_path).name} [{video_type}] completed")
+                            else:
+                                logger.warning(f"❌ GPU {gpu_id}: {Path(video_path).name} failed")
+                                with lock:
+                                    results_dict[video_path] = None
+                                
+                                if powersafe_manager:
+                                    powersafe_manager.mark_video_failed(video_path, f"GPU {gpu_id} processing failed")
+                            
+                            # Clean GPU memory after each video
+                            torch.cuda.empty_cache()
+                            torch.cuda.synchronize(gpu_id)
+                            
+                        except Exception as e:
+                            logger.error(f"❌ GPU {gpu_id}: Error processing {Path(video_path).name}: {e}")
+                            with lock:
+                                results_dict[video_path] = None
+                            
+                            if powersafe_manager:
+                                powersafe_manager.mark_video_failed(video_path, f"GPU {gpu_id} error: {str(e)}")
+                
+                except Exception as e:
+                    logger.error(f"❌ GPU {gpu_id}: Worker thread failed: {e}")
+                    # Mark all remaining videos as failed
+                    with lock:
+                        for video_path in video_list:
+                            if video_path not in results_dict:
+                                results_dict[video_path] = None
+                
+                logger.info(f"🎮 GPU {gpu_id}: Worker thread completed")
+            
+            # ========== EXECUTE DUAL-GPU PROCESSING ==========
+            results_dict = {}
+            results_lock = threading.Lock()
+            processing_start_time = time.time()
+            
+            # Create two threads - one for each GPU
+            gpu_0_thread = threading.Thread(
+                target=process_videos_on_specific_gpu,
+                args=(0, gpu_0_videos, results_dict, results_lock),
+                name="GPU-0-Worker"
+            )
+            
+            gpu_1_thread = threading.Thread(
+                target=process_videos_on_specific_gpu, 
+                args=(1, gpu_1_videos, results_dict, results_lock),
+                name="GPU-1-Worker"
+            )
+            
+            # Start both threads simultaneously
+            logger.info("🚀 Starting DUAL-GPU processing threads...")
+            gpu_0_thread.start()
+            gpu_1_thread.start()
+            
+            # Monitor progress with unified progress bar
+            total_videos = len(videos_to_process)
+            with tqdm(total=total_videos, desc=f"{mode_desc} DUAL-GPU processing") as pbar:
+                last_completed = 0
+                
+                while gpu_0_thread.is_alive() or gpu_1_thread.is_alive():
+                    time.sleep(2)  # Check every 2 seconds
+                    
+                    with results_lock:
+                        current_completed = len([v for v in results_dict.values() if v is not None])
+                        current_failed = len([v for v in results_dict.values() if v is None])
+                        total_processed = current_completed + current_failed
+                    
+                    # Update progress bar
+                    new_progress = total_processed - last_completed
+                    if new_progress > 0:
+                        pbar.update(new_progress)
+                        last_completed = total_processed
+                        
+                        # Show which GPU is working
+                        gpu_0_alive = "🚀" if gpu_0_thread.is_alive() else "✅"
+                        gpu_1_alive = "🚀" if gpu_1_thread.is_alive() else "✅"
+                        pbar.set_postfix_str(f"GPU0:{gpu_0_alive} GPU1:{gpu_1_alive} Success:{current_completed}")
+            
+            # Wait for both threads to complete
+            logger.info("🎮 Waiting for GPU threads to complete...")
+            gpu_0_thread.join()
+            gpu_1_thread.join()
+            
+            # Merge results back into video_features
+            video_features.update(results_dict)
+            
+            # Final cache save
+            with open(video_cache_path, 'wb') as f:
+                pickle.dump(video_features, f)
+            
+            # Calculate statistics
+            processing_time = time.time() - processing_start_time
+            successful_videos = len([v for v in results_dict.values() if v is not None])
+            failed_videos = len([v for v in results_dict.values() if v is None])
+            video_360_count = len([v for v in results_dict.values() if v and v.get('is_360_video', False)])
+            videos_per_second = len(videos_to_process) / processing_time if processing_time > 0 else 0
+            
+            success_rate = successful_videos / max(successful_videos + failed_videos, 1)
+            mode_info = " [TURBO + DUAL-GPU]" if config.turbo_mode else " [ENHANCED + DUAL-GPU]"
+            
+            logger.info(f"🚀 DUAL-GPU video processing{mode_info}: {successful_videos} success | {failed_videos} failed | {video_360_count} x 360° videos ({success_rate:.1%})")
+            logger.info(f"   Performance: {videos_per_second:.2f} videos/second with DUAL-GPU processing")
+            logger.info(f"   🎮 GPU 0: processed {len(gpu_0_videos)} videos")
+            logger.info(f"   🎮 GPU 1: processed {len(gpu_1_videos)} videos")
+            logger.info(f"   ⚡ Total processing time: {processing_time:.1f} seconds")

@@ -11,11 +11,8 @@ python matcher50.py \
     --force \
 	--cuda-streams \
 	--vectorized-ops \
-	--parallel_videos 1 \
-	--gpu-batch-size 1 \
-	--correlation-batch-size 250 \
-	--max_frames 50 \
-	--video_size 320 240
+	--parallel_videos 2 
+	#--gpu_batch_size 100
 	#--max_frames 50 \
     #--video_size 720 480 \
     #--sample_rate 2.0 \

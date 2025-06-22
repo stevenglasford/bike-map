@@ -1,0 +1,57 @@
+Yes, exactly! For the first option, you would replace **both** the `gpu_processors = get_gpu_processors(...)` call **AND** the loop that follows it.
+
+## **What to Replace:**
+
+Find this **entire section**:
+
+```python
+# ========== CLEANUP GPU PROCESSORS ==========
+logger.info("🎮 Cleaning up GPU processors...")
+gpu_processors = get_gpu_processors(
+    turbo_mode=config.turbo_mode,
+    gpu_batch_size=gpu_batch_size,
+    max_gpus=kwargs.get('max_gpus', None),
+    min_memory_mb=kwargs.get('min_memory_mb', 2048)
+)
+
+for gpu_id, processor in gpu_processors.items():
+    try:
+        # Clean up GPU memory
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize(gpu_id)
+        logger.debug(f"🎮 GPU {gpu_id} cleaned up")
+    except Exception as e:
+        logger.debug(f"🎮 GPU {gpu_id} cleanup warning: {e}")
+```
+
+## **Replace it with this:**
+
+```python
+# ========== CLEANUP GPU PROCESSORS ==========
+logger.info("🎮 Cleaning up GPU processors...")
+
+# Simple GPU cleanup without re-initialization
+try:
+    for gpu_id in [0, 1]:  # Your GPU IDs
+        try:
+            torch.cuda.set_device(gpu_id)
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize(gpu_id)
+            logger.debug(f"🎮 GPU {gpu_id} cleaned up")
+        except Exception as e:
+            logger.debug(f"🎮 GPU {gpu_id} cleanup warning: {e}")
+    
+    logger.info("🎮 GPU memory cleanup completed")
+    
+except Exception as e:
+    logger.warning(f"GPU cleanup failed: {e}")
+```
+
+## **Why this works better:**
+
+1. **No `kwargs` dependency** - eliminates the error completely
+1. **No re-initialization** - we don’t need to create GPU processors just to clean them up
+1. **Direct cleanup** - directly cleans GPU 0 and GPU 1 that were actually used
+1. **Simpler logic** - fewer things that can go wrong
+
+The original code was trying to re-initialize GPU processors just to iterate through them for cleanup, which is unnecessary. The new code directly cleans the GPUs that were used (0 and 1) without needing to call `get_gpu_processors()` at all.​​​​​​​​​​​​​​​​
