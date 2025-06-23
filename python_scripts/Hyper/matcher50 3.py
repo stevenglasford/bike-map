@@ -66,7 +66,6 @@ import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 import threading
-from threading import Lock, Event, RLock
 from pathlib import Path
 import pickle
 import hashlib
@@ -97,121 +96,6 @@ import asyncio
 import aiofiles
 from numba import cuda, jit, prange
 import numba
-
-import logging
-import traceback
-
-try:
-    import torch
-    TORCH_AVAILABLE = torch.cuda.is_available()
-    print(f"🔍 TORCH_AVAILABLE = {TORCH_AVAILABLE}")
-except ImportError:
-    TORCH_AVAILABLE = False
-    print(f"🔍 TORCH_AVAILABLE = {TORCH_AVAILABLE} (PyTorch not found)")
-
-# Also add PSUTIL_AVAILABLE if referenced
-try:
-    import psutil
-    PSUTIL_AVAILABLE = True
-    print(f"🔍 PSUTIL_AVAILABLE = {PSUTIL_AVAILABLE}")
-except ImportError:
-    PSUTIL_AVAILABLE = False
-    print(f"🔍 PSUTIL_AVAILABLE = {PSUTIL_AVAILABLE}")
-
-# Enhanced logging for debugging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
-# Add this debug wrapper around your TurboGPUBatchEngine class
-original_TurboGPUBatchEngine_init = None
-
-def debug_TurboGPUBatchEngine_init(self, gpu_manager, config):
-    """Debug wrapper for TurboGPUBatchEngine.__init__"""
-    print("🔍 DEBUG: TurboGPUBatchEngine.__init__ called")
-    print(f"🔍 DEBUG: gpu_manager type: {type(gpu_manager)}")
-    print(f"🔍 DEBUG: config type: {type(config)}")
-    
-    try:
-        print(f"🔍 DEBUG: gpu_manager.gpu_ids: {getattr(gpu_manager, 'gpu_ids', 'MISSING')}")
-        print(f"🔍 DEBUG: config.turbo_mode: {getattr(config, 'turbo_mode', 'MISSING')}")
-        print(f"🔍 DEBUG: config.gpu_batch_size: {getattr(config, 'gpu_batch_size', 'MISSING')}")
-    except Exception as e:
-        print(f"🔍 DEBUG: Error accessing attributes: {e}")
-    
-    self.gpu_manager = gpu_manager
-    self.config = config
-    self.correlation_models = {}
-    
-    print("🔍 DEBUG: Starting GPU model initialization...")
-    
-    if not hasattr(gpu_manager, 'gpu_ids'):
-        raise AttributeError("gpu_manager missing gpu_ids attribute")
-    
-    for i, gpu_id in enumerate(gpu_manager.gpu_ids):
-        print(f"🔍 DEBUG: Initializing GPU {gpu_id} ({i+1}/{len(gpu_manager.gpu_ids)})")
-        
-        try:
-            import torch
-            device = torch.device(f'cuda:{gpu_id}')
-            print(f"🔍 DEBUG: Created device: {device}")
-            
-            print(f"🔍 DEBUG: Calling _create_correlation_model for GPU {gpu_id}")
-            model = self._create_correlation_model(device)
-            print(f"🔍 DEBUG: Model created successfully for GPU {gpu_id}")
-            
-            self.correlation_models[gpu_id] = model
-            print(f"🔍 DEBUG: Model stored for GPU {gpu_id}")
-            
-        except Exception as e:
-            print(f"❌ DEBUG: GPU {gpu_id} initialization failed: {e}")
-            print(f"❌ DEBUG: Exception type: {type(e).__name__}")
-            print(f"❌ DEBUG: Traceback:\n{traceback.format_exc()}")
-            raise
-    
-    print("✅ DEBUG: All GPU models initialized successfully!")
-    logger.info("🚀 GPU batch correlation engine initialized for maximum performance")
-
-# Monkey patch the initialization
-def apply_debug_patch():
-    """Apply debug patch to TurboGPUBatchEngine"""
-    try:
-        global TurboGPUBatchEngine, original_TurboGPUBatchEngine_init
-        
-        if 'TurboGPUBatchEngine' in globals():
-            print("🔧 DEBUG: Applying debug patch to TurboGPUBatchEngine")
-            original_TurboGPUBatchEngine_init = TurboGPUBatchEngine.__init__
-            TurboGPUBatchEngine.__init__ = debug_TurboGPUBatchEngine_init
-            print("✅ DEBUG: Debug patch applied successfully")
-        else:
-            print("⚠️ DEBUG: TurboGPUBatchEngine not found in globals, will patch when available")
-    except Exception as e:
-        print(f"❌ DEBUG: Failed to apply debug patch: {e}")
-
-# Apply the patch immediately
-apply_debug_patch()
-
-# Also add debug to the correlation condition check
-def debug_correlation_condition(config, gpu_manager):
-    """Debug the correlation condition that determines GPU vs CPU path"""
-    print("\n🔍 DEBUG: CORRELATION PATH DECISION")
-    print(f"🔍 DEBUG: config object: {config}")
-    print(f"🔍 DEBUG: config.turbo_mode: {getattr(config, 'turbo_mode', 'MISSING')}")
-    print(f"🔍 DEBUG: config.gpu_batch_size: {getattr(config, 'gpu_batch_size', 'MISSING')}")
-    
-    turbo_condition = getattr(config, 'turbo_mode', False)
-    batch_condition = getattr(config, 'gpu_batch_size', 0) > 1
-    full_condition = turbo_condition and batch_condition
-    
-    print(f"🔍 DEBUG: turbo_mode condition: {turbo_condition}")
-    print(f"🔍 DEBUG: gpu_batch_size > 1 condition: {batch_condition}")
-    print(f"🔍 DEBUG: FULL CONDITION: {full_condition}")
-    
-    if full_condition:
-        print("✅ DEBUG: Should use GPU batch processing")
-    else:
-        print("❌ DEBUG: Will use CPU fallback processing")
-    
-    return full_condition
 
 # Advanced DTW imports
 try:
@@ -481,7 +365,7 @@ class CompleteTurboConfig:
     gpx_diagnostics_file: str = "gpx_validation.db"
     
     # ========== TURBO PERFORMANCE OPTIMIZATIONS ==========
-    turbo_mode: bool = True
+    turbo_mode: bool = False
     max_cpu_workers: int = 0  # 0 = auto-detect
     gpu_batch_size: int = 32
     memory_map_features: bool = True
@@ -522,106 +406,57 @@ class CompleteTurboConfig:
         self._optimize_for_system()
         self._log_configuration()
     
-    
-    
-    def _set_safe_defaults(self):
-        """Set safe default values ONLY for missing or invalid parameters"""
-        print(f"🔧 Applying safe defaults (preserving user inputs)")
-        
-        # Basic parameters - only set if missing or invalid
-        if not hasattr(self, 'max_frames') or self.max_frames <= 0:
-            self.max_frames = 150
-            print(f"🔧 Set max_frames default: {self.max_frames}")
-        
-        if not hasattr(self, 'target_size') or len(self.target_size) != 2 or any(x <= 0 for x in self.target_size):
-            self.target_size = (720, 480)
-            print(f"🔧 Set target_size default: {self.target_size}")
-        
-        if not hasattr(self, 'parallel_videos') or self.parallel_videos <= 0:
-            self.parallel_videos = 1
-            print(f"🔧 Set parallel_videos default: {self.parallel_videos}")
-        
-        if not hasattr(self, 'gpu_memory_fraction') or self.gpu_memory_fraction <= 0 or self.gpu_memory_fraction > 1:
-            self.gpu_memory_fraction = 0.8
-            print(f"🔧 Set gpu_memory_fraction default: {self.gpu_memory_fraction}")
-        
-        if not hasattr(self, 'ram_cache_gb') or self.ram_cache_gb <= 0:
-            self.ram_cache_gb = 8.0
-            print(f"🔧 Set ram_cache_gb default: {self.ram_cache_gb}")
-        
-        # CRITICAL: PRESERVE user inputs for turbo mode and GPU settings
-        if not hasattr(self, 'turbo_mode'):
-            self.turbo_mode = False  # Only set default if missing
-            print(f"🔧 Set turbo_mode default: {self.turbo_mode}")
-        else:
-            print(f"🔧 PRESERVED user turbo_mode: {self.turbo_mode}")
-        
-        if not hasattr(self, 'prefer_gpu_processing'):
-            self.prefer_gpu_processing = False  # Only set default if missing
-            print(f"🔧 Set prefer_gpu_processing default: {self.prefer_gpu_processing}")
-        else:
-            print(f"🔧 PRESERVED user prefer_gpu_processing: {self.prefer_gpu_processing}")
-        
-        if not hasattr(self, 'gpu_batch_size'):
-            self.gpu_batch_size = 32  # Only set default if missing
-            print(f"🔧 Set gpu_batch_size default: {self.gpu_batch_size}")
-        else:
-            print(f"🔧 PRESERVED user gpu_batch_size: {self.gpu_batch_size}")
-        
-        logging.info("Safe defaults applied (user inputs preserved)")
-    
-    # ALTERNATIVE APPROACH: More robust validation that doesn't trigger defaults
-    
     def _validate_config(self):
-        """Validate configuration parameters without overriding valid user inputs"""
-        validation_issues = []
-        
+        """Validate configuration parameters"""
         try:
-            # Validate but don't change - just log issues
-            if hasattr(self, 'max_frames') and self.max_frames <= 0:
-                validation_issues.append("max_frames must be positive")
+            # Validate basic parameters
+            if self.max_frames <= 0:
+                raise ValueError("max_frames must be positive")
             
-            if hasattr(self, 'parallel_videos') and self.parallel_videos <= 0:
-                validation_issues.append("parallel_videos must be positive")
-                # Fix this specific issue without calling _set_safe_defaults
+            if self.parallel_videos <= 0:
                 self.parallel_videos = 1
                 logging.warning("parallel_videos must be positive, set to 1")
             
-            if hasattr(self, 'gpu_memory_fraction') and (self.gpu_memory_fraction <= 0 or self.gpu_memory_fraction > 1):
-                validation_issues.append("gpu_memory_fraction must be between 0 and 1")
+            if self.gpu_memory_fraction <= 0 or self.gpu_memory_fraction > 1:
                 self.gpu_memory_fraction = 0.8
                 logging.warning("gpu_memory_fraction must be between 0 and 1, set to 0.8")
             
-            # IMPORTANT: Don't validate turbo_mode - it's a boolean flag from user
-            # IMPORTANT: Don't validate gpu_batch_size if turbo_mode is True
-            if hasattr(self, 'turbo_mode') and self.turbo_mode:
-                print(f"🚀 Turbo mode enabled - preserving all turbo settings")
-                # Don't override any turbo-related settings
+            if self.ram_cache_gb <= 0:
+                self.ram_cache_gb = 8.0
+                logging.warning("ram_cache_gb must be positive, set to 8GB")
             
-            # Handle validation issues without nuclear _set_safe_defaults
-            if validation_issues:
-                logging.warning(f"Configuration validation issues (but preserving user inputs): {validation_issues}")
-                # Don't call _set_safe_defaults() here!
+            # Validate 360° parameters
+            if self.num_tangent_planes <= 0:
+                self.num_tangent_planes = 6
+            
+            if self.tangent_plane_fov <= 0 or self.tangent_plane_fov > 180:
+                self.tangent_plane_fov = 90.0
+            
+            # Validate GPU settings
+            if not TORCH_AVAILABLE and self.prefer_gpu_processing:
+                self.prefer_gpu_processing = False
+                logging.warning("PyTorch/CUDA not available, disabling GPU processing")
+            
+            # Validate target size
+            if len(self.target_size) != 2 or any(x <= 0 for x in self.target_size):
+                self.target_size = (720, 480)
+                logging.warning("Invalid target_size, set to (720, 480)")
             
         except Exception as e:
-            logging.error(f"Configuration validation error: {e}")
-            # Only set defaults for truly broken configs, preserve user inputs
-            self._set_minimal_safe_defaults()
-        
-    def _set_minimal_safe_defaults(self):
-        """Set only absolutely necessary defaults without overriding user inputs"""
-        if not hasattr(self, 'max_frames'):
-            self.max_frames = 150
-        if not hasattr(self, 'target_size'):
-            self.target_size = (720, 480)
-        if not hasattr(self, 'cache_dir'):
-            import tempfile
-            self.cache_dir = tempfile.gettempdir()
-        
-        # NEVER override turbo_mode, gpu_batch_size, etc. here
-        print("🔧 Minimal safe defaults applied (user turbo settings preserved)")
+            logging.error(f"Configuration validation failed: {e}")
+            self._set_safe_defaults()
     
-# USAGE: Replace both methods in CompleteTurboConfig class    
+    def _set_safe_defaults(self):
+        """Set safe default values if validation fails"""
+        self.max_frames = 150
+        self.target_size = (720, 480)
+        self.parallel_videos = 1
+        self.gpu_memory_fraction = 0.8
+        self.ram_cache_gb = 8.0
+        self.turbo_mode = False
+        self.prefer_gpu_processing = False
+        logging.info("Configuration reset to safe defaults")
+    
     def _setup_directories(self):
         """Setup and validate directories"""
         try:
@@ -857,425 +692,7 @@ class CompleteTurboConfig:
                 f"gpu={self.prefer_gpu_processing}, "
                 f"ram={self.ram_cache_gb:.1f}GB, "
                 f"parallel={self.parallel_videos})")
-class TurboSharedMemoryManager:
-    """
-    ULTRA-OPTIMIZED: GPU-aware shared memory manager for maximum performance
-    
-    Optimized for your system:
-    - 2x RTX 5060 Ti (15.5GB each) = 31GB GPU VRAM
-    - 125.7GB System RAM  
-    - 16 CPU cores
-    - Designed for video-GPX correlation at maximum speed
-    """
-    
-    def __init__(self, config):
-        self.config = config
-        self.shared_arrays = {}
-        self.gpu_pinned_arrays = {}
-        self.memory_mapped_arrays = {}
-        self.locks = {}
-        self.global_lock = RLock()
-        
-        # System optimization parameters
-        self.system_ram_gb = psutil.virtual_memory().total / (1024**3)
-        self.available_ram_gb = psutil.virtual_memory().available / (1024**3)
-        self.cpu_cores = psutil.cpu_count(logical=True)
-        
-        # GPU detection
-        self.cuda_available = torch.cuda.is_available()
-        self.gpu_count = torch.cuda.device_count() if self.cuda_available else 0
-        self.gpu_memory_per_device = []
-        
-        if self.cuda_available:
-            for i in range(self.gpu_count):
-                props = torch.cuda.get_device_properties(i)
-                self.gpu_memory_per_device.append(props.total_memory / (1024**3))
-        
-        # Calculate optimal allocation strategies
-        self._calculate_optimal_allocations()
-        
-        # Initialize temp directory for memory mapping
-        self.temp_dir = Path(getattr(config, 'temp_dir', '/tmp/turbo_cache'))
-        self.temp_dir.mkdir(parents=True, exist_ok=True)
-        
-        logger.info(f"🚀 TurboSharedMemoryManager initialized:")
-        logger.info(f"   💾 System RAM: {self.system_ram_gb:.1f}GB (Available: {self.available_ram_gb:.1f}GB)")
-        logger.info(f"   🎮 GPUs: {self.gpu_count} ({sum(self.gpu_memory_per_device):.1f}GB total VRAM)")
-        logger.info(f"   🧠 CPU Cores: {self.cpu_cores}")
-        logger.info(f"   📂 Temp directory: {self.temp_dir}")
-    
-    def _calculate_optimal_allocations(self):
-        """Calculate optimal memory allocation strategies based on system specs"""
-        
-        # For your 125GB system, we can be very aggressive
-        if self.system_ram_gb >= 100:
-            self.max_shared_memory_gb = min(80, self.available_ram_gb * 0.6)  # Use up to 80GB
-            self.max_pinned_memory_gb = min(16, self.available_ram_gb * 0.1)   # 16GB for GPU pinned
-            self.use_huge_pages = True
-            self.prefetch_factor = 4  # Aggressive prefetching
-        elif self.system_ram_gb >= 32:
-            self.max_shared_memory_gb = min(24, self.available_ram_gb * 0.5)
-            self.max_pinned_memory_gb = min(8, self.available_ram_gb * 0.1)
-            self.use_huge_pages = True
-            self.prefetch_factor = 2
-        else:
-            self.max_shared_memory_gb = min(8, self.available_ram_gb * 0.3)
-            self.max_pinned_memory_gb = min(2, self.available_ram_gb * 0.05)
-            self.use_huge_pages = False
-            self.prefetch_factor = 1
-        
-        # GPU-specific optimizations for your RTX 5060 Ti setup
-        if self.gpu_count >= 2:
-            self.enable_multi_gpu_pinning = True
-            self.gpu_batch_prefetch = True
-            self.cross_gpu_memory_sharing = True
-        else:
-            self.enable_multi_gpu_pinning = False
-            self.gpu_batch_prefetch = False
-            self.cross_gpu_memory_sharing = False
-            
-        logger.info(f"🚀 Memory allocation strategy:")
-        logger.info(f"   📊 Max shared memory: {self.max_shared_memory_gb:.1f}GB")
-        logger.info(f"   📌 Max pinned memory: {self.max_pinned_memory_gb:.1f}GB") 
-        logger.info(f"   🔄 Multi-GPU pinning: {'✅' if self.enable_multi_gpu_pinning else '❌'}")
-        logger.info(f"   🚀 Huge pages: {'✅' if self.use_huge_pages else '❌'}")
-    
-    def create_shared_array(self, name: str, shape: tuple, dtype=np.float32, 
-                          gpu_pinned=False, memory_mapped=False, 
-                          gpu_id: Optional[int] = None) -> Optional[Union[mp.Array, torch.Tensor, np.ndarray]]:
-        """
-        Create ultra-optimized shared memory array with multiple strategies
-        
-        Args:
-            name: Unique identifier for the array
-            shape: Array shape
-            dtype: Data type (np.float32, np.float64, etc.)
-            gpu_pinned: If True, create GPU-pinned memory for faster GPU transfers
-            memory_mapped: If True, use memory-mapped file for very large arrays
-            gpu_id: Specific GPU to pin memory to (None for automatic selection)
-        """
-        
-        if not getattr(self.config, 'shared_memory_cache', True):
-            return None
-        
-        with self.global_lock:
-            try:
-                total_size = np.prod(shape)
-                element_size = np.dtype(dtype).itemsize
-                total_bytes = total_size * element_size
-                total_gb = total_bytes / (1024**3)
                 
-                logger.debug(f"🔧 Creating shared array '{name}': {shape} ({total_gb:.3f}GB)")
-                
-                # Strategy 1: GPU-pinned memory for frequent GPU transfers
-                if gpu_pinned and self.cuda_available and total_gb <= self.max_pinned_memory_gb:
-                    return self._create_gpu_pinned_array(name, shape, dtype, gpu_id, total_bytes)
-                
-                # Strategy 2: Memory-mapped for very large arrays
-                elif memory_mapped or total_gb > 8:  # Use memory mapping for arrays > 8GB
-                    return self._create_memory_mapped_array(name, shape, dtype, total_bytes)
-                
-                # Strategy 3: Standard shared memory for medium arrays
-                elif total_gb <= self.max_shared_memory_gb:
-                    return self._create_standard_shared_array(name, shape, dtype, total_size)
-                
-                # Strategy 4: Fallback to memory mapping for oversized arrays
-                else:
-                    logger.warning(f"⚠️ Array '{name}' ({total_gb:.1f}GB) exceeds limits, using memory mapping")
-                    return self._create_memory_mapped_array(name, shape, dtype, total_bytes)
-                    
-            except Exception as e:
-                logger.error(f"❌ Failed to create shared array '{name}': {e}")
-                return None
-    
-    def _create_gpu_pinned_array(self, name: str, shape: tuple, dtype, gpu_id: Optional[int], total_bytes: int) -> Optional[torch.Tensor]:
-        """Create GPU-pinned memory for ultra-fast GPU transfers"""
-        try:
-            # Select optimal GPU
-            if gpu_id is None:
-                gpu_id = self._select_optimal_gpu()
-            
-            # Create pinned memory tensor
-            torch_dtype = self._numpy_to_torch_dtype(dtype)
-            device = torch.device(f'cuda:{gpu_id}')
-            
-            # Allocate pinned memory on CPU that can be quickly transferred to GPU
-            pinned_tensor = torch.empty(shape, dtype=torch_dtype, pin_memory=True)
-            
-            self.gpu_pinned_arrays[name] = {
-                'tensor': pinned_tensor,
-                'shape': shape,
-                'dtype': dtype,
-                'gpu_id': gpu_id,
-                'device': device,
-                'size_bytes': total_bytes
-            }
-            
-            self.locks[name] = Lock()
-            
-            logger.debug(f"✅ GPU-pinned array '{name}' created on GPU {gpu_id}")
-            return pinned_tensor
-            
-        except Exception as e:
-            logger.warning(f"⚠️ GPU-pinned allocation failed for '{name}': {e}, falling back to shared memory")
-            total_size = np.prod(shape)
-            return self._create_standard_shared_array(name, shape, dtype, total_size)
-    
-    def _create_memory_mapped_array(self, name: str, shape: tuple, dtype, total_bytes: int) -> Optional[np.ndarray]:
-        """Create memory-mapped array for very large datasets"""
-        try:
-            # Create memory-mapped file
-            mmap_file = self.temp_dir / f"{name}.mmap"
-            
-            # Create the file with the right size
-            with open(mmap_file, 'wb') as f:
-                f.write(b'\x00' * total_bytes)
-            
-            # Memory-map the file
-            with open(mmap_file, 'r+b') as f:
-                mm = mmap.mmap(f.fileno(), total_bytes)
-                array = np.frombuffer(mm, dtype=dtype).reshape(shape)
-            
-            self.memory_mapped_arrays[name] = {
-                'array': array,
-                'mmap': mm,
-                'file': mmap_file,
-                'shape': shape,
-                'dtype': dtype,
-                'size_bytes': total_bytes
-            }
-            
-            self.locks[name] = Lock()
-            
-            logger.debug(f"✅ Memory-mapped array '{name}' created: {mmap_file}")
-            return array
-            
-        except Exception as e:
-            logger.warning(f"⚠️ Memory mapping failed for '{name}': {e}, falling back to shared memory")
-            total_size = np.prod(shape)
-            return self._create_standard_shared_array(name, shape, dtype, total_size)
-    
-    def _create_standard_shared_array(self, name: str, shape: tuple, dtype, total_size: int) -> Optional[mp.Array]:
-        """Create standard multiprocessing shared array"""
-        try:
-            # Map numpy dtypes to multiprocessing array types
-            if dtype == np.float32:
-                mp_type = 'f'
-            elif dtype == np.float64:
-                mp_type = 'd'
-            elif dtype == np.int32:
-                mp_type = 'i'
-            elif dtype == np.int64:
-                mp_type = 'l'
-            else:
-                mp_type = 'f'  # Default to float32
-            
-            shared_array = mp.Array(mp_type, total_size)
-            
-            self.shared_arrays[name] = {
-                'array': shared_array,
-                'shape': shape,
-                'dtype': dtype,
-                'mp_type': mp_type
-            }
-            
-            self.locks[name] = mp.Lock()
-            
-            logger.debug(f"✅ Standard shared array '{name}' created")
-            return shared_array
-            
-        except Exception as e:
-            logger.error(f"❌ Standard shared array creation failed for '{name}': {e}")
-            return None
-    
-    def get_numpy_array(self, name: str) -> Optional[np.ndarray]:
-        """Get numpy array view of shared memory - ultra-optimized access"""
-        
-        # GPU-pinned arrays
-        if name in self.gpu_pinned_arrays:
-            tensor_info = self.gpu_pinned_arrays[name]
-            return tensor_info['tensor'].cpu().numpy()
-        
-        # Memory-mapped arrays
-        elif name in self.memory_mapped_arrays:
-            return self.memory_mapped_arrays[name]['array']
-        
-        # Standard shared arrays
-        elif name in self.shared_arrays:
-            array_info = self.shared_arrays[name]
-            shared_array = array_info['array']
-            shape = array_info['shape']
-            dtype = array_info['dtype']
-            return np.frombuffer(shared_array.get_obj(), dtype=dtype).reshape(shape)
-        
-        else:
-            logger.warning(f"⚠️ Array '{name}' not found in shared memory")
-            return None
-    
-    def get_gpu_tensor(self, name: str, gpu_id: Optional[int] = None) -> Optional[torch.Tensor]:
-        """Get GPU tensor for direct GPU processing - maximum speed"""
-        
-        if not self.cuda_available:
-            logger.warning("⚠️ CUDA not available for GPU tensor access")
-            return None
-        
-        if gpu_id is None:
-            gpu_id = self._select_optimal_gpu()
-        
-        device = torch.device(f'cuda:{gpu_id}')
-        
-        # GPU-pinned arrays - ultra-fast transfer
-        if name in self.gpu_pinned_arrays:
-            tensor_info = self.gpu_pinned_arrays[name]
-            pinned_tensor = tensor_info['tensor']
-            
-            # Non-blocking transfer for maximum speed
-            return pinned_tensor.to(device, non_blocking=True)
-        
-        # Convert from other formats
-        numpy_array = self.get_numpy_array(name)
-        if numpy_array is not None:
-            torch_dtype = self._numpy_to_torch_dtype(numpy_array.dtype)
-            tensor = torch.from_numpy(numpy_array.copy()).to(torch_dtype)
-            return tensor.to(device, non_blocking=True)
-        
-        return None
-    
-    def prefetch_to_gpu(self, names: List[str], gpu_id: Optional[int] = None) -> Dict[str, torch.Tensor]:
-        """Prefetch multiple arrays to GPU for batch processing - ultimate performance"""
-        
-        if not self.cuda_available:
-            return {}
-        
-        if gpu_id is None:
-            gpu_id = self._select_optimal_gpu()
-        
-        device = torch.device(f'cuda:{gpu_id}')
-        gpu_tensors = {}
-        
-        # Use CUDA streams for parallel transfers
-        stream = torch.cuda.Stream(device=device)
-        
-        with torch.cuda.stream(stream):
-            for name in names:
-                try:
-                    tensor = self.get_gpu_tensor(name, gpu_id)
-                    if tensor is not None:
-                        gpu_tensors[name] = tensor
-                except Exception as e:
-                    logger.warning(f"⚠️ Failed to prefetch '{name}' to GPU {gpu_id}: {e}")
-        
-        # Synchronize stream to ensure all transfers complete
-        stream.synchronize()
-        
-        logger.debug(f"🚀 Prefetched {len(gpu_tensors)} arrays to GPU {gpu_id}")
-        return gpu_tensors
-    
-    def _select_optimal_gpu(self) -> int:
-        """Select GPU with most available memory"""
-        if not self.cuda_available or self.gpu_count == 0:
-            return 0
-        
-        best_gpu = 0
-        max_free_memory = 0
-        
-        for i in range(self.gpu_count):
-            try:
-                torch.cuda.set_device(i)
-                free_memory = torch.cuda.get_device_properties(i).total_memory - torch.cuda.memory_allocated(i)
-                if free_memory > max_free_memory:
-                    max_free_memory = free_memory
-                    best_gpu = i
-            except:
-                continue
-        
-        return best_gpu
-    
-    def _numpy_to_torch_dtype(self, numpy_dtype):
-        """Convert numpy dtype to torch dtype"""
-        if numpy_dtype == np.float32:
-            return torch.float32
-        elif numpy_dtype == np.float64:
-            return torch.float64
-        elif numpy_dtype == np.int32:
-            return torch.int32
-        elif numpy_dtype == np.int64:
-            return torch.int64
-        else:
-            return torch.float32
-    
-    def get_memory_stats(self) -> Dict[str, Any]:
-        """Get comprehensive memory usage statistics"""
-        stats = {
-            'shared_arrays': len(self.shared_arrays),
-            'gpu_pinned_arrays': len(self.gpu_pinned_arrays),
-            'memory_mapped_arrays': len(self.memory_mapped_arrays),
-            'total_arrays': len(self.shared_arrays) + len(self.gpu_pinned_arrays) + len(self.memory_mapped_arrays),
-            'system_ram_usage_gb': (psutil.virtual_memory().total - psutil.virtual_memory().available) / (1024**3),
-            'system_ram_available_gb': psutil.virtual_memory().available / (1024**3)
-        }
-        
-        if self.cuda_available:
-            gpu_stats = {}
-            for i in range(self.gpu_count):
-                try:
-                    torch.cuda.set_device(i)
-                    allocated = torch.cuda.memory_allocated(i) / (1024**3)
-                    reserved = torch.cuda.memory_reserved(i) / (1024**3)
-                    total = torch.cuda.get_device_properties(i).total_memory / (1024**3)
-                    gpu_stats[f'gpu_{i}'] = {
-                        'allocated_gb': allocated,
-                        'reserved_gb': reserved,
-                        'total_gb': total,
-                        'free_gb': total - allocated
-                    }
-                except:
-                    gpu_stats[f'gpu_{i}'] = {'error': 'Unable to get stats'}
-            
-            stats['gpu_memory'] = gpu_stats
-        
-        return stats
-    
-    def cleanup(self):
-        """Clean up all shared memory resources"""
-        logger.info("🧹 Cleaning up TurboSharedMemoryManager...")
-        
-        # Clean up memory-mapped arrays
-        for name, array_info in self.memory_mapped_arrays.items():
-            try:
-                array_info['mmap'].close()
-                if array_info['file'].exists():
-                    array_info['file'].unlink()
-            except Exception as e:
-                logger.warning(f"⚠️ Failed to cleanup memory-mapped array '{name}': {e}")
-        
-        # Clean up GPU pinned arrays
-        for name, tensor_info in self.gpu_pinned_arrays.items():
-            try:
-                del tensor_info['tensor']
-                if self.cuda_available:
-                    torch.cuda.empty_cache()
-            except Exception as e:
-                logger.warning(f"⚠️ Failed to cleanup GPU-pinned array '{name}': {e}")
-        
-        # Clear references
-        self.shared_arrays.clear()
-        self.gpu_pinned_arrays.clear()
-        self.memory_mapped_arrays.clear()
-        self.locks.clear()
-        
-        # Force garbage collection
-        gc.collect()
-        
-        logger.info("✅ TurboSharedMemoryManager cleanup complete")
-    
-    def __del__(self):
-        """Destructor to ensure cleanup"""
-        try:
-            self.cleanup()
-        except:
-            pass                
-
 class TurboMemoryMappedCache:
     """NEW: Memory-mapped feature cache for lightning-fast I/O"""
     
@@ -1429,68 +846,12 @@ class TurboGPUBatchEngine:
         
         logger.info("🚀 GPU batch correlation engine initialized for maximum performance")
     
-    def _assess_quality(self, score: float) -> str:
-        """Assess correlation quality based on score thresholds"""
-        if score >= 0.85:
-            return 'excellent'
-        elif score >= 0.70:
-            return 'very_good'
-        elif score >= 0.55:
-            return 'good'
-        elif score >= 0.40:
-            return 'fair'
-        elif score >= 0.25:
-            return 'poor'
-        else:
-            return 'very_poor'
-    
-    def _standardize_feature_tensor(self, features, device, target_length=512):
-        """Standardize feature tensor to consistent size"""
-        try:
-            # Convert to tensor if not already
-            if not isinstance(features, torch.Tensor):
-                if isinstance(features, (list, tuple)):
-                    features = torch.tensor(features, dtype=torch.float32)
-                elif isinstance(features, np.ndarray):
-                    features = torch.from_numpy(features).float()
-                else:
-                    features = torch.tensor([features], dtype=torch.float32)
-            
-            # Ensure we have at least 2D tensor
-            if features.dim() == 1:
-                features = features.unsqueeze(-1)
-            
-            # Move to device
-            features = features.to(device, non_blocking=True)
-            
-            # Standardize sequence length using interpolation
-            if features.size(0) != target_length:
-                # Interpolate to target length
-                features = features.transpose(0, 1).unsqueeze(0)
-                features = F.interpolate(features, size=target_length, mode='linear', align_corners=False)
-                features = features.squeeze(0).transpose(0, 1)
-            
-            # Ensure consistent feature dimension (4D)
-            if features.size(-1) < 4:
-                padding_size = 4 - features.size(-1)
-                padding = torch.zeros(features.size(0), padding_size, device=device)
-                features = torch.cat([features, padding], dim=-1)
-            elif features.size(-1) > 4:
-                features = features[:, :4]
-            
-            return features
-            
-        except Exception as e:
-            logger.debug(f"Feature standardization failed: {e}")
-            return torch.zeros(target_length, 4, device=device)
-    
-    
     def _create_correlation_model(self, device: torch.device) -> nn.Module:
-        """Create optimized GPU correlation model - ACCURACY PRESERVING VERSION"""
+        """Create optimized GPU correlation model"""
         class TurboBatchCorrelationModel(nn.Module):
             def __init__(self):
                 super().__init__()
-                # Learnable ensemble weights (PRESERVED)
+                # Learnable ensemble weights
                 self.motion_weight = nn.Parameter(torch.tensor(0.25))
                 self.temporal_weight = nn.Parameter(torch.tensor(0.20))
                 self.statistical_weight = nn.Parameter(torch.tensor(0.15))
@@ -1498,43 +859,37 @@ class TurboGPUBatchEngine:
                 self.cnn_weight = nn.Parameter(torch.tensor(0.15))
                 self.dtw_weight = nn.Parameter(torch.tensor(0.10))
                 
-                # Batch normalization for stability (PRESERVED)
+                # Batch normalization for stability
                 self.batch_norm = nn.BatchNorm1d(6)
             
             def forward(self, video_features_batch, gps_features_batch):
-                """PROPER FIX: Standardize input shapes while preserving ALL information"""
-                # STRICT GPU: Ensure all tensors are on correct GPU device
+                # FIXED: Ensure all tensors are on correct GPU device
                 device = video_features_batch.device
                 if gps_features_batch.device != device:
                     gps_features_batch = gps_features_batch.to(device, non_blocking=True)
                 
-                # Verify we're actually using GPU (STRICT MODE COMPLIANCE)
+                # Verify we're actually using GPU
                 if device.type != 'cuda':
                     raise RuntimeError(f"Expected CUDA device, got {device}")
                 
                 batch_size = video_features_batch.shape[0]
                 
-                # ACCURACY PRESERVING FIX: Standardize input tensor shapes BEFORE correlation
-                video_standardized, gps_standardized = self._standardize_input_tensors(
-                    video_features_batch, gps_features_batch, device
-                )
+                # Compute all correlation types in parallel
+                motion_corr = self._compute_motion_correlation_batch(video_features_batch, gps_features_batch)
+                temporal_corr = self._compute_temporal_correlation_batch(video_features_batch, gps_features_batch)
+                statistical_corr = self._compute_statistical_correlation_batch(video_features_batch, gps_features_batch)
+                optical_flow_corr = self._compute_optical_flow_correlation_batch(video_features_batch, gps_features_batch)
+                cnn_corr = self._compute_cnn_correlation_batch(video_features_batch, gps_features_batch)
+                dtw_corr = self._compute_dtw_correlation_batch(video_features_batch, gps_features_batch)
                 
-                # Now compute correlations with standardized inputs (FULL ACCURACY MAINTAINED)
-                motion_corr = self._compute_motion_correlation_batch(video_standardized, gps_standardized)
-                temporal_corr = self._compute_temporal_correlation_batch(video_standardized, gps_standardized)
-                statistical_corr = self._compute_statistical_correlation_batch(video_standardized, gps_standardized)
-                optical_flow_corr = self._compute_optical_flow_correlation_batch(video_standardized, gps_standardized)
-                cnn_corr = self._compute_cnn_correlation_batch(video_standardized, gps_standardized)
-                dtw_corr = self._compute_dtw_correlation_batch(video_standardized, gps_standardized)
-                
-                # Stack all correlations - GUARANTEED to work with no information loss
+                # Stack all correlations
                 all_corr = torch.stack([motion_corr, temporal_corr, statistical_corr, 
                                         optical_flow_corr, cnn_corr, dtw_corr], dim=1).to(device, non_blocking=True)
                 
-                # Apply batch normalization (PRESERVED FUNCTIONALITY)
+                # Apply batch normalization
                 all_corr = self.batch_norm(all_corr)
                 
-                # Weighted combination (PRESERVED FUNCTIONALITY)
+                # Weighted combination
                 weights = torch.stack([self.motion_weight, self.temporal_weight, self.statistical_weight,
                                     self.optical_flow_weight, self.cnn_weight, self.dtw_weight]).to(device, non_blocking=True)
                 weights = F.softmax(weights, dim=0)
@@ -1543,204 +898,107 @@ class TurboGPUBatchEngine:
                 
                 return torch.sigmoid(combined_scores)  # Ensure [0,1] range
             
-            def _standardize_input_tensors(self, video_batch, gps_batch, device):
-                """
-                ACCURACY PRESERVING: Standardize tensor shapes without losing information
-                
-                Goal: Make both tensors the same shape [batch_size, sequence_length, feature_dim]
-                Method: Use interpolation/expansion rather than averaging
-                """
-                
-                batch_size = video_batch.size(0)
-                
-                # Determine target dimensions
-                target_sequence_length = 512  # Standard sequence length
-                target_feature_dim = 4        # Standard feature dimension
-                
-                # Standardize video tensor
-                if video_batch.dim() == 2:
-                    # [batch_size, features] → [batch_size, 1, features] → [batch_size, sequence_length, features]
-                    video_batch = video_batch.unsqueeze(1)  # Add sequence dimension
-                    video_batch = video_batch.expand(batch_size, target_sequence_length, -1)
-                elif video_batch.dim() == 3:
-                    # [batch_size, seq_len, features] → standardize seq_len
-                    current_seq_len = video_batch.size(1)
-                    if current_seq_len != target_sequence_length:
-                        # Use interpolation to preserve temporal patterns
-                        video_batch = video_batch.transpose(1, 2)  # [batch, features, seq_len]
-                        video_batch = F.interpolate(
-                            video_batch, 
-                            size=target_sequence_length, 
-                            mode='linear', 
-                            align_corners=False
-                        )
-                        video_batch = video_batch.transpose(1, 2)  # [batch, seq_len, features]
-                
-                # Standardize GPS tensor  
-                if gps_batch.dim() == 2:
-                    # [batch_size, features] → [batch_size, sequence_length, features]
-                    gps_batch = gps_batch.unsqueeze(1)  # Add sequence dimension
-                    gps_batch = gps_batch.expand(batch_size, target_sequence_length, -1)
-                elif gps_batch.dim() == 3:
-                    # [batch_size, seq_len, features] → standardize seq_len
-                    current_seq_len = gps_batch.size(1)
-                    if current_seq_len != target_sequence_length:
-                        # Use interpolation to preserve temporal patterns
-                        gps_batch = gps_batch.transpose(1, 2)  # [batch, features, seq_len]
-                        gps_batch = F.interpolate(
-                            gps_batch, 
-                            size=target_sequence_length, 
-                            mode='linear', 
-                            align_corners=False
-                        )
-                        gps_batch = gps_batch.transpose(1, 2)  # [batch, seq_len, features]
-                
-                # Ensure both tensors have same feature dimension
-                if video_batch.size(-1) != target_feature_dim:
-                    if video_batch.size(-1) < target_feature_dim:
-                        # Pad with zeros
-                        padding_size = target_feature_dim - video_batch.size(-1)
-                        padding = torch.zeros(batch_size, target_sequence_length, padding_size, device=device)
-                        video_batch = torch.cat([video_batch, padding], dim=-1)
-                    else:
-                        # Truncate to target size
-                        video_batch = video_batch[:, :, :target_feature_dim]
-                
-                if gps_batch.size(-1) != target_feature_dim:
-                    if gps_batch.size(-1) < target_feature_dim:
-                        # Pad with zeros
-                        padding_size = target_feature_dim - gps_batch.size(-1)
-                        padding = torch.zeros(batch_size, target_sequence_length, padding_size, device=device)
-                        gps_batch = torch.cat([gps_batch, padding], dim=-1)
-                    else:
-                        # Truncate to target size
-                        gps_batch = gps_batch[:, :, :target_feature_dim]
-                
-                # Final validation: both should be [batch_size, sequence_length, feature_dim]
-                assert video_batch.shape == (batch_size, target_sequence_length, target_feature_dim)
-                assert gps_batch.shape == (batch_size, target_sequence_length, target_feature_dim)
-                
-                return video_batch, gps_batch
-            
             def _compute_motion_correlation_batch(self, video_batch, gps_batch):
-                """ACCURACY PRESERVING: Enhanced motion correlation using full sequence information"""
-                # Both tensors are now [batch_size, sequence_length, feature_dim]
+                # Enhanced motion correlation
+                video_motion = torch.mean(video_batch, dim=-1)
+                gps_motion = torch.mean(gps_batch, dim=-1)
                 
-                # Compute motion over the sequence dimension (preserves temporal information)
-                video_motion = torch.mean(video_batch, dim=-1)  # [batch_size, sequence_length]
-                gps_motion = torch.mean(gps_batch, dim=-1)      # [batch_size, sequence_length]
-                
-                # Compute correlation across the sequence (uses ALL temporal information)
                 video_motion = F.normalize(video_motion, dim=-1, eps=1e-8)
                 gps_motion = F.normalize(gps_motion, dim=-1, eps=1e-8)
                 
-                # Correlation using full sequence information
-                correlation = F.cosine_similarity(video_motion, gps_motion, dim=-1)  # [batch_size]
+                correlation = F.cosine_similarity(video_motion, gps_motion, dim=-1)
                 return torch.abs(correlation)
             
             def _compute_temporal_correlation_batch(self, video_batch, gps_batch):
-                """ACCURACY PRESERVING: Temporal dynamics using full sequence information"""
-                # Both tensors are [batch_size, sequence_length, feature_dim]
+                # Temporal dynamics correlation
+                if video_batch.size(-1) > 1:
+                    video_temporal = torch.diff(video_batch, dim=-1)
+                    video_temporal = torch.mean(video_temporal, dim=-1)
+                else:
+                    video_temporal = torch.mean(video_batch, dim=-1)
                 
-                # Compute temporal differences (preserves ALL temporal patterns)
-                video_temporal = torch.diff(video_batch, dim=1)  # [batch_size, seq_len-1, feature_dim]
-                gps_temporal = torch.diff(gps_batch, dim=1)      # [batch_size, seq_len-1, feature_dim]
+                if gps_batch.size(-1) > 1:
+                    gps_temporal = torch.diff(gps_batch, dim=-1)
+                    gps_temporal = torch.mean(gps_temporal, dim=-1)
+                else:
+                    gps_temporal = torch.mean(gps_batch, dim=-1)
                 
-                # Aggregate temporal information (preserves dynamics)
-                video_temporal = torch.mean(video_temporal, dim=-1)  # [batch_size, seq_len-1]
-                gps_temporal = torch.mean(gps_temporal, dim=-1)      # [batch_size, seq_len-1]
-                
-                # Normalize and correlate temporal patterns
                 video_temporal = F.normalize(video_temporal, dim=-1, eps=1e-8)
                 gps_temporal = F.normalize(gps_temporal, dim=-1, eps=1e-8)
                 
-                correlation = F.cosine_similarity(video_temporal, gps_temporal, dim=-1)  # [batch_size]
+                correlation = F.cosine_similarity(video_temporal, gps_temporal, dim=-1)
                 return torch.abs(correlation)
             
             def _compute_statistical_correlation_batch(self, video_batch, gps_batch):
-                """ACCURACY PRESERVING: Statistical moments using full distribution information"""
-                # Both tensors are [batch_size, sequence_length, feature_dim]
+                # Statistical moments correlation
+                device = video_batch.device
+                video_mean = torch.mean(video_batch, dim=-1)
+                video_std = torch.std(video_batch, dim=-1)
+                gps_mean = torch.mean(gps_batch, dim=-1)
+                gps_std = torch.std(gps_batch, dim=-1)
                 
-                # Compute statistics across both sequence and feature dimensions (full information)
-                video_mean = torch.mean(video_batch, dim=(1, 2))  # [batch_size]
-                video_std = torch.std(video_batch, dim=(1, 2))    # [batch_size]
-                gps_mean = torch.mean(gps_batch, dim=(1, 2))      # [batch_size]
-                gps_std = torch.std(gps_batch, dim=(1, 2))        # [batch_size]
-                
-                # Combine statistical features
-                video_stats = torch.stack([video_mean, video_std], dim=-1)  # [batch_size, 2]
-                gps_stats = torch.stack([gps_mean, gps_std], dim=-1)        # [batch_size, 2]
+                video_stats = torch.stack([video_mean, video_std], dim=-1).to(device, non_blocking=True)
+                gps_stats = torch.stack([gps_mean, gps_std], dim=-1).to(device, non_blocking=True)
                 
                 video_stats = F.normalize(video_stats, dim=-1, eps=1e-8)
                 gps_stats = F.normalize(gps_stats, dim=-1, eps=1e-8)
                 
-                correlation = F.cosine_similarity(video_stats, gps_stats, dim=-1)  # [batch_size]
+                correlation = F.cosine_similarity(video_stats, gps_stats, dim=-1)
                 return torch.abs(correlation)
             
             def _compute_optical_flow_correlation_batch(self, video_batch, gps_batch):
-                """ACCURACY PRESERVING: Optical flow using full sequence information"""
-                # Both tensors are [batch_size, sequence_length, feature_dim]
+                # Simplified optical flow correlation for batch processing
+                if video_batch.size(-1) > 2:
+                    video_flow = torch.diff(video_batch, n=2, dim=-1)
+                    video_flow = torch.mean(video_flow, dim=-1)
+                else:
+                    video_flow = torch.mean(video_batch, dim=-1)
                 
-                # Compute second-order differences (optical flow approximation)
-                video_flow = torch.diff(video_batch, n=2, dim=1)  # [batch_size, seq_len-2, feature_dim]
-                gps_flow = torch.diff(gps_batch, n=2, dim=1)      # [batch_size, seq_len-2, feature_dim]
-                
-                # Aggregate flow information (preserves flow patterns)
-                video_flow = torch.mean(video_flow, dim=-1)  # [batch_size, seq_len-2]
-                gps_flow = torch.mean(gps_flow, dim=-1)      # [batch_size, seq_len-2]
+                if gps_batch.size(-1) > 2:
+                    gps_flow = torch.diff(gps_batch, n=2, dim=-1)
+                    gps_flow = torch.mean(gps_flow, dim=-1)
+                else:
+                    gps_flow = torch.mean(gps_batch, dim=-1)
                 
                 video_flow = F.normalize(video_flow, dim=-1, eps=1e-8)
                 gps_flow = F.normalize(gps_flow, dim=-1, eps=1e-8)
                 
-                correlation = F.cosine_similarity(video_flow, gps_flow, dim=-1)  # [batch_size]
+                correlation = F.cosine_similarity(video_flow, gps_flow, dim=-1)
                 return torch.abs(correlation)
             
             def _compute_cnn_correlation_batch(self, video_batch, gps_batch):
-                """ACCURACY PRESERVING: CNN features using full spatial-temporal information"""
-                # Both tensors are [batch_size, sequence_length, feature_dim]
+                # CNN feature correlation (simplified for batch processing)
+                video_cnn = torch.mean(video_batch**2, dim=-1)  # Energy-based features
+                gps_cnn = torch.mean(gps_batch**2, dim=-1)
                 
-                # Compute energy features across all dimensions (preserves ALL information)
-                video_cnn = torch.mean(video_batch**2, dim=(1, 2))  # [batch_size]
-                gps_cnn = torch.mean(gps_batch**2, dim=(1, 2))      # [batch_size]
+                video_cnn = F.normalize(video_cnn, dim=-1, eps=1e-8)
+                gps_cnn = F.normalize(gps_cnn, dim=-1, eps=1e-8)
                 
-                video_cnn = F.normalize(video_cnn.unsqueeze(-1), dim=-1, eps=1e-8).squeeze(-1)
-                gps_cnn = F.normalize(gps_cnn.unsqueeze(-1), dim=-1, eps=1e-8).squeeze(-1)
-                
-                correlation = F.cosine_similarity(video_cnn.unsqueeze(-1), gps_cnn.unsqueeze(-1), dim=-1)
-                return torch.abs(correlation)  # [batch_size]
+                correlation = F.cosine_similarity(video_cnn, gps_cnn, dim=-1)
+                return torch.abs(correlation)
             
             def _compute_dtw_correlation_batch(self, video_batch, gps_batch):
-                """ACCURACY PRESERVING: DTW using full sequence alignment"""
-                # Both tensors are [batch_size, sequence_length, feature_dim]
+                # Simplified DTW-like correlation for batch processing
+                # Use cross-correlation as DTW approximation for speed
                 batch_size = video_batch.size(0)
                 device = video_batch.device
                 correlations = torch.zeros(batch_size, device=device)
                 
-                # Process each item with full sequence information
                 for i in range(batch_size):
-                    video_seq = video_batch[i]  # [sequence_length, feature_dim]
-                    gps_seq = gps_batch[i]      # [sequence_length, feature_dim]
+                    video_seq = video_batch[i].mean(dim=0)
+                    gps_seq = gps_batch[i].mean(dim=0)
                     
-                    # Use full sequence for DTW approximation (preserves ALL temporal patterns)
-                    video_signature = torch.mean(video_seq, dim=-1)  # [sequence_length]
-                    gps_signature = torch.mean(gps_seq, dim=-1)      # [sequence_length]
+                    # Normalize sequences
+                    video_seq = F.normalize(video_seq.unsqueeze(0), dim=-1, eps=1e-8)
+                    gps_seq = F.normalize(gps_seq.unsqueeze(0), dim=-1, eps=1e-8)
                     
-                    # Sequence-level correlation (uses full temporal information)
-                    video_signature = F.normalize(video_signature, dim=-1, eps=1e-8)
-                    gps_signature = F.normalize(gps_signature, dim=-1, eps=1e-8)
-                    
-                    corr = F.cosine_similarity(video_signature, gps_signature, dim=-1)
+                    # Cross-correlation
+                    corr = F.cosine_similarity(video_seq, gps_seq, dim=-1)
                     correlations[i] = torch.abs(corr)
                 
-                return correlations  # [batch_size]
+                return correlations
         
-        # RTX 5060 Ti optimized model instantiation
         model = TurboBatchCorrelationModel().to(device, non_blocking=True)
-        
-        # Enable optimized GPU execution
-        if hasattr(torch.backends.cudnn, 'benchmark'):
-            torch.backends.cudnn.benchmark = True
-        
         return model
     
     def compute_batch_correlations_turbo(self, video_features_dict: Dict, gps_features_dict: Dict) -> Dict[str, List[Dict]]:
@@ -1925,63 +1183,15 @@ class TurboGPUBatchEngine:
                 if not gps_tensors:
                     continue
                 
-                                # Stack tensors for batch processing with size standardization
+                # Stack tensors for batch processing
                 try:
-                    # FIXED: Standardize tensor sizes before stacking
-                    standardized_gps_tensors = []
-                    target_length = 512  # Standard sequence length
-                    
-                    for gps_tensor in gps_tensors:
-                        # Standardize each tensor to the same size
-                        if gps_tensor.size(0) != target_length:
-                            # Interpolate to target length
-                            gps_tensor_reshaped = gps_tensor.transpose(0, 1).unsqueeze(0)  # [1, features, sequence]
-                            gps_tensor_interpolated = F.interpolate(
-                                gps_tensor_reshaped, 
-                                size=target_length, 
-                                mode='linear', 
-                                align_corners=False
-                            )
-                            gps_tensor = gps_tensor_interpolated.squeeze(0).transpose(0, 1)  # [sequence, features]
-                        
-                        # Ensure consistent feature dimension
-                        if gps_tensor.size(-1) < 4:
-                            padding_size = 4 - gps_tensor.size(-1)
-                            padding = torch.zeros(gps_tensor.size(0), padding_size, device=device)
-                            gps_tensor = torch.cat([gps_tensor, padding], dim=-1)
-                        elif gps_tensor.size(-1) > 4:
-                            gps_tensor = gps_tensor[:, :4]
-                        
-                        standardized_gps_tensors.append(gps_tensor)
-                    
-                    # Now stacking will work because all tensors have the same size
-                    gps_batch_tensor = torch.stack(standardized_gps_tensors).to(device, non_blocking=True)
-                    
-                    # Also standardize video tensor to match
-                    if video_tensor.size(0) != target_length:
-                        video_tensor_reshaped = video_tensor.transpose(0, 1).unsqueeze(0)
-                        video_tensor_interpolated = F.interpolate(
-                            video_tensor_reshaped, 
-                            size=target_length, 
-                            mode='linear', 
-                            align_corners=False
-                        )
-                        video_tensor = video_tensor_interpolated.squeeze(0).transpose(0, 1)
-                    
-                    # Ensure video tensor has consistent feature dimension
-                    if video_tensor.size(-1) < 4:
-                        padding_size = 4 - video_tensor.size(-1)
-                        padding = torch.zeros(video_tensor.size(0), padding_size, device=device)
-                        video_tensor = torch.cat([video_tensor, padding], dim=-1)
-                    elif video_tensor.size(-1) > 4:
-                        video_tensor = video_tensor[:, :4]
-                    
-                    video_batch_tensor = video_tensor.unsqueeze(0).repeat(len(standardized_gps_tensors), 1, 1)
+                    gps_batch_tensor = torch.stack(gps_tensors).to(device, non_blocking=True)
+                    video_batch_tensor = video_tensor.unsqueeze(0).repeat(len(gps_tensors), 1, 1)
                     
                     # Compute batch correlations
                     correlation_scores = model(video_batch_tensor, gps_batch_tensor)
                     correlation_scores = correlation_scores.cpu().numpy()
-                                        
+                    
                     # Create match entries
                     for i, (gps_path, score) in enumerate(zip(valid_gps_paths, correlation_scores)):
                         gps_data = gps_features_dict[gps_path]
@@ -2018,19 +1228,7 @@ class TurboGPUBatchEngine:
         return batch_results
     
     def _features_to_tensor(self, features: Dict, device: torch.device) -> Optional[torch.Tensor]:
-        """
-        STRICT GPU MODE: All operations on GPU for maximum acceleration
-        
-        ✅ RTX 5060 Ti Optimized
-        ✅ GPU-Only Processing (respects --strict flag)
-        ✅ No CPU fallbacks  
-        ✅ Maximum GPU Utilization
-        ✅ Safe GPU Memory Operations
-        """
-        
-        # STRICT MODE: Move to GPU immediately and stay there
-        torch.cuda.set_device(device)
-        
+        """Convert feature dictionary to optimized GPU tensor"""
         try:
             feature_arrays = []
             
@@ -2048,218 +1246,45 @@ class TurboGPUBatchEngine:
                         feature_arrays.append(arr)
             
             if not feature_arrays:
-                # STRICT GPU: Create directly on GPU
-                return torch.zeros(512, 4, dtype=torch.float32, device=device)
+                return None
             
-            # STRICT GPU APPROACH: All processing on GPU
+            # Pad arrays to same length for batch processing
+            max_len = max(len(arr) for arr in feature_arrays)
+            padded_arrays = []
             
-            # Step 1: Convert to GPU tensors immediately (maximum GPU utilization)
-            gpu_feature_tensors = []
             for arr in feature_arrays:
-                # Direct to GPU conversion (no CPU intermediate)
-                gpu_tensor = torch.from_numpy(arr).float().to(device, non_blocking=True)
-                gpu_feature_tensors.append(gpu_tensor)
-            
-            # Step 2: GPU-based standardization (RTX 5060 Ti optimized)
-            target_length = 512
-            target_features = 4
-            
-            standardized_gpu_tensors = []
-            
-            for gpu_tensor in gpu_feature_tensors:
-                # All operations on GPU using native PyTorch GPU operations
-                
-                # GPU-based length standardization using interpolation
-                if gpu_tensor.size(0) != target_length:
-                    # Use GPU interpolation (highly optimized on RTX 5060 Ti)
-                    gpu_tensor_reshaped = gpu_tensor.unsqueeze(0).unsqueeze(0)  # [1, 1, sequence]
-                    gpu_tensor_interpolated = F.interpolate(
-                        gpu_tensor_reshaped, 
-                        size=target_length, 
-                        mode='linear', 
-                        align_corners=False
-                    ).squeeze(0).squeeze(0)  # Back to [sequence]
-                    gpu_tensor = gpu_tensor_interpolated
-                
-                standardized_gpu_tensors.append(gpu_tensor)
-            
-            # Step 3: GPU-based feature dimension management
-            while len(standardized_gpu_tensors) < target_features:
-                # Create zero tensor directly on GPU
-                zero_tensor = torch.zeros(target_length, dtype=torch.float32, device=device)
-                standardized_gpu_tensors.append(zero_tensor)
-            
-            if len(standardized_gpu_tensors) > target_features:
-                # Keep first N features (GPU memory efficient)
-                standardized_gpu_tensors = standardized_gpu_tensors[:target_features]
-            
-            # Step 4: GPU-native tensor stacking (fixes the original error)
-            # Stack along dim=1 to create [sequence_length, num_features]
-            feature_matrix = torch.stack(standardized_gpu_tensors, dim=1)
-            
-            # Step 5: GPU-based validation and correction
-            if feature_matrix.shape != (target_length, target_features):
-                # GPU-native reshape/padding operations
-                if feature_matrix.numel() >= target_length * target_features:
-                    # Reshape if we have enough elements
-                    feature_matrix = feature_matrix.view(target_length, target_features)
+                if len(arr) < max_len:
+                    padded = np.pad(arr, (0, max_len - len(arr)), mode='constant')
                 else:
-                    # Create correct size and copy data (all on GPU)
-                    correct_tensor = torch.zeros(target_length, target_features, 
-                                               dtype=torch.float32, device=device)
-                    
-                    # Copy available data (GPU operation)
-                    copy_rows = min(feature_matrix.size(0), target_length)
-                    copy_cols = min(feature_matrix.size(1), target_features)
-                    correct_tensor[:copy_rows, :copy_cols] = feature_matrix[:copy_rows, :copy_cols]
-                    feature_matrix = correct_tensor
+                    padded = arr[:max_len]
+                padded_arrays.append(padded)
             
-            # Step 6: GPU-native data cleaning (prevent illegal memory access)
-            # Use GPU operations to clean data
-            feature_matrix = torch.where(torch.isnan(feature_matrix), 
-                                       torch.zeros_like(feature_matrix), 
-                                       feature_matrix)
-            feature_matrix = torch.where(torch.isinf(feature_matrix), 
-                                       torch.ones_like(feature_matrix), 
-                                       feature_matrix)
+            # Stack and convert to tensor
+            feature_matrix = np.stack(padded_arrays, axis=0)
+            tensor = torch.from_numpy(feature_matrix).float().to(device, non_blocking=True)
             
-            # Step 7: GPU memory optimization for RTX 5060 Ti
-            # Ensure contiguous memory layout for maximum GPU efficiency
-            feature_matrix = feature_matrix.contiguous()
-            
-            return feature_matrix
+            return tensor
             
         except Exception as e:
-            logger.debug(f"GPU tensor conversion failed: {e}")
-            
-            # STRICT MODE: Even fallback must be on GPU
-            try:
-                # GPU-only fallback (no CPU involvement)
-                return torch.zeros(512, 4, dtype=torch.float32, device=device)
-            except:
-                # Ultimate GPU-only fallback
-                torch.cuda.empty_cache()
-                return torch.zeros(512, 4, dtype=torch.float32, device=device)
+            logger.debug(f"Feature tensor conversion failed: {e}")
+            return None
     
-    # ===== STRICT GPU BATCH PROCESSING ENHANCEMENT =====
-    
-    def _process_gpu_batch_strict_mode(self, video_batch_items, gps_batch_items, model, device):
-        """
-        Enhanced batch processing for strict GPU mode
-        Ensures all tensor operations stay on GPU
-        """
-        
-        results = []
-        torch.cuda.set_device(device)
-        
-        # GPU-native tensor preparation
-        with torch.cuda.device(device):
-            
-            # Process video features with GPU-only operations
-            video_tensors = []
-            video_names = []
-            
-            for video_file, features in video_batch_items:
-                if features and 'features' in features:
-                    # Use our strict GPU tensor conversion
-                    video_tensor = self._features_to_tensor(features['features'], device)
-                    if video_tensor is not None:
-                        video_tensors.append(video_tensor)
-                        video_names.append(video_file)
-            
-            # Process GPS features with GPU-only operations  
-            gps_tensors = []
-            gps_names = []
-            
-            for gps_file, features in gps_batch_items:
-                if features and 'features' in features:
-                    # Use our strict GPU tensor conversion
-                    gps_tensor = self._features_to_tensor(features['features'], device)
-                    if gps_tensor is not None:
-                        gps_tensors.append(gps_tensor)
-                        gps_names.append(gps_file)
-            
-            # GPU-native batch creation (this should now work without size errors)
-            if video_tensors and gps_tensors:
-                try:
-                    # All tensors are now guaranteed to be [512, 4] from GPU processing
-                    video_batch = torch.stack(video_tensors, dim=0)  # [batch, 512, 4]
-                    gps_batch = torch.stack(gps_tensors, dim=0)      # [batch, 512, 4]
-                    
-                    # GPU-native correlation computation
-                    with torch.no_grad():
-                        for i, video_name in enumerate(video_names):
-                            for j, gps_name in enumerate(gps_names):
-                                # Extract single samples (keep on GPU)
-                                video_single = video_batch[i:i+1]  # [1, 512, 4]
-                                gps_single = gps_batch[j:j+1]      # [1, 512, 4]
-                                
-                                # GPU correlation computation
-                                score = model(video_single, gps_single)
-                                results.append((video_name, gps_name, score.item()))
-                    
-                except Exception as e:
-                    logger.debug(f"Strict GPU batch processing failed: {e}")
-                    # Individual processing still on GPU
-                    for video_name, video_tensor in zip(video_names, video_tensors):
-                        for gps_name, gps_tensor in zip(gps_names, gps_tensors):
-                            try:
-                                video_single = video_tensor.unsqueeze(0)
-                                gps_single = gps_tensor.unsqueeze(0)
-                                score = model(video_single, gps_single)
-                                results.append((video_name, gps_name, score.item()))
-                            except:
-                                # Minimal score for failed correlations (still respects strict mode)
-                                results.append((video_name, gps_name, 0.01))
-        
-        return results
-    
-    # ===== STRICT MODE GPU HEALTH CHECK =====
-    
-    def validate_strict_gpu_mode(self):
-        """Validate GPUs are ready for strict mode processing"""
-        try:
-            for gpu_id in self.gpu_manager.gpu_ids:
-                device = torch.device(f'cuda:{gpu_id}')
-                
-                # Test GPU tensor operations that will be used
-                test_tensor = torch.zeros(512, 4, dtype=torch.float32, device=device)
-                test_result = test_tensor.sum()
-                
-                # Test interpolation (used in standardization)
-                test_interp = F.interpolate(test_tensor.unsqueeze(0).unsqueeze(0), 
-                                          size=256, mode='linear', align_corners=False)
-                
-                # Test stacking (the operation that was failing)
-                test_stack = torch.stack([test_tensor, test_tensor], dim=0)
-                
-                if not torch.isfinite(test_result):
-                    logger.error(f"Strict GPU mode validation failed for GPU {gpu_id}")
-                    return False
-                    
-            logger.info("✅ Strict GPU mode validation passed - all GPUs ready")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Strict GPU mode validation failed: {e}")
-            return False
-       
-        def _assess_quality(self, score: float) -> str:
-            """Assess correlation quality (PRESERVED)"""
-            if score >= 0.85:
-                return 'excellent'
-            elif score >= 0.70:
-                return 'very_good'
-            elif score >= 0.55:
-                return 'good'
-            elif score >= 0.40:
-                return 'fair'
-            elif score >= 0.25:
-                return 'poor'
-            else:
-                return 'very_poor'
-    
-    # ========== ALL ORIGINAL CLASSES PRESERVED WITH TURBO ENHANCEMENTS ==========
+    def _assess_quality(self, score: float) -> str:
+        """Assess correlation quality (PRESERVED)"""
+        if score >= 0.85:
+            return 'excellent'
+        elif score >= 0.70:
+            return 'very_good'
+        elif score >= 0.55:
+            return 'good'
+        elif score >= 0.40:
+            return 'fair'
+        elif score >= 0.25:
+            return 'poor'
+        else:
+            return 'very_poor'
+
+# ========== ALL ORIGINAL CLASSES PRESERVED WITH TURBO ENHANCEMENTS ==========
 
 class Enhanced360OpticalFlowExtractor:
     """FIXED & GPU-OPTIMIZED: Complete 360°-aware optical flow extraction + turbo optimizations"""
@@ -8415,410 +7440,7 @@ class GPUUtilizationMonitor:
             except Exception as e:
                 logger.debug(f"GPU monitoring error: {e}")
                 time.sleep(10)
-                
-class UltraOptimizedGPUVideoAssigner:
-    """
-    ULTRA-OPTIMIZED: GPU video assignment system for maximum performance
-    
-    Specifically optimized for:
-    - 2x RTX 5060 Ti (15.5GB each) 
-    - 125GB System RAM
-    - 16 CPU cores
-    - Video-GPX correlation workloads
-    """
-    
-    def __init__(self, gpu_manager, config):
-        self.gpu_manager = gpu_manager
-        self.config = config
-        self.gpu_capabilities = {}
-        self.video_complexity_cache = {}
-        self.assignment_history = defaultdict(list)
-        self.performance_metrics = defaultdict(dict)
-        
-        # Initialize GPU profiling
-        self._profile_gpu_capabilities()
-        
-        logger.info(f"🚀 UltraOptimizedGPUVideoAssigner initialized for {len(gpu_manager.gpu_ids)} GPUs")
-    
-    def _profile_gpu_capabilities(self):
-        """Profile each GPU's capabilities for optimal assignment"""
-        
-        for gpu_id in self.gpu_manager.gpu_ids:
-            try:
-                # Get GPU properties
-                if torch.cuda.is_available():
-                    props = torch.cuda.get_device_properties(gpu_id)
-                    memory_gb = props.total_memory / (1024**3)
-                    compute_capability = f"{props.major}.{props.minor}"
-                    multiprocessors = props.multi_processor_count
-                else:
-                    memory_gb = 15.5  # Fallback for RTX 5060 Ti
-                    compute_capability = "12.0"
-                    multiprocessors = 64
-                
-                # Calculate processing capacity
-                base_capacity = memory_gb * multiprocessors
-                
-                # Boost capacity for newer compute capabilities
-                if float(compute_capability) >= 12.0:
-                    capacity_multiplier = 1.5  # RTX 5060 Ti boost
-                elif float(compute_capability) >= 8.0:
-                    capacity_multiplier = 1.2
-                else:
-                    capacity_multiplier = 1.0
-                
-                processing_capacity = base_capacity * capacity_multiplier
-                
-                self.gpu_capabilities[gpu_id] = {
-                    'memory_gb': memory_gb,
-                    'compute_capability': compute_capability,
-                    'multiprocessors': multiprocessors,
-                    'processing_capacity': processing_capacity,
-                    'max_concurrent_videos': self._calculate_max_concurrent_videos(memory_gb),
-                    'optimal_batch_size': self._calculate_optimal_batch_size(memory_gb),
-                    'current_load': 0.0,
-                    'performance_score': 1.0
-                }
-                
-                logger.info(f"🎮 GPU {gpu_id} Profile:")
-                logger.info(f"   Memory: {memory_gb:.1f}GB")
-                logger.info(f"   Compute: {compute_capability}")
-                logger.info(f"   Processing Capacity: {processing_capacity:.1f}")
-                logger.info(f"   Max Concurrent Videos: {self.gpu_capabilities[gpu_id]['max_concurrent_videos']}")
-                
-            except Exception as e:
-                logger.warning(f"⚠️ Failed to profile GPU {gpu_id}: {e}")
-                # Fallback values for RTX 5060 Ti
-                self.gpu_capabilities[gpu_id] = {
-                    'memory_gb': 15.5,
-                    'compute_capability': "12.0", 
-                    'multiprocessors': 64,
-                    'processing_capacity': 1500.0,
-                    'max_concurrent_videos': 8,
-                    'optimal_batch_size': 16,
-                    'current_load': 0.0,
-                    'performance_score': 1.0
-                }
-    
-    def _calculate_max_concurrent_videos(self, memory_gb: float) -> int:
-        """Calculate maximum concurrent videos based on GPU memory"""
-        # Estimate memory per video (based on typical 360° video processing)
-        if hasattr(self.config, 'video_size') and self.config.video_size:
-            # Use configured video size
-            width, height = self.config.video_size
-            estimated_memory_per_video_gb = (width * height * 3 * 4) / (1024**3)  # RGB float32
-        else:
-            # Conservative estimate for 4K 360° video
-            estimated_memory_per_video_gb = 2.0
-        
-        # Reserve memory for models and operations
-        available_memory = memory_gb * 0.8  # 80% usable
-        max_videos = max(1, int(available_memory / estimated_memory_per_video_gb))
-        
-        # Cap based on system optimization
-        if memory_gb >= 15:  # RTX 5060 Ti class
-            return min(max_videos, 12)
-        elif memory_gb >= 10:
-            return min(max_videos, 8)
-        else:
-            return min(max_videos, 4)
-    
-    def _calculate_optimal_batch_size(self, memory_gb: float) -> int:
-        """Calculate optimal batch size for correlation processing"""
-        if memory_gb >= 15:  # RTX 5060 Ti class
-            return max(16, min(64, int(memory_gb * 2)))
-        elif memory_gb >= 10:
-            return max(8, min(32, int(memory_gb * 2)))
-        else:
-            return max(4, min(16, int(memory_gb * 2)))
 
-def create_intelligent_gpu_video_assignments(video_files: List[str], 
-                                           gpu_manager, 
-                                           config,
-                                           video_features: Optional[Dict] = None) -> Dict[int, List[str]]:
-    """
-    Create ultra-optimized GPU-to-video assignments for maximum performance
-    
-    This is the main function that creates the gpu_video_assignments dictionary
-    that your code is looking for.
-    
-    Args:
-        video_files: List of video file paths
-        gpu_manager: Your GPU manager instance
-        config: Configuration object
-        video_features: Optional dict of pre-computed video features for complexity analysis
-    
-    Returns:
-        Dict[int, List[str]]: Mapping of GPU ID to list of assigned video files
-    """
-    
-    if not video_files:
-        logger.warning("⚠️ No video files provided for GPU assignment")
-        return {gpu_id: [] for gpu_id in gpu_manager.gpu_ids}
-    
-    logger.info(f"🚀 Creating intelligent GPU assignments for {len(video_files)} videos across {len(gpu_manager.gpu_ids)} GPUs")
-    
-    # Initialize the assigner
-    assigner = UltraOptimizedGPUVideoAssigner(gpu_manager, config)
-    
-    # Analyze video complexity for intelligent assignment
-    video_complexity_scores = _analyze_video_complexity(video_files, video_features, config)
-    
-    # Create assignments using multiple strategies
-    if len(gpu_manager.gpu_ids) >= 2 and hasattr(config, 'turbo_mode') and config.turbo_mode:
-        # Use advanced load balancing for multi-GPU turbo mode
-        assignments = _create_advanced_load_balanced_assignments(
-            video_files, video_complexity_scores, assigner, config
-        )
-    else:
-        # Use simple round-robin for single GPU or non-turbo mode
-        assignments = _create_round_robin_assignments(video_files, gpu_manager.gpu_ids)
-    
-    # Log assignment summary
-    total_assigned = sum(len(videos) for videos in assignments.values())
-    logger.info(f"📊 GPU Assignment Summary:")
-    for gpu_id, videos in assignments.items():
-        avg_complexity = np.mean([video_complexity_scores.get(v, 1.0) for v in videos]) if videos else 0
-        logger.info(f"   GPU {gpu_id}: {len(videos)} videos (avg complexity: {avg_complexity:.2f})")
-    logger.info(f"   Total assigned: {total_assigned}/{len(video_files)} videos")
-    
-    return assignments
-
-def _analyze_video_complexity(video_files: List[str], 
-                            video_features: Optional[Dict],
-                            config) -> Dict[str, float]:
-    """Analyze video complexity for intelligent assignment"""
-    
-    complexity_scores = {}
-    
-    for video_file in video_files:
-        try:
-            # Method 1: Use pre-computed features if available
-            if video_features and video_file in video_features:
-                features = video_features[video_file]
-                if features and isinstance(features, dict):
-                    # Calculate complexity based on feature dimensions and variance
-                    complexity = 1.0
-                    if 'motion_features' in features:
-                        motion_var = np.var(features['motion_features']) if len(features['motion_features']) > 1 else 1.0
-                        complexity += min(motion_var * 0.1, 2.0)
-                    if 'optical_flow_features' in features:
-                        flow_complexity = len(features['optical_flow_features']) / 100.0
-                        complexity += min(flow_complexity, 1.5)
-                    complexity_scores[video_file] = min(complexity, 5.0)
-                    continue
-            
-            # Method 2: File size-based estimation (fast fallback)
-            file_size_mb = os.path.getsize(video_file) / (1024 * 1024)
-            
-            # Base complexity from file size
-            if file_size_mb > 1000:  # >1GB
-                complexity = 3.0
-            elif file_size_mb > 500:  # >500MB
-                complexity = 2.0
-            elif file_size_mb > 100:  # >100MB
-                complexity = 1.5
-            else:
-                complexity = 1.0
-            
-            # Method 3: Video metadata analysis (if enabled and time permits)
-            if hasattr(config, 'enable_video_analysis') and config.enable_video_analysis:
-                try:
-                    # Quick ffprobe for resolution and frame rate
-                    result = subprocess.run([
-                        'ffprobe', '-v', 'quiet', '-select_streams', 'v:0',
-                        '-show_entries', 'stream=width,height,r_frame_rate',
-                        '-of', 'csv=p=0', video_file
-                    ], capture_output=True, text=True, timeout=2)
-                    
-                    if result.returncode == 0:
-                        parts = result.stdout.strip().split(',')
-                        if len(parts) >= 3:
-                            width = int(parts[0])
-                            height = int(parts[1])
-                            
-                            # 360° video detection and complexity adjustment
-                            if width / height >= 1.8:  # Likely 360° video (2:1 ratio)
-                                complexity *= 1.8  # 360° videos are more complex
-                            
-                            # Resolution-based complexity
-                            total_pixels = width * height
-                            if total_pixels > 8000000:  # 4K+
-                                complexity *= 1.5
-                            elif total_pixels > 2000000:  # 1080p+
-                                complexity *= 1.2
-                
-                except (subprocess.TimeoutExpired, Exception):
-                    pass  # Use file size estimation
-            
-            complexity_scores[video_file] = min(complexity, 5.0)
-            
-        except Exception as e:
-            logger.debug(f"Failed to analyze complexity for {video_file}: {e}")
-            complexity_scores[video_file] = 1.5  # Default moderate complexity
-    
-    return complexity_scores
-
-def _create_advanced_load_balanced_assignments(video_files: List[str],
-                                             complexity_scores: Dict[str, float],
-                                             assigner: UltraOptimizedGPUVideoAssigner,
-                                             config) -> Dict[int, List[str]]:
-    """Create advanced load-balanced assignments for maximum performance"""
-    
-    assignments = {gpu_id: [] for gpu_id in assigner.gpu_manager.gpu_ids}
-    gpu_loads = {gpu_id: 0.0 for gpu_id in assigner.gpu_manager.gpu_ids}
-    
-    # Sort videos by complexity (descending) for better load balancing
-    sorted_videos = sorted(video_files, key=lambda v: complexity_scores.get(v, 1.0), reverse=True)
-    
-    for video_file in sorted_videos:
-        complexity = complexity_scores.get(video_file, 1.0)
-        
-        # Find the GPU with the lowest current load
-        best_gpu = min(gpu_loads, key=lambda gpu_id: (
-            gpu_loads[gpu_id] / assigner.gpu_capabilities[gpu_id]['processing_capacity'] +
-            len(assignments[gpu_id]) / assigner.gpu_capabilities[gpu_id]['max_concurrent_videos']
-        ))
-        
-        # Check if this GPU can handle another video
-        current_videos = len(assignments[best_gpu])
-        max_videos = assigner.gpu_capabilities[best_gpu]['max_concurrent_videos']
-        
-        if current_videos < max_videos:
-            assignments[best_gpu].append(video_file)
-            gpu_loads[best_gpu] += complexity
-        else:
-            # Find next available GPU
-            for gpu_id in assigner.gpu_manager.gpu_ids:
-                if len(assignments[gpu_id]) < assigner.gpu_capabilities[gpu_id]['max_concurrent_videos']:
-                    assignments[gpu_id].append(video_file)
-                    gpu_loads[gpu_id] += complexity
-                    break
-            else:
-                # All GPUs at capacity, assign to least loaded
-                assignments[best_gpu].append(video_file)
-                gpu_loads[best_gpu] += complexity
-    
-    return assignments
-
-def _create_round_robin_assignments(video_files: List[str], gpu_ids: List[int]) -> Dict[int, List[str]]:
-    """Create simple round-robin assignments for basic load distribution"""
-    
-    assignments = {gpu_id: [] for gpu_id in gpu_ids}
-    
-    for i, video_file in enumerate(video_files):
-        gpu_id = gpu_ids[i % len(gpu_ids)]
-        assignments[gpu_id].append(video_file)
-    
-    return assignments
-
-def update_gpu_video_assignments_with_performance(assignments: Dict[int, List[str]],
-                                                performance_data: Dict[int, Dict]) -> Dict[int, List[str]]:
-    """Update assignments based on real-time performance data"""
-    
-    if not performance_data:
-        return assignments
-    
-    # Calculate performance ratios
-    gpu_performance = {}
-    total_performance = 0
-    
-    for gpu_id in assignments.keys():
-        if gpu_id in performance_data:
-            # Use videos per second as performance metric
-            perf = performance_data[gpu_id].get('videos_per_second', 1.0)
-            gpu_performance[gpu_id] = max(perf, 0.1)  # Minimum threshold
-            total_performance += gpu_performance[gpu_id]
-        else:
-            gpu_performance[gpu_id] = 1.0
-            total_performance += 1.0
-    
-    # Redistribute if performance imbalance is significant
-    performance_ratios = {gpu_id: perf / total_performance for gpu_id, perf in gpu_performance.items()}
-    
-    # Check if redistribution is needed (>30% imbalance)
-    max_ratio = max(performance_ratios.values())
-    min_ratio = min(performance_ratios.values())
-    
-    if max_ratio / min_ratio > 1.3:
-        logger.info("🔄 Rebalancing GPU assignments based on performance data...")
-        
-        # Collect all videos
-        all_videos = []
-        for videos in assignments.values():
-            all_videos.extend(videos)
-        
-        # Redistribute based on performance ratios
-        new_assignments = {gpu_id: [] for gpu_id in assignments.keys()}
-        
-        for i, video in enumerate(all_videos):
-            # Select GPU based on performance ratio
-            cumulative_ratio = 0
-            selection_point = (i / len(all_videos))
-            
-            for gpu_id, ratio in performance_ratios.items():
-                cumulative_ratio += ratio
-                if selection_point <= cumulative_ratio:
-                    new_assignments[gpu_id].append(video)
-                    break
-        
-        return new_assignments
-    
-    return assignments
-
-# Import numpy for complexity calculations
-try:
-    import numpy as np
-except ImportError:
-    # Fallback functions if numpy not available
-    class MockNumpy:
-        @staticmethod
-        def mean(data):
-            return sum(data) / len(data) if data else 0
-        
-        @staticmethod
-        def var(data):
-            if len(data) <= 1:
-                return 0
-            mean_val = sum(data) / len(data)
-            return sum((x - mean_val) ** 2 for x in data) / len(data)
-    
-    np = MockNumpy()
-
-# Main function that should be called in your correlation system
-def gpu_video_assignments(video_files: List[str], 
-                         gpu_manager, 
-                         config,
-                         video_features: Optional[Dict] = None) -> Dict[int, List[str]]:
-    """
-    Main entry point for creating GPU video assignments
-    
-    This function creates the gpu_video_assignments dictionary that your code needs.
-    
-    Usage in your correlation system:
-    gpu_video_assignments = gpu_video_assignments(video_files, gpu_manager, config)
-    """
-    return create_intelligent_gpu_video_assignments(video_files, gpu_manager, config, video_features)
-
-def fix_gpu_video_assignments_error(video_files, gpu_manager, config, video_features=None):
-    """
-    This function should be called BEFORE the line that's causing the error.
-    It creates the gpu_video_assignments variable that your code is looking for.
-    """
-    
-    # Create the GPU video assignments
-    gpu_video_assignments = create_intelligent_gpu_video_assignments(
-        video_files=video_files,
-        gpu_manager=gpu_manager, 
-        config=config,
-        video_features=video_features
-    )
-    
-    logger.info(f"✅ Created GPU video assignments for {len(video_files)} videos:")
-    for gpu_id, assigned_videos in gpu_video_assignments.items():
-        logger.info(f"   GPU {gpu_id}: {len(assigned_videos)} videos assigned")
-    
-    return gpu_video_assignments
 
 def main():
     """COMPLETE: Enhanced main function with ALL original features + maximum performance optimizations + RAM cache"""
@@ -9018,7 +7640,6 @@ def main():
             ram_cache_video_features=args.ram_cache_video and not args.disable_ram_cache,
             ram_cache_gpx_features=args.ram_cache_gpx and not args.disable_ram_cache
         )
-        print(config.turbo_mode)
         
         # ========== SYSTEM OPTIMIZATION FOR HIGH-END HARDWARE ==========
         if args.aggressive_caching or config.turbo_mode:
@@ -9472,65 +8093,12 @@ def complete_turbo_video_gpx_correlation_system(turbo_mode=True, gpu_batch_size=
     """
     
     # Initialize GPU processors
-    # Initialize GPU processors with robust error handling
-    logger.info("🚀 Initializing robust GPU processors...")
-    
-    # First, try the original function with validation
-    gpu_processors = None
-    try:
-        result = get_gpu_processors(
-            turbo_mode=config.turbo_mode,
-            gpu_batch_size=getattr(config, 'gpu_batch_size', 32),
-            max_gpus=None,
-            min_memory_mb=2048
-        )
-        
-        # Validate the result is actually a dictionary
-        if isinstance(result, dict):
-            gpu_processors = result
-            logger.info(f"✅ Original function worked: {len(gpu_processors)} processors")
-        else:
-            logger.warning(f"⚠️ get_gpu_processors returned {type(result)}, not dict")
-            raise TypeError(f"Expected dict, got {type(result)}")
-            
-    except Exception as e:
-        logger.warning(f"⚠️ get_gpu_processors failed: {e}")
-        logger.info("🔧 Creating fallback GPU processors from gpu_manager...")
-        
-        # Robust fallback: Create GPU processors from your existing gpu_manager
-        gpu_processors = {}
-        for gpu_id in gpu_manager.gpu_ids:
-            # Create a simple but compatible GPU processor
-            class CompatibleGPUProcessor:
-                def __init__(self, gpu_id):
-                    self.gpu_id = gpu_id
-                    self.gpu_name = "NVIDIA GeForce RTX 5060 Ti"
-                    self.memory_mb = 16311
-                    self.compute_capability = "12.0"
-                    self.is_busy = False
-                    self.current_task = None
-                
-                def acquire(self, task_name="video_processing"):
-                    if not self.is_busy:
-                        self.is_busy = True
-                        self.current_task = task_name
-                        return True
-                    return False
-                
-                def release(self):
-                    self.is_busy = False
-                    self.current_task = None
-            
-            gpu_processors[gpu_id] = CompatibleGPUProcessor(gpu_id)
-            logger.info(f"✅ Created fallback processor for GPU {gpu_id}")
-    
-    # Final validation
-    if not isinstance(gpu_processors, dict):
-        logger.error(f"❌ GPU processors is still {type(gpu_processors)}, forcing empty dict")
-        gpu_processors = {}
-    
-    logger.info(f"🎉 GPU processors ready: {len(gpu_processors)} processors available")
-
+    gpu_processors = get_gpu_processors(
+        turbo_mode=config.turbo_mode,
+        gpu_batch_size=getattr(config, 'gpu_batch_size', 32),
+        max_gpus=None,
+        min_memory_mb=2048
+    )
     
     if not gpu_processors and turbo_mode:
         logging.warning("🔄 No GPUs available - disabling turbo mode")
@@ -9669,15 +8237,9 @@ def complete_turbo_video_gpx_correlation_system(args, config):
         logger.info("🎮 GPU monitoring started - watch GPU utilization in real-time")
         
         if config.turbo_mode:
-            try:
-                shared_memory = TurboSharedMemoryManager(config)
-                memory_cache = TurboMemoryMappedCache(cache_dir, config)
-                ram_cache_manager = TurboRAMCacheManager(config, config.ram_cache_gb)
-            except NameError as e:
-                logger.warning(f"Some turbo components not available: {e}")
-                shared_memory = None
-                memory_cache = None
-                ram_cache_manager = TurboRAMCacheManager(config, config.ram_cache_gb)
+            shared_memory = TurboSharedMemoryManager(config)
+            memory_cache = TurboMemoryMappedCache(cache_dir, config)
+            ram_cache_manager = TurboRAMCacheManager(config, config.ram_cache_gb)
         
         # ========== SCAN FOR FILES (PRESERVED) ==========
         logger.info("🔍 Scanning for input files...")
@@ -9971,119 +8533,12 @@ def complete_turbo_video_gpx_correlation_system(args, config):
             logger.info(f"🚀 Complete video processing{mode_info}: {successful_videos} success | {failed_videos} failed | {video_360_count} x 360° videos ({success_rate:.1%})")
             logger.info(f"   Performance: {videos_per_second:.2f} videos/second with proper GPU isolation")
             
-            # Initialize GPU processors with robust error handling
-            logger.info("🚀 Initializing robust GPU processors...")
-            
-            # First, try the original function with validation
-            gpu_processors = None
-            try:
-                result = get_gpu_processors(
-                    turbo_mode=config.turbo_mode,
-                    gpu_batch_size=getattr(config, 'gpu_batch_size', 32),
-                    max_gpus=None,
-                    min_memory_mb=2048
-                )
-                
-                # Validate the result is actually a dictionary
-                if isinstance(result, dict):
-                    gpu_processors = result
-                    logger.info(f"✅ Original function worked: {len(gpu_processors)} processors")
-                else:
-                    logger.warning(f"⚠️ get_gpu_processors returned {type(result)}, not dict")
-                    raise TypeError(f"Expected dict, got {type(result)}")
-                    
-            except Exception as e:
-                logger.warning(f"⚠️ get_gpu_processors failed: {e}")
-                logger.info("🔧 Creating fallback GPU processors from gpu_manager...")
-                
-                # Robust fallback: Create GPU processors from your existing gpu_manager
-                gpu_processors = {}
-                for gpu_id in gpu_manager.gpu_ids:
-                    # Create a simple but compatible GPU processor
-                    class CompatibleGPUProcessor:
-                        def __init__(self, gpu_id):
-                            self.gpu_id = gpu_id
-                            self.gpu_name = "NVIDIA GeForce RTX 5060 Ti"
-                            self.memory_mb = 16311
-                            self.compute_capability = "12.0"
-                            self.is_busy = False
-                            self.current_task = None
-                        
-                        def acquire(self, task_name="video_processing"):
-                            if not self.is_busy:
-                                self.is_busy = True
-                                self.current_task = task_name
-                                return True
-                            return False
-                        
-                        def release(self):
-                            self.is_busy = False
-                            self.current_task = None
-                    
-                    gpu_processors[gpu_id] = CompatibleGPUProcessor(gpu_id)
-                    logger.info(f"✅ Created fallback processor for GPU {gpu_id}")
-            
-            # Final validation
-            if not isinstance(gpu_processors, dict):
-                logger.error(f"❌ GPU processors is still {type(gpu_processors)}, forcing empty dict")
-                gpu_processors = {}
-            
-            logger.info(f"🎉 GPU processors ready: {len(gpu_processors)} processors available")
-
-            logger.info("🚀 Creating GPU video assignments...")
-
-            # Check if gpu_video_assignments is not properly initialized
-            if not isinstance(locals().get('gpu_video_assignments'), dict):
-                logger.info("🔧 Creating GPU video assignments...")
-                
-                try:
-                    # Try to find your video files list
-                    video_files_list = []
-                    for var_name in ['video_files', 'videos_to_process', 'video_paths', 'all_videos']:
-                        if var_name in locals() and locals()[var_name]:
-                            video_files_list = locals()[var_name]
-                            logger.info(f"📹 Found {len(video_files_list)} videos in '{var_name}'")
-                            break
-                    
-                    # Use the intelligent assignment function I provided earlier
-                    gpu_video_assignments = create_intelligent_gpu_video_assignments(
-                        video_files=video_files_list,
-                        gpu_manager=gpu_manager,
-                        config=config,
-                        video_features=video_features if 'video_features' in locals() else None
-                    )
-                    
-                    # Validate result
-                    if not isinstance(gpu_video_assignments, dict):
-                        raise TypeError("Assignment function failed")
-                        
-                    logger.info(f"✅ Created assignments for {len(gpu_video_assignments)} GPUs")
-                    
-                except Exception as e:
-                    logger.warning(f"⚠️ Intelligent assignment failed: {e}")
-                    logger.info("🔧 Creating simple fallback assignments...")
-                    
-                    # Emergency fallback: simple round-robin
-                    gpu_video_assignments = {}
-                    for gpu_id in gpu_manager.gpu_ids:
-                        gpu_video_assignments[gpu_id] = []
-                    
-                    # Distribute any available videos
-                    video_count = 0
-                    for var_name in ['video_files', 'videos_to_process', 'video_paths']:
-                        if var_name in locals():
-                            video_list = locals()[var_name]
-                            for i, video in enumerate(video_list):
-                                gpu_id = gpu_manager.gpu_ids[i % len(gpu_manager.gpu_ids)]
-                                gpu_video_assignments[gpu_id].append(video)
-                                video_count += 1
-                            break
-                    
-                    logger.info(f"🔧 Created fallback assignments: {video_count} videos distributed")
-                
-                # Log assignments
-                for gpu_id, videos in gpu_video_assignments.items():
-                    logger.info(f"   🎮 GPU {gpu_id}: {len(videos)} videos assigned")
+            gpu_processors = get_gpu_processors(
+                turbo_mode=config.turbo_mode,
+                gpu_batch_size=getattr(config, 'gpu_batch_size', 32),
+                max_gpus=None,
+                min_memory_mb=2048
+            )
             
             # Log GPU-specific stats
             for gpu_id in gpu_processors.keys():
@@ -10181,8 +8636,7 @@ def complete_turbo_video_gpx_correlation_system(args, config):
         
         # Initialize complete turbo correlation engines
         correlation_start_time = time.time()
-        debug_correlation_condition(config, gpu_manager)
-        #print("test" + config.turbo_mode + " : " + config.gpu_batch_size)
+        print("test" + config.turbo_mode + " : " + config.gpu_batch_size)
         if config.turbo_mode and config.gpu_batch_size > 1:
             logger.info("🚀 Initializing GPU batch correlation engine for maximum performance...")
             correlation_engine = TurboGPUBatchEngine(gpu_manager, config)
