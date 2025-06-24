@@ -5,7 +5,7 @@ export CUDA_LAUNCH_BLOCKING=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 python matcher50.py \
     -d ~/penis/panoramics/playground/ \
-    -o ~/penis/testingground/ \
+    -o ~/penis/testingground/hyper \
 	--turbo-mode \
     --debug \
     --strict \
@@ -16,6 +16,7 @@ python matcher50.py \
 	--parallel_videos 2 \
 	--gpu-batch-size 128 \
 	--correlation-batch-size 5000 \
+	--max_gpu_memory 8.0 \
 	--max-cpu-workers 0
 	#--gpu_batch_size 100
 	#--max_frames 50 \
