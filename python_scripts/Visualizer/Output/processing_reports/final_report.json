@@ -1,0 +1,13 @@
+{
+  "processing_summary": {
+    "total_videos_processed": 0,
+    "total_videos_failed": 0,
+    "total_processing_time": 0,
+    "average_processing_time": 0,
+    "timestamp": "2025-06-25T17:20:20.767982"
+  },
+  "performance_metrics": {
+    "videos_per_hour": 0,
+    "success_rate": 0
+  }
+}

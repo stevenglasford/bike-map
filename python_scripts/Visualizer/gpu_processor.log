@@ -1,0 +1,172 @@
+2025-06-26 10:00:53,157 - __main__ - INFO - 🔥 Starting Simplified GPU YOLO Processor...
+2025-06-26 10:00:53,157 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 10:00:53,157 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 10:00:53,157 - __main__ - INFO -    🔥 Strategy: Simple & Reliable (like your working process*.py)
+2025-06-26 10:00:53,157 - __main__ - INFO - 🚀 Initializing Simplified GPU YOLO Processor...
+2025-06-26 10:00:53,157 - __main__ - INFO - 🔧 Simple GPU initialization...
+2025-06-26 10:00:53,157 - __main__ - INFO - 🔧 Initializing GPU 0...
+2025-06-26 10:00:53,157 - __main__ - INFO - 📦 Loading YOLO model on GPU 0...
+2025-06-26 10:00:53,463 - __main__ - INFO - ✅ YOLO model loaded on GPU 0
+2025-06-26 10:00:53,463 - __main__ - INFO - 📊 GPU 0: Model loaded (0.22GB)
+2025-06-26 10:00:53,464 - __main__ - INFO - ✅ GPU 0 initialized successfully
+2025-06-26 10:00:53,464 - __main__ - INFO - 🔧 Initializing GPU 1...
+2025-06-26 10:00:53,464 - __main__ - INFO - 📦 Loading YOLO model on GPU 1...
+2025-06-26 10:00:53,755 - __main__ - INFO - ✅ YOLO model loaded on GPU 1
+2025-06-26 10:00:53,755 - __main__ - INFO - 📊 GPU 1: Model loaded (0.22GB)
+2025-06-26 10:00:53,756 - __main__ - INFO - ✅ GPU 1 initialized successfully
+2025-06-26 10:00:53,756 - __main__ - INFO - 🔧 All 2 GPUs ready!
+2025-06-26 10:00:53,756 - __main__ - INFO - ✅ Simplified GPU processor ready!
+2025-06-26 10:00:53,756 - __main__ - INFO - 🔥 SIMPLIFIED GPU SYSTEM INFO:
+2025-06-26 10:00:53,756 - __main__ - INFO -    🔥 GPUs: 2
+2025-06-26 10:00:53,756 - __main__ - INFO -    📦 Batch Size: 8
+2025-06-26 10:00:53,756 - __main__ - INFO -    ⏭️ Frame Skip: 2
+2025-06-26 10:00:53,756 - __main__ - INFO -    🎯 Confidence: 0.3
+2025-06-26 10:00:53,756 - __main__ - INFO -    📋 Approach: Simple & Reliable (like process*.py)
+2025-06-26 10:00:54,869 - __main__ - INFO - 🔍 Filtered: 85 high-quality matches
+2025-06-26 10:00:54,957 - __main__ - INFO - 🔥 Ready for processing 85 videos
+2025-06-26 10:00:54,957 - __main__ - INFO - 🔥 DUAL GPU PROCESSING: 85 videos
+2025-06-26 10:00:54,957 - __main__ - INFO - 
+🔥 GPU BATCH 1: 2 videos
+2025-06-26 10:00:54,957 - __main__ - INFO - 🔥 GPU 0: temp_video_249409624610967552.MP4
+2025-06-26 10:00:54,964 - __main__ - INFO - 🔥 GPU 0 processing: temp_video_249409624610967552
+2025-06-26 10:00:54,964 - __main__ - INFO - 🔥 GPU 1: temp_video_249174044895608832.MP4
+2025-06-26 10:00:54,964 - __main__ - INFO - 📹 Extracting frames: temp_video_249409624610967552.MP4
+2025-06-26 10:00:54,966 - __main__ - INFO - 🔥 GPU 1 processing: temp_video_249174044895608832
+2025-06-26 10:00:54,966 - __main__ - INFO - 🔥 Waiting for GPU processing...
+2025-06-26 10:00:54,967 - __main__ - INFO - 📹 Extracting frames: temp_video_249174044895608832.MP4
+2025-06-26 10:00:54,970 - __main__ - INFO - 📊 Processing: 9441 frames
+2025-06-26 10:00:54,970 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:00:54,970 - __main__ - INFO -    Video duration: 630.0s
+2025-06-26 10:00:54,973 - __main__ - INFO - 📊 Processing: 4487 frames
+2025-06-26 10:00:54,973 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:00:54,973 - __main__ - INFO -    Video duration: 299.4s
+2025-06-26 10:05:59,564 - __main__ - INFO - 🛑 Processing interrupted
+2025-06-26 10:06:09,086 - __main__ - INFO - 🔥 Starting Simplified GPU YOLO Processor...
+2025-06-26 10:06:09,086 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 10:06:09,086 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 10:06:09,086 - __main__ - INFO -    🔥 Strategy: Simple & Reliable (like your working process*.py)
+2025-06-26 10:06:09,086 - __main__ - INFO - 🚀 Initializing Simplified GPU YOLO Processor...
+2025-06-26 10:06:09,086 - __main__ - INFO - 🔧 Simple GPU initialization...
+2025-06-26 10:06:09,086 - __main__ - INFO - 🔧 Initializing GPU 0...
+2025-06-26 10:06:09,086 - __main__ - INFO - 📦 Loading YOLO model on GPU 0...
+2025-06-26 10:06:09,399 - __main__ - INFO - ✅ YOLO model loaded on GPU 0
+2025-06-26 10:06:09,399 - __main__ - INFO - 📊 GPU 0: Model loaded (0.22GB)
+2025-06-26 10:06:09,399 - __main__ - INFO - ✅ GPU 0 initialized successfully
+2025-06-26 10:06:09,399 - __main__ - INFO - 🔧 Initializing GPU 1...
+2025-06-26 10:06:09,399 - __main__ - INFO - 📦 Loading YOLO model on GPU 1...
+2025-06-26 10:06:09,723 - __main__ - INFO - ✅ YOLO model loaded on GPU 1
+2025-06-26 10:06:09,724 - __main__ - INFO - 📊 GPU 1: Model loaded (0.00GB)
+2025-06-26 10:06:09,724 - __main__ - INFO - ✅ GPU 1 initialized successfully
+2025-06-26 10:06:09,724 - __main__ - INFO - 🔧 All 2 GPUs ready!
+2025-06-26 10:06:09,724 - __main__ - INFO - ✅ Simplified GPU processor ready!
+2025-06-26 10:06:09,724 - __main__ - INFO - 🔥 SIMPLIFIED GPU SYSTEM INFO:
+2025-06-26 10:06:09,724 - __main__ - INFO -    🔥 GPUs: 2
+2025-06-26 10:06:09,724 - __main__ - INFO -    🖼️ Frame Processing: One by one (like process*.py)
+2025-06-26 10:06:09,724 - __main__ - INFO -    ⏭️ Frame Skip: 2
+2025-06-26 10:06:09,724 - __main__ - INFO -    🎯 Confidence: 0.3
+2025-06-26 10:06:09,724 - __main__ - INFO -    📋 Approach: Simple & Reliable (like process*.py)
+2025-06-26 10:06:10,832 - __main__ - INFO - 🔍 Filtered: 85 high-quality matches
+2025-06-26 10:06:10,920 - __main__ - INFO - 🔥 Ready for processing 85 videos
+2025-06-26 10:06:10,920 - __main__ - INFO - 🔥 DUAL GPU PROCESSING: 85 videos
+2025-06-26 10:06:10,920 - __main__ - INFO - 
+🔥 GPU BATCH 1: 2 videos
+2025-06-26 10:06:10,920 - __main__ - INFO - 🔥 GPU 0: temp_video_249409624610967552.MP4
+2025-06-26 10:06:10,927 - __main__ - INFO - 🔥 GPU 0 processing: temp_video_249409624610967552
+2025-06-26 10:06:10,927 - __main__ - INFO - 🔥 GPU 1: temp_video_249174044895608832.MP4
+2025-06-26 10:06:10,928 - __main__ - INFO - 📹 Extracting frames: temp_video_249409624610967552.MP4
+2025-06-26 10:06:10,930 - __main__ - INFO - 🔥 GPU 1 processing: temp_video_249174044895608832
+2025-06-26 10:06:10,930 - __main__ - INFO - 🔥 Waiting for GPU processing...
+2025-06-26 10:06:10,930 - __main__ - INFO - 📹 Extracting frames: temp_video_249174044895608832.MP4
+2025-06-26 10:06:10,933 - __main__ - INFO - 📊 Processing: 9441 frames
+2025-06-26 10:06:10,933 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:06:10,933 - __main__ - INFO -    Video duration: 630.0s
+2025-06-26 10:06:10,936 - __main__ - INFO - 📊 Processing: 4487 frames
+2025-06-26 10:06:10,936 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:06:10,936 - __main__ - INFO -    Video duration: 299.4s
+2025-06-26 10:19:22,029 - __main__ - INFO - 🛑 Processing interrupted
+2025-06-26 10:20:08,914 - __main__ - INFO - 🔥 Starting Simplified GPU YOLO Processor...
+2025-06-26 10:20:08,914 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 10:20:08,914 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 10:20:08,914 - __main__ - INFO -    🔥 Strategy: Simple & Reliable (like your working process*.py)
+2025-06-26 10:20:08,914 - __main__ - INFO - 🚀 Initializing Simplified GPU YOLO Processor...
+2025-06-26 10:20:08,915 - __main__ - INFO - 🔧 Simple GPU initialization...
+2025-06-26 10:20:08,915 - __main__ - INFO - 🔧 Initializing GPU 0...
+2025-06-26 10:20:08,915 - __main__ - INFO - 📦 Loading YOLO model on GPU 0...
+2025-06-26 10:20:09,222 - __main__ - INFO - ✅ YOLO model loaded on GPU 0
+2025-06-26 10:20:09,222 - __main__ - INFO - 📊 GPU 0: Model loaded (0.22GB)
+2025-06-26 10:20:09,222 - __main__ - INFO - ✅ GPU 0 initialized successfully
+2025-06-26 10:20:09,222 - __main__ - INFO - 🔧 Initializing GPU 1...
+2025-06-26 10:20:09,222 - __main__ - INFO - 📦 Loading YOLO model on GPU 1...
+2025-06-26 10:20:09,549 - __main__ - INFO - ✅ YOLO model loaded on GPU 1
+2025-06-26 10:20:09,549 - __main__ - INFO - 📊 GPU 1: Model loaded (0.00GB)
+2025-06-26 10:20:09,549 - __main__ - INFO - ✅ GPU 1 initialized successfully
+2025-06-26 10:20:09,549 - __main__ - INFO - 🔧 All 2 GPUs ready!
+2025-06-26 10:20:09,549 - __main__ - INFO - ✅ Simplified GPU processor ready!
+2025-06-26 10:20:09,549 - __main__ - INFO - 🔥 SIMPLIFIED GPU SYSTEM INFO:
+2025-06-26 10:20:09,549 - __main__ - INFO -    🔥 GPUs: 2
+2025-06-26 10:20:09,549 - __main__ - INFO -    🖼️ Frame Processing: One by one (like process*.py)
+2025-06-26 10:20:09,549 - __main__ - INFO -    ⏭️ Frame Skip: 2
+2025-06-26 10:20:09,549 - __main__ - INFO -    🎯 Confidence: 0.3
+2025-06-26 10:20:09,549 - __main__ - INFO -    📋 Approach: Simple & Reliable (like process*.py)
+2025-06-26 10:20:10,665 - __main__ - INFO - 🔍 Filtered: 85 high-quality matches
+2025-06-26 10:20:10,752 - __main__ - INFO - 🔥 Ready for processing 85 videos
+2025-06-26 10:20:10,753 - __main__ - INFO - 🔥 DUAL GPU PROCESSING: 85 videos
+2025-06-26 10:20:10,753 - __main__ - INFO - 
+🔥 GPU BATCH 1: 2 videos
+2025-06-26 10:20:10,753 - __main__ - INFO - 🔥 GPU 0: temp_video_249409624610967552.MP4
+2025-06-26 10:20:10,760 - __main__ - INFO - 🔥 GPU 0 processing: temp_video_249409624610967552
+2025-06-26 10:20:10,760 - __main__ - INFO - 🔥 GPU 1: temp_video_249174044895608832.MP4
+2025-06-26 10:20:10,760 - __main__ - INFO - 📹 Extracting frames: temp_video_249409624610967552.MP4
+2025-06-26 10:20:10,762 - __main__ - INFO - 🔥 GPU 1 processing: temp_video_249174044895608832
+2025-06-26 10:20:10,762 - __main__ - INFO - 🔥 Waiting for GPU processing...
+2025-06-26 10:20:10,762 - __main__ - INFO - 📹 Extracting frames: temp_video_249174044895608832.MP4
+2025-06-26 10:20:10,766 - __main__ - INFO - 📊 Processing: 9441 frames
+2025-06-26 10:20:10,766 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:20:10,766 - __main__ - INFO -    Video duration: 630.0s
+2025-06-26 10:20:10,769 - __main__ - INFO - 📊 Processing: 4487 frames
+2025-06-26 10:20:10,769 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:20:10,769 - __main__ - INFO -    Video duration: 299.4s
+2025-06-26 10:30:20,768 - __main__ - INFO - 🛑 Processing interrupted
+2025-06-26 10:30:28,973 - __main__ - INFO - 🔥 Starting Simplified GPU YOLO Processor...
+2025-06-26 10:30:28,973 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 10:30:28,973 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 10:30:28,973 - __main__ - INFO -    🔥 Strategy: Simple & Reliable (like your working process*.py)
+2025-06-26 10:30:28,973 - __main__ - INFO - 🚀 Initializing Simplified GPU YOLO Processor...
+2025-06-26 10:30:28,973 - __main__ - INFO - 🔧 Simple GPU initialization...
+2025-06-26 10:30:28,973 - __main__ - INFO - 🔧 Initializing GPU 0...
+2025-06-26 10:30:28,973 - __main__ - INFO - 📦 Loading YOLO model on GPU 0...
+2025-06-26 10:30:29,281 - __main__ - INFO - ✅ YOLO model loaded on GPU 0
+2025-06-26 10:30:29,282 - __main__ - INFO - 📊 GPU 0: Model loaded (0.22GB)
+2025-06-26 10:30:29,282 - __main__ - INFO - ✅ GPU 0 initialized successfully
+2025-06-26 10:30:29,282 - __main__ - INFO - 🔧 Initializing GPU 1...
+2025-06-26 10:30:29,282 - __main__ - INFO - 📦 Loading YOLO model on GPU 1...
+2025-06-26 10:30:29,610 - __main__ - INFO - ✅ YOLO model loaded on GPU 1
+2025-06-26 10:30:29,610 - __main__ - INFO - 📊 GPU 1: Model loaded (0.00GB)
+2025-06-26 10:30:29,610 - __main__ - INFO - ✅ GPU 1 initialized successfully
+2025-06-26 10:30:29,610 - __main__ - INFO - 🔧 All 2 GPUs ready!
+2025-06-26 10:30:29,610 - __main__ - INFO - ✅ Simplified GPU processor ready!
+2025-06-26 10:30:29,610 - __main__ - INFO - 🔥 SIMPLIFIED GPU SYSTEM INFO:
+2025-06-26 10:30:29,610 - __main__ - INFO -    🔥 GPUs: 2
+2025-06-26 10:30:29,610 - __main__ - INFO -    🖼️ Frame Processing: One by one (like process*.py)
+2025-06-26 10:30:29,610 - __main__ - INFO -    ⏭️ Frame Skip: 2
+2025-06-26 10:30:29,610 - __main__ - INFO -    🎯 Confidence: 0.3
+2025-06-26 10:30:29,610 - __main__ - INFO -    📋 Approach: Simple & Reliable (like process*.py)
+2025-06-26 10:30:30,742 - __main__ - INFO - 🔍 Filtered: 85 high-quality matches
+2025-06-26 10:30:30,831 - __main__ - INFO - 🔥 Ready for processing 85 videos
+2025-06-26 10:30:30,831 - __main__ - INFO - 🔥 DUAL GPU PROCESSING: 85 videos
+2025-06-26 10:30:30,831 - __main__ - INFO - 
+🔥 GPU BATCH 1: 2 videos
+2025-06-26 10:30:30,831 - __main__ - INFO - 🔥 GPU 0: temp_video_249409624610967552.MP4
+2025-06-26 10:30:30,838 - __main__ - INFO - 🔥 GPU 0 processing: temp_video_249409624610967552
+2025-06-26 10:30:30,839 - __main__ - INFO - 🔥 GPU 1: temp_video_249174044895608832.MP4
+2025-06-26 10:30:30,839 - __main__ - INFO - 📹 Extracting frames: temp_video_249409624610967552.MP4
+2025-06-26 10:30:30,841 - __main__ - INFO - 🔥 GPU 1 processing: temp_video_249174044895608832
+2025-06-26 10:30:30,841 - __main__ - INFO - 🔥 Waiting for GPU processing...
+2025-06-26 10:30:30,841 - __main__ - INFO - 📹 Extracting frames: temp_video_249174044895608832.MP4
+2025-06-26 10:30:30,844 - __main__ - INFO - 📊 Processing: 9441 frames
+2025-06-26 10:30:30,844 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:30:30,844 - __main__ - INFO -    Video duration: 630.0s
+2025-06-26 10:30:30,847 - __main__ - INFO - 📊 Processing: 4487 frames
+2025-06-26 10:30:30,847 - __main__ - INFO -    Frame skip: 2
+2025-06-26 10:30:30,847 - __main__ - INFO -    Video duration: 299.4s
+2025-06-26 10:30:40,633 - __main__ - INFO - 🛑 Processing interrupted

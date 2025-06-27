@@ -1,0 +1,351 @@
+2025-06-26 09:07:22,475 - __main__ - INFO - 🚀 Starting VERIFIED GPU YOLO Video Processor...
+2025-06-26 09:07:22,475 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 09:07:22,475 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 09:07:22,475 - __main__ - INFO -    🎯 Strategy: VERIFIED GPU acceleration with monitoring
+2025-06-26 09:07:22,475 - __main__ - INFO - 🚀 Initializing VERIFIED GPU YOLO Processor...
+2025-06-26 09:07:22,483 - __main__ - INFO - 🎮 VERIFYING GPU initialization...
+2025-06-26 09:07:22,584 - __main__ - INFO - 🔧 Initializing and verifying GPU 0...
+2025-06-26 09:07:22,692 - __main__ - INFO - 📊 GPU 0 baseline memory: 0.00GB
+2025-06-26 09:07:22,693 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 0...
+2025-06-26 09:07:22,828 - __main__ - INFO - 🔧 Forcing model to device: cuda:0
+2025-06-26 09:07:22,903 - __main__ - INFO - ✅ Model confirmed on device: cuda:0
+2025-06-26 09:07:22,904 - __main__ - INFO - 📊 GPU 0: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:07:22,904 - __main__ - INFO - 🧪 Testing GPU 0 inference...
+2025-06-26 09:07:22,905 - __main__ - INFO -    Test tensor created on: cuda:0
+2025-06-26 09:07:24,809 - __main__ - INFO - ✅ GPU 0 inference test successful (1.904s)
+2025-06-26 09:07:24,814 - __main__ - INFO - 🔍 GPU 0 usage verification:
+2025-06-26 09:07:24,814 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:07:24,814 - __main__ - INFO -    Current: 0.25GB
+2025-06-26 09:07:24,814 - __main__ - INFO -    Increase: 0.25GB
+2025-06-26 09:07:24,814 - __main__ - ERROR - ❌ GPU 0: NO GPU usage detected (insufficient memory increase)
+2025-06-26 09:07:24,814 - __main__ - ERROR - ❌ CRITICAL ERROR: ❌ GPU 0 verification FAILED - not using GPU!
+2025-06-26 09:07:24,814 - __main__ - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer17.py", line 967, in main
+    processor = VerifiedGPUYOLOProcessor(config)
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer17.py", line 194, in __init__
+    self._initialize_and_verify_gpus()
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer17.py", line 245, in _initialize_and_verify_gpus
+    raise RuntimeError(f"❌ GPU {gpu_id} verification FAILED - not using GPU!")
+RuntimeError: ❌ GPU 0 verification FAILED - not using GPU!
+
+2025-06-26 09:19:21,334 - __main__ - INFO - 🚀 Starting VERIFIED GPU YOLO Video Processor...
+2025-06-26 09:19:21,334 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 09:19:21,334 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 09:19:21,334 - __main__ - INFO -    🎯 Strategy: VERIFIED GPU acceleration with monitoring
+2025-06-26 09:19:21,334 - __main__ - INFO -    🖼️ Frame Processing: ALL frames (no artificial limits)
+2025-06-26 09:19:21,334 - __main__ - INFO -    ⏭️ Frame Skip: Every 2 frames
+2025-06-26 09:19:21,334 - __main__ - INFO - 🚀 Initializing VERIFIED GPU YOLO Processor...
+2025-06-26 09:19:21,334 - __main__ - INFO - 🎮 VERIFYING GPU initialization...
+2025-06-26 09:19:21,448 - __main__ - INFO - 🔧 Initializing and verifying GPU 0...
+2025-06-26 09:19:21,551 - __main__ - INFO - 📊 GPU 0 baseline memory: 0.00GB
+2025-06-26 09:19:21,551 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 0...
+2025-06-26 09:19:21,687 - __main__ - INFO - 🔧 Forcing model to device: cuda:0
+2025-06-26 09:19:21,762 - __main__ - INFO - ✅ Model confirmed on device: cuda:0
+2025-06-26 09:19:21,764 - __main__ - INFO - 📊 GPU 0: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:19:21,764 - __main__ - INFO - 🧪 Testing GPU 0 inference...
+2025-06-26 09:19:21,764 - __main__ - INFO -    Test tensor created on: cuda:0
+2025-06-26 09:19:23,676 - __main__ - INFO - ✅ GPU 0 inference test successful (1.911s)
+2025-06-26 09:19:23,680 - __main__ - INFO - 🔍 GPU 0 usage verification:
+2025-06-26 09:19:23,680 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:19:23,680 - __main__ - INFO -    Current: 0.25GB
+2025-06-26 09:19:23,680 - __main__ - INFO -    Increase: 0.25GB
+2025-06-26 09:19:23,680 - __main__ - INFO - ✅ GPU 0: CONFIRMED GPU processing (memory increased by 0.25GB)
+2025-06-26 09:19:23,680 - __main__ - INFO - ✅ GPU 0 VERIFIED and ready for processing
+2025-06-26 09:19:23,680 - __main__ - INFO - 🔧 Initializing and verifying GPU 1...
+2025-06-26 09:19:23,681 - __main__ - INFO - 📊 GPU 1 baseline memory: 0.00GB
+2025-06-26 09:19:23,681 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 1...
+2025-06-26 09:19:23,897 - __main__ - INFO - 🔧 Forcing model to device: cuda:1
+2025-06-26 09:19:23,946 - __main__ - INFO - ✅ Model confirmed on device: cuda:1
+2025-06-26 09:19:23,947 - __main__ - INFO - 📊 GPU 1: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:19:23,947 - __main__ - INFO - 🧪 Testing GPU 1 inference...
+2025-06-26 09:19:23,948 - __main__ - INFO -    Test tensor created on: cuda:1
+2025-06-26 09:19:24,362 - __main__ - INFO - ✅ GPU 1 inference test successful (0.414s)
+2025-06-26 09:19:24,365 - __main__ - INFO - 🔍 GPU 1 usage verification:
+2025-06-26 09:19:24,365 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:19:24,365 - __main__ - INFO -    Current: 0.00GB
+2025-06-26 09:19:24,365 - __main__ - INFO -    Increase: 0.00GB
+2025-06-26 09:19:24,365 - __main__ - ERROR - ❌ GPU 1: NO GPU usage detected (only 0.00GB increase)
+2025-06-26 09:19:24,365 - __main__ - ERROR - ❌ CRITICAL ERROR: ❌ GPU 1 verification FAILED - not using GPU!
+2025-06-26 09:19:24,365 - __main__ - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer20.py", line 987, in main
+    processor = VerifiedGPUYOLOProcessor(config)
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer20.py", line 195, in __init__
+    self._initialize_and_verify_gpus()
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer20.py", line 246, in _initialize_and_verify_gpus
+    raise RuntimeError(f"❌ GPU {gpu_id} verification FAILED - not using GPU!")
+RuntimeError: ❌ GPU 1 verification FAILED - not using GPU!
+
+2025-06-26 09:26:56,409 - __main__ - INFO - 🚀 Starting VERIFIED GPU YOLO Video Processor...
+2025-06-26 09:26:56,409 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 09:26:56,409 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 09:26:56,409 - __main__ - INFO -    🎯 Strategy: VERIFIED GPU acceleration with monitoring
+2025-06-26 09:26:56,409 - __main__ - INFO -    🖼️ Frame Processing: ALL frames (no artificial limits)
+2025-06-26 09:26:56,409 - __main__ - INFO -    ⏭️ Frame Skip: Every 2 frames
+2025-06-26 09:26:56,409 - __main__ - INFO - 🚀 Initializing VERIFIED GPU YOLO Processor...
+2025-06-26 09:26:56,409 - __main__ - INFO - 🎮 VERIFYING GPU initialization...
+2025-06-26 09:26:56,518 - __main__ - INFO - 🔧 Initializing and verifying GPU 0...
+2025-06-26 09:26:56,618 - __main__ - INFO - 📊 GPU 0 baseline memory:
+2025-06-26 09:26:56,619 - __main__ - INFO -    Allocated: 0.000GB
+2025-06-26 09:26:56,619 - __main__ - INFO -    Reserved: 0.000GB
+2025-06-26 09:26:56,619 - __main__ - WARNING -    ⚠️ GPU 0 shows no memory usage - this may be a measurement issue
+2025-06-26 09:26:56,619 - __main__ - INFO -    Total GPU memory: 15.5GB
+2025-06-26 09:26:56,619 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 0...
+2025-06-26 09:26:56,753 - __main__ - INFO - 🔧 Forcing model to device: cuda:0
+2025-06-26 09:26:56,828 - __main__ - INFO - ✅ Model confirmed on device: cuda:0
+2025-06-26 09:26:56,829 - __main__ - INFO - 📊 GPU 0: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:26:56,829 - __main__ - INFO - 🧪 Testing GPU 0 inference...
+2025-06-26 09:26:56,839 - __main__ - INFO -    Test tensor created on: cuda:0
+2025-06-26 09:26:56,860 - __main__ - INFO -    Tensor range: 0.000 - 1.000
+2025-06-26 09:26:58,743 - __main__ - INFO - ✅ GPU 0 inference test successful:
+2025-06-26 09:26:58,743 - __main__ - INFO -    Inference time: 1.883s
+2025-06-26 09:26:58,743 - __main__ - INFO -    Memory used during inference: 0.031GB
+2025-06-26 09:26:58,743 - __main__ - INFO -    Results generated: 1
+2025-06-26 09:26:58,743 - __main__ - INFO -    ✅ Valid YOLO results received from GPU
+2025-06-26 09:26:58,748 - __main__ - INFO - ✅ GPU 0: Inference test passed - GPU is working!
+2025-06-26 09:26:58,748 - __main__ - INFO - 🔍 Comprehensive GPU 0 verification...
+2025-06-26 09:26:58,748 - __main__ - INFO - 🔍 GPU 0 usage verification:
+2025-06-26 09:26:58,748 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:26:58,748 - __main__ - INFO -    Current: 0.25GB
+2025-06-26 09:26:58,748 - __main__ - INFO -    Increase: 0.25GB
+2025-06-26 09:26:58,748 - __main__ - INFO - ✅ GPU 0: CONFIRMED GPU processing (memory increased by 0.25GB)
+2025-06-26 09:26:58,748 - __main__ - INFO -    Model device check: cuda:0 == cuda:0 -> True
+2025-06-26 09:26:58,748 - __main__ - INFO -    Verification results for GPU 0:
+2025-06-26 09:26:58,748 - __main__ - INFO -       Memory increase: ✅
+2025-06-26 09:26:58,748 - __main__ - INFO -       Model device placement: ✅
+2025-06-26 09:26:58,749 - __main__ - INFO -       Tensor operations: ✅
+2025-06-26 09:26:58,749 - __main__ - INFO -       CUDA context: ✅
+2025-06-26 09:26:58,749 - __main__ - INFO -       YOLO inference: ✅
+2025-06-26 09:26:58,749 - __main__ - INFO -    ✅ CRITICAL verification passed: GPU is working!
+2025-06-26 09:26:58,749 - __main__ - INFO -    Overall verification: 5/5 methods passed -> ✅
+2025-06-26 09:26:58,749 - __main__ - INFO - ✅ GPU 0 fully verified and ready
+2025-06-26 09:26:58,749 - __main__ - INFO - 🔧 Initializing and verifying GPU 1...
+2025-06-26 09:26:58,749 - __main__ - INFO - 📊 GPU 1 baseline memory:
+2025-06-26 09:26:58,749 - __main__ - INFO -    Allocated: 0.000GB
+2025-06-26 09:26:58,749 - __main__ - INFO -    Reserved: 0.000GB
+2025-06-26 09:26:58,749 - __main__ - WARNING -    ⚠️ GPU 1 shows no memory usage - this may be a measurement issue
+2025-06-26 09:26:58,749 - __main__ - INFO -    Total GPU memory: 15.5GB
+2025-06-26 09:26:58,749 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 1...
+2025-06-26 09:26:58,965 - __main__ - INFO - 🔧 Forcing model to device: cuda:1
+2025-06-26 09:26:59,014 - __main__ - INFO - ✅ Model confirmed on device: cuda:1
+2025-06-26 09:26:59,015 - __main__ - INFO - 📊 GPU 1: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:26:59,015 - __main__ - INFO - 🧪 Testing GPU 1 inference...
+2025-06-26 09:26:59,015 - __main__ - INFO -    Test tensor created on: cuda:1
+2025-06-26 09:26:59,018 - __main__ - INFO -    Tensor range: 0.000 - 1.000
+2025-06-26 09:26:59,430 - __main__ - INFO - ✅ GPU 1 inference test successful:
+2025-06-26 09:26:59,431 - __main__ - INFO -    Inference time: 0.412s
+2025-06-26 09:26:59,431 - __main__ - INFO -    Memory used during inference: -0.218GB
+2025-06-26 09:26:59,431 - __main__ - INFO -    Results generated: 1
+2025-06-26 09:26:59,438 - __main__ - INFO -    ✅ Valid YOLO results received from GPU
+2025-06-26 09:26:59,441 - __main__ - INFO - ✅ GPU 1: Inference test passed - GPU is working!
+2025-06-26 09:26:59,441 - __main__ - INFO - 🔍 Comprehensive GPU 1 verification...
+2025-06-26 09:26:59,441 - __main__ - INFO - 🔍 GPU 1 usage verification:
+2025-06-26 09:26:59,441 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:26:59,441 - __main__ - INFO -    Current: 0.00GB
+2025-06-26 09:26:59,441 - __main__ - INFO -    Increase: 0.00GB
+2025-06-26 09:26:59,441 - __main__ - WARNING - ⚠️ GPU 1: Low memory usage (only 0.00GB increase)
+2025-06-26 09:26:59,441 - __main__ - WARNING -    This may be normal for some GPU configurations
+2025-06-26 09:26:59,441 - __main__ - INFO -    Model device check: cuda:0 == cuda:1 -> False
+2025-06-26 09:26:59,450 - __main__ - INFO -    Verification results for GPU 1:
+2025-06-26 09:26:59,450 - __main__ - INFO -       Memory increase: ❌
+2025-06-26 09:26:59,450 - __main__ - INFO -       Model device placement: ❌
+2025-06-26 09:26:59,450 - __main__ - INFO -       Tensor operations: ✅
+2025-06-26 09:26:59,450 - __main__ - INFO -       CUDA context: ✅
+2025-06-26 09:26:59,450 - __main__ - INFO -       YOLO inference: ✅
+2025-06-26 09:26:59,450 - __main__ - WARNING -    ⚠️ Some critical verification failed
+2025-06-26 09:26:59,450 - __main__ - INFO -    Overall verification: 3/5 methods passed -> ❌
+2025-06-26 09:26:59,450 - __main__ - WARNING - ⚠️ GPU 1 comprehensive verification had some issues
+2025-06-26 09:26:59,450 - __main__ - WARNING -    But inference test passed, so GPU is likely working
+2025-06-26 09:26:59,450 - __main__ - WARNING -    Proceeding with processing...
+2025-06-26 09:26:59,450 - __main__ - INFO - 🧪 Running comprehensive GPU verification test...
+2025-06-26 09:26:59,450 - __main__ - INFO - 🔍 Comprehensive test for GPU 0...
+2025-06-26 09:26:59,451 - __main__ - INFO -    ✅ GPU 0 tensor operations: OK
+2025-06-26 09:26:59,451 - __main__ - INFO -    ✅ GPU 0 memory allocation: +3.8MB
+2025-06-26 09:26:59,451 - __main__ - INFO - 🔍 Comprehensive test for GPU 1...
+2025-06-26 09:26:59,452 - __main__ - INFO -    ✅ GPU 1 tensor operations: OK
+2025-06-26 09:26:59,452 - __main__ - INFO -    ✅ GPU 1 memory allocation: +4.2MB
+2025-06-26 09:26:59,452 - __main__ - INFO - 🎉 All GPU verification tests PASSED!
+2025-06-26 09:26:59,452 - __main__ - INFO - 🎉 ALL 2 GPUs initialized and ready!
+2025-06-26 09:26:59,452 - __main__ - INFO - ✅ VERIFIED GPU YOLO processor ready!
+2025-06-26 09:26:59,452 - __main__ - INFO - 🚀 VERIFIED GPU SYSTEM INFO:
+2025-06-26 09:26:59,452 - __main__ - INFO -    🎮 VERIFIED GPUs: 2
+2025-06-26 09:26:59,453 - __main__ - INFO -       GPU 0: Model on cuda:0 ✅
+2025-06-26 09:26:59,453 - __main__ - INFO -       GPU 1: Model on cuda:0 ✅
+2025-06-26 09:26:59,453 - __main__ - INFO -    📦 Batch Size: 24
+2025-06-26 09:26:59,453 - __main__ - INFO -    🖼️ Frame Processing: ALL frames (no limit)
+2025-06-26 09:26:59,453 - __main__ - INFO -    ⏭️ Frame Skip: 2 (process every 2 frames)
+2025-06-26 09:26:59,453 - __main__ - INFO -    🎯 Confidence: 0.3
+2025-06-26 09:26:59,453 - __main__ - INFO -    🔍 GPU Monitoring: ✅
+2025-06-26 09:27:00,596 - __main__ - INFO - 🔍 Quality filtered: 85 high-quality matches
+2025-06-26 09:27:00,692 - __main__ - INFO - ✅ Ready for VERIFIED processing of 85 videos
+2025-06-26 09:27:00,692 - __main__ - INFO - 🚀 VERIFIED DUAL GPU PROCESSING: 85 videos
+2025-06-26 09:27:00,692 - __main__ - INFO -    Strategy: VERIFIED GPU acceleration with usage monitoring
+2025-06-26 09:27:00,692 - __main__ - INFO - 
+🔥 VERIFIED GPU BATCH 1: 2 videos
+2025-06-26 09:27:00,692 - __main__ - INFO - 🎮 GPU 0 VERIFIED processing: temp_video_249409624610967552.MP4
+2025-06-26 09:27:00,699 - __main__ - INFO - 🚀 GPU 0 VERIFIED processing: temp_video_249409624610967552
+2025-06-26 09:27:00,699 - __main__ - INFO - 🎮 GPU 1 VERIFIED processing: temp_video_249174044895608832.MP4
+2025-06-26 09:27:00,700 - __main__ - INFO - 📹 Extracting ALL frames for GPU analysis: temp_video_249409624610967552.MP4
+2025-06-26 09:27:00,702 - __main__ - INFO - 🚀 GPU 1 VERIFIED processing: temp_video_249174044895608832
+2025-06-26 09:27:00,702 - __main__ - INFO - ⚡ Waiting for VERIFIED GPU processing...
+2025-06-26 09:27:00,702 - __main__ - INFO - 📹 Extracting ALL frames for GPU analysis: temp_video_249174044895608832.MP4
+2025-06-26 09:27:00,705 - __main__ - INFO - 📊 GPU processing ALL frames: 9441 frames from 18881 total
+2025-06-26 09:27:00,705 - __main__ - INFO -    Frame skip: 2 (processing every 2 frames)
+2025-06-26 09:27:00,705 - __main__ - INFO -    Video duration: 630.0 seconds
+2025-06-26 09:27:00,708 - __main__ - INFO - 📊 GPU processing ALL frames: 4487 frames from 8973 total
+2025-06-26 09:27:00,708 - __main__ - INFO -    Frame skip: 2 (processing every 2 frames)
+2025-06-26 09:27:00,708 - __main__ - INFO -    Video duration: 299.4 seconds
+2025-06-26 09:33:44,268 - __main__ - INFO - 🛑 Processing interrupted
+2025-06-26 09:34:14,328 - __main__ - INFO - 🚀 Starting VERIFIED GPU YOLO Video Processor...
+2025-06-26 09:34:14,328 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 09:34:14,328 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 09:34:14,328 - __main__ - INFO -    🎯 Strategy: VERIFIED GPU acceleration with monitoring
+2025-06-26 09:34:14,328 - __main__ - INFO -    🖼️ Frame Processing: ALL frames (no artificial limits)
+2025-06-26 09:34:14,328 - __main__ - INFO -    ⏭️ Frame Skip: Every 2 frames
+2025-06-26 09:34:14,328 - __main__ - INFO - 🚀 Initializing VERIFIED GPU YOLO Processor...
+2025-06-26 09:34:14,328 - __main__ - INFO - 🎮 VERIFYING GPU initialization...
+2025-06-26 09:34:14,436 - __main__ - INFO - 🔧 Initializing and verifying GPU 0...
+2025-06-26 09:34:14,543 - __main__ - INFO - 📊 GPU 0 baseline memory:
+2025-06-26 09:34:14,543 - __main__ - INFO -    Allocated: 0.000GB
+2025-06-26 09:34:14,543 - __main__ - INFO -    Reserved: 0.000GB
+2025-06-26 09:34:14,543 - __main__ - WARNING -    ⚠️ GPU 0 shows no memory usage - this may be a measurement issue
+2025-06-26 09:34:14,543 - __main__ - INFO -    Total GPU memory: 15.5GB
+2025-06-26 09:34:14,543 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 0...
+2025-06-26 09:34:14,678 - __main__ - INFO - 🔧 Forcing model to device: cuda:0
+2025-06-26 09:34:14,753 - __main__ - ERROR - ❌ CRITICAL: YOLO loading failed on GPU 0: can't set attribute 'device'
+2025-06-26 09:34:14,753 - __main__ - ERROR - ❌ CRITICAL ERROR: can't set attribute 'device'
+2025-06-26 09:34:14,761 - __main__ - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer22.py", line 1140, in main
+    processor = VerifiedGPUYOLOProcessor(config)
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer22.py", line 235, in __init__
+    self._initialize_and_verify_gpus()
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer22.py", line 282, in _initialize_and_verify_gpus
+    self._load_and_verify_yolo_model(gpu_id)
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer22.py", line 384, in _load_and_verify_yolo_model
+    model.device = device
+  File "/home/preston/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in __setattr__
+    super().__setattr__(name, value)
+AttributeError: can't set attribute 'device'
+
+2025-06-26 09:40:35,998 - __main__ - INFO - 🚀 Starting VERIFIED GPU YOLO Video Processor...
+2025-06-26 09:40:35,998 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 09:40:35,998 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 09:40:35,998 - __main__ - INFO -    🎯 Strategy: VERIFIED GPU acceleration with monitoring
+2025-06-26 09:40:35,998 - __main__ - INFO -    🖼️ Frame Processing: ALL frames (no artificial limits)
+2025-06-26 09:40:35,998 - __main__ - INFO -    ⏭️ Frame Skip: Every 2 frames
+2025-06-26 09:40:35,998 - __main__ - INFO - 🚀 Initializing VERIFIED GPU YOLO Processor...
+2025-06-26 09:40:35,998 - __main__ - INFO - 🎮 VERIFYING GPU initialization...
+2025-06-26 09:40:36,105 - __main__ - INFO - 🔧 Initializing and verifying GPU 0...
+2025-06-26 09:40:36,211 - __main__ - INFO - 📊 GPU 0 baseline memory:
+2025-06-26 09:40:36,211 - __main__ - INFO -    Allocated: 0.000GB
+2025-06-26 09:40:36,211 - __main__ - INFO -    Reserved: 0.000GB
+2025-06-26 09:40:36,211 - __main__ - WARNING -    ⚠️ GPU 0 shows no memory usage - this may be a measurement issue
+2025-06-26 09:40:36,211 - __main__ - INFO -    Total GPU memory: 15.5GB
+2025-06-26 09:40:36,211 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 0...
+2025-06-26 09:40:36,347 - __main__ - INFO - 🔧 Forcing model to device: cuda:0
+2025-06-26 09:40:36,421 - __main__ - INFO - ✅ Model confirmed on device: cuda:0
+2025-06-26 09:40:36,422 - __main__ - INFO - 📊 GPU 0: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:40:36,422 - __main__ - INFO - 🧪 Testing GPU 0 inference...
+2025-06-26 09:40:36,423 - __main__ - INFO -    Test tensor created on: cuda:0
+2025-06-26 09:40:36,442 - __main__ - INFO -    Tensor range: 0.000 - 1.000
+2025-06-26 09:40:38,334 - __main__ - INFO - ✅ GPU 0 inference test successful:
+2025-06-26 09:40:38,334 - __main__ - INFO -    Inference time: 1.891s
+2025-06-26 09:40:38,334 - __main__ - INFO -    Memory used during inference: 0.031GB
+2025-06-26 09:40:38,334 - __main__ - INFO -    Results generated: 1
+2025-06-26 09:40:38,334 - __main__ - INFO -    ✅ Valid YOLO results received from GPU
+2025-06-26 09:40:38,339 - __main__ - INFO - ✅ GPU 0: Inference test passed - GPU is working!
+2025-06-26 09:40:38,339 - __main__ - INFO - 🔍 Comprehensive GPU 0 verification...
+2025-06-26 09:40:38,339 - __main__ - INFO - 🔍 GPU 0 usage verification:
+2025-06-26 09:40:38,339 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:40:38,339 - __main__ - INFO -    Current: 0.25GB
+2025-06-26 09:40:38,339 - __main__ - INFO -    Increase: 0.25GB
+2025-06-26 09:40:38,339 - __main__ - INFO - ✅ GPU 0: CONFIRMED GPU processing (memory increased by 0.25GB)
+2025-06-26 09:40:38,339 - __main__ - INFO -    Model device check: cuda:0 == cuda:0 -> True
+2025-06-26 09:40:38,339 - __main__ - INFO -    Verification results for GPU 0:
+2025-06-26 09:40:38,340 - __main__ - INFO -       Memory increase: ✅
+2025-06-26 09:40:38,340 - __main__ - INFO -       Model device placement: ✅
+2025-06-26 09:40:38,340 - __main__ - INFO -       Tensor operations: ✅
+2025-06-26 09:40:38,340 - __main__ - INFO -       CUDA context: ✅
+2025-06-26 09:40:38,340 - __main__ - INFO -       YOLO inference: ✅
+2025-06-26 09:40:38,340 - __main__ - INFO -    ✅ CRITICAL verification passed: GPU is working!
+2025-06-26 09:40:38,340 - __main__ - INFO -    Overall verification: 5/5 methods passed -> ✅
+2025-06-26 09:40:38,340 - __main__ - INFO - ✅ GPU 0 fully verified and ready
+2025-06-26 09:40:38,340 - __main__ - INFO - 🔧 Initializing and verifying GPU 1...
+2025-06-26 09:40:38,340 - __main__ - INFO - 📊 GPU 1 baseline memory:
+2025-06-26 09:40:38,340 - __main__ - INFO -    Allocated: 0.000GB
+2025-06-26 09:40:38,340 - __main__ - INFO -    Reserved: 0.000GB
+2025-06-26 09:40:38,340 - __main__ - WARNING -    ⚠️ GPU 1 shows no memory usage - this may be a measurement issue
+2025-06-26 09:40:38,340 - __main__ - INFO -    Total GPU memory: 15.5GB
+2025-06-26 09:40:38,340 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 1...
+2025-06-26 09:40:38,557 - __main__ - INFO - 🔧 Forcing model to device: cuda:1
+2025-06-26 09:40:38,605 - __main__ - INFO - ✅ Model confirmed on device: cuda:1
+2025-06-26 09:40:38,606 - __main__ - INFO - 📊 GPU 1: YOLO model loaded (0.22GB allocated)
+2025-06-26 09:40:38,607 - __main__ - INFO - 🧪 Testing GPU 1 inference...
+2025-06-26 09:40:38,607 - __main__ - INFO -    Test tensor created on: cuda:1
+2025-06-26 09:40:38,610 - __main__ - INFO -    Tensor range: 0.000 - 1.000
+2025-06-26 09:40:39,022 - __main__ - INFO - ✅ GPU 1 inference test successful:
+2025-06-26 09:40:39,022 - __main__ - INFO -    Inference time: 0.411s
+2025-06-26 09:40:39,022 - __main__ - INFO -    Memory used during inference: -0.218GB
+2025-06-26 09:40:39,022 - __main__ - INFO -    Results generated: 1
+2025-06-26 09:40:39,022 - __main__ - INFO -    ✅ Valid YOLO results received from GPU
+2025-06-26 09:40:39,024 - __main__ - INFO - ✅ GPU 1: Inference test passed - GPU is working!
+2025-06-26 09:40:39,024 - __main__ - INFO - 🔍 Comprehensive GPU 1 verification...
+2025-06-26 09:40:39,025 - __main__ - INFO - 🔍 GPU 1 usage verification:
+2025-06-26 09:40:39,025 - __main__ - INFO -    Baseline: 0.00GB
+2025-06-26 09:40:39,025 - __main__ - INFO -    Current: 0.00GB
+2025-06-26 09:40:39,025 - __main__ - INFO -    Increase: 0.00GB
+2025-06-26 09:40:39,025 - __main__ - WARNING - ⚠️ GPU 1: Low memory usage (only 0.00GB increase)
+2025-06-26 09:40:39,025 - __main__ - WARNING -    This may be normal for some GPU configurations
+2025-06-26 09:40:39,025 - __main__ - INFO -    Model device check: cuda:0 == cuda:1 -> False
+2025-06-26 09:40:39,033 - __main__ - INFO -    Verification results for GPU 1:
+2025-06-26 09:40:39,033 - __main__ - INFO -       Memory increase: ❌
+2025-06-26 09:40:39,034 - __main__ - INFO -       Model device placement: ❌
+2025-06-26 09:40:39,034 - __main__ - INFO -       Tensor operations: ✅
+2025-06-26 09:40:39,034 - __main__ - INFO -       CUDA context: ✅
+2025-06-26 09:40:39,034 - __main__ - INFO -       YOLO inference: ✅
+2025-06-26 09:40:39,034 - __main__ - WARNING -    ⚠️ Some critical verification failed
+2025-06-26 09:40:39,034 - __main__ - INFO -    Overall verification: 3/5 methods passed -> ❌
+2025-06-26 09:40:39,034 - __main__ - WARNING - ⚠️ GPU 1 comprehensive verification had some issues
+2025-06-26 09:40:39,034 - __main__ - WARNING -    But inference test passed, so GPU is likely working
+2025-06-26 09:40:39,034 - __main__ - WARNING -    Proceeding with processing...
+2025-06-26 09:40:39,034 - __main__ - INFO - 🧪 Running comprehensive GPU verification test...
+2025-06-26 09:40:39,034 - __main__ - INFO - 🔍 Comprehensive test for GPU 0...
+2025-06-26 09:40:39,035 - __main__ - INFO -    ✅ GPU 0 tensor operations: OK
+2025-06-26 09:40:39,035 - __main__ - INFO -    ✅ GPU 0 memory allocation: +3.8MB
+2025-06-26 09:40:39,035 - __main__ - INFO - 🔍 Comprehensive test for GPU 1...
+2025-06-26 09:40:39,036 - __main__ - INFO -    ✅ GPU 1 tensor operations: OK
+2025-06-26 09:40:39,036 - __main__ - INFO -    ✅ GPU 1 memory allocation: +4.2MB
+2025-06-26 09:40:39,036 - __main__ - INFO - 🎉 All GPU verification tests PASSED!
+2025-06-26 09:40:39,036 - __main__ - INFO - 🎉 ALL 2 GPUs initialized and ready!
+2025-06-26 09:40:39,036 - __main__ - INFO - ✅ VERIFIED GPU YOLO processor ready!
+2025-06-26 09:40:39,036 - __main__ - INFO - 🚀 VERIFIED GPU SYSTEM INFO:
+2025-06-26 09:40:39,036 - __main__ - INFO -    🎮 VERIFIED GPUs: 2
+2025-06-26 09:40:39,036 - __main__ - INFO -       GPU 0: Model on cuda:0 ✅
+2025-06-26 09:40:39,036 - __main__ - INFO -       GPU 1: Model on cuda:0 ✅
+2025-06-26 09:40:39,036 - __main__ - INFO -    📦 Batch Size: 24
+2025-06-26 09:40:39,036 - __main__ - INFO -    🖼️ Frame Processing: ALL frames (no limit)
+2025-06-26 09:40:39,036 - __main__ - INFO -    ⏭️ Frame Skip: 2 (process every 2 frames)
+2025-06-26 09:40:39,036 - __main__ - INFO -    🎯 Confidence: 0.3
+2025-06-26 09:40:39,036 - __main__ - INFO -    🔍 GPU Monitoring: ✅
+2025-06-26 09:40:40,179 - __main__ - INFO - 🔍 Quality filtered: 85 high-quality matches
+2025-06-26 09:40:40,273 - __main__ - INFO - ✅ Ready for VERIFIED processing of 85 videos
+2025-06-26 09:40:40,273 - __main__ - INFO - 🚀 VERIFIED DUAL GPU PROCESSING: 85 videos
+2025-06-26 09:40:40,273 - __main__ - INFO -    Strategy: VERIFIED GPU acceleration with usage monitoring
+2025-06-26 09:40:40,273 - __main__ - INFO - 
+🔥 VERIFIED GPU BATCH 1: 2 videos
+2025-06-26 09:40:40,273 - __main__ - INFO - 🎮 GPU 0 VERIFIED processing: temp_video_249409624610967552.MP4
+2025-06-26 09:40:40,280 - __main__ - INFO - 🚀 GPU 0 VERIFIED processing: temp_video_249409624610967552
+2025-06-26 09:40:40,281 - __main__ - INFO - 🎮 GPU 1 VERIFIED processing: temp_video_249174044895608832.MP4
+2025-06-26 09:40:40,281 - __main__ - INFO - 📹 Extracting ALL frames for GPU analysis: temp_video_249409624610967552.MP4
+2025-06-26 09:40:40,283 - __main__ - INFO - 🚀 GPU 1 VERIFIED processing: temp_video_249174044895608832
+2025-06-26 09:40:40,283 - __main__ - INFO - ⚡ Waiting for VERIFIED GPU processing...
+2025-06-26 09:40:40,283 - __main__ - INFO - 📹 Extracting ALL frames for GPU analysis: temp_video_249174044895608832.MP4
+2025-06-26 09:40:40,286 - __main__ - INFO - 📊 GPU processing ALL frames: 9441 frames from 18881 total
+2025-06-26 09:40:40,286 - __main__ - INFO -    Frame skip: 2 (processing every 2 frames)
+2025-06-26 09:40:40,286 - __main__ - INFO -    Video duration: 630.0 seconds
+2025-06-26 09:40:40,289 - __main__ - INFO - 📊 GPU processing ALL frames: 4487 frames from 8973 total
+2025-06-26 09:40:40,289 - __main__ - INFO -    Frame skip: 2 (processing every 2 frames)
+2025-06-26 09:40:40,289 - __main__ - INFO -    Video duration: 299.4 seconds
+2025-06-26 09:49:38,169 - __main__ - INFO - 🛑 Processing interrupted

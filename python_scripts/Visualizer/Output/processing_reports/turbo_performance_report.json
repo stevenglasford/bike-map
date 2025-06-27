@@ -1,0 +1,44 @@
+{
+  "turbo_performance_summary": {
+    "total_videos_processed": 0,
+    "failed_videos": 85,
+    "success_rate": 0.0,
+    "total_frames_processed": 0,
+    "total_detections": 0,
+    "average_fps": 0,
+    "total_processing_time_seconds": 0
+  },
+  "gpu_performance": {
+    "gpu_0": {
+      "average_utilization": 0.0,
+      "max_utilization": 0.0,
+      "min_utilization": 0.0,
+      "target_achievement": 0.0,
+      "samples": 1
+    },
+    "gpu_1": {
+      "average_utilization": 0.0,
+      "max_utilization": 0.0,
+      "min_utilization": 0.0,
+      "target_achievement": 0.0,
+      "samples": 1
+    }
+  },
+  "turbo_configuration": {
+    "target_gpu_utilization": 0.95,
+    "base_batch_size": 512,
+    "adaptive_batching": true,
+    "mixed_precision": true,
+    "cuda_streams": true,
+    "memory_pooling": true
+  },
+  "system_info": {
+    "gpu_count": 2,
+    "gpu_ids": [
+      0,
+      1
+    ],
+    "torch_version": "2.7.0+cu128",
+    "cuda_version": "12.8"
+  }
+}

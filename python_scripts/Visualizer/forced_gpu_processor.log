@@ -1,0 +1,33 @@
+2025-06-26 09:49:50,531 - __main__ - INFO - 🔥 Starting FORCED GPU YOLO Processor...
+2025-06-26 09:49:50,531 - __main__ - INFO -    📁 Input: MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-06-26 09:49:50,531 - __main__ - INFO -    📁 Output: Output/
+2025-06-26 09:49:50,531 - __main__ - INFO -    🔥 Strategy: FORCED GPU with immediate CPU fallback detection
+2025-06-26 09:49:50,531 - __main__ - INFO -    🚨 Will ABORT immediately if CPU fallback detected
+2025-06-26 09:49:50,531 - __main__ - INFO - 🚀 Initializing FORCED GPU YOLO Processor...
+2025-06-26 09:49:50,531 - __main__ - INFO - 🔥 FORCING GPU initialization...
+2025-06-26 09:49:50,683 - __main__ - INFO - 📊 GPU 0 baseline utilization: 0.0%
+2025-06-26 09:49:50,716 - __main__ - INFO - 📊 GPU 1 baseline utilization: 0.0%
+2025-06-26 09:49:50,716 - __main__ - INFO - 🔧 FORCING GPU 0 initialization...
+2025-06-26 09:49:50,822 - __main__ - INFO - 📦 FORCING YOLO model onto GPU 0...
+2025-06-26 09:49:51,038 - __main__ - INFO - ✅ YOLO model FORCED onto cuda:0
+2025-06-26 09:49:51,039 - __main__ - INFO - 📊 GPU 0: Model loaded (0.21GB)
+2025-06-26 09:49:51,039 - __main__ - INFO - 🧪 Testing FORCED GPU 0 inference...
+2025-06-26 09:49:53,683 - __main__ - INFO - 🔍 GPU 0 utilization check (test_inference):
+2025-06-26 09:49:53,683 - __main__ - INFO -    Current: 0.0%
+2025-06-26 09:49:53,683 - __main__ - INFO -    Baseline: 0.0%
+2025-06-26 09:49:53,683 - __main__ - ERROR - ❌ CRITICAL: GPU 0 utilization only 0.0%!
+2025-06-26 09:49:53,683 - __main__ - ERROR -    Operation: test_inference
+2025-06-26 09:49:53,683 - __main__ - ERROR -    CPU FALLBACK DETECTED - ABORTING!
+2025-06-26 09:49:53,683 - __main__ - ERROR - ❌ CRITICAL ERROR: ❌ GPU 0 test failed - CPU fallback detected!
+2025-06-26 09:49:53,683 - __main__ - ERROR - Traceback:
+Traceback (most recent call last):
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer24.py", line 891, in main
+    processor = ForcedGPUYOLOProcessor(config)
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer24.py", line 200, in __init__
+    self._force_initialize_gpus()
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer24.py", line 250, in _force_initialize_gpus
+    self._test_forced_gpu_inference(gpu_id)
+  File "/home/preston/bike-map/python_scripts/Visualizer/visualizer24.py", line 327, in _test_forced_gpu_inference
+    raise RuntimeError(f"❌ GPU {gpu_id} test failed - CPU fallback detected!")
+RuntimeError: ❌ GPU 0 test failed - CPU fallback detected!
+

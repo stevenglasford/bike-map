@@ -5,7 +5,7 @@ export CUDA_LAUNCH_BLOCKING=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 python matcher50.py \
     -d ~/penis/panoramics/playground/ \
-    -o ~/penis/testingground/hyper \
+    -o ~/bike-map/python_scripts/Visualizer/MatcherFiles \
 	--turbo-mode \
     --debug \
     --strict \
