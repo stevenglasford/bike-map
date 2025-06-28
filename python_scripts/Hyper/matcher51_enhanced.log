@@ -1,0 +1,81 @@
+2025-06-27 22:32:03,511 - INFO - Temp directory configured: /home/preston/penis/temp
+2025-06-27 22:32:03,511 - INFO - 🚀🚀🚀 COMPLETE TURBO MODE + RAM CACHE ACTIVATED - MAXIMUM PERFORMANCE + ALL FEATURES 🚀🚀🚀
+2025-06-27 22:32:03,547 - INFO - 🚀 Applying high-end system optimizations...
+2025-06-27 22:32:03,548 - INFO - 🚀 Detected high-RAM system - enabling aggressive caching
+2025-06-27 22:32:03,548 - INFO - 🚀 Detected high-core CPU - enabling maximum parallelism
+2025-06-27 22:32:03,548 - INFO - 🚀 Detected multi-GPU system - enabling aggressive GPU batching
+2025-06-27 22:32:03,548 - INFO - 🚀 SYSTEM OPTIMIZATION SUMMARY:
+2025-06-27 22:32:03,548 - INFO -    CPU Cores: 16
+2025-06-27 22:32:03,548 - INFO -    RAM: 125.7GB
+2025-06-27 22:32:03,548 - INFO -    GPUs: 2
+2025-06-27 22:32:03,548 - INFO -      GPU 0: NVIDIA GeForce RTX 5060 Ti (15.5GB)
+2025-06-27 22:32:03,548 - INFO -      GPU 1: NVIDIA GeForce RTX 5060 Ti (15.5GB)
+2025-06-27 22:32:03,548 - INFO -    Optimized Settings:
+2025-06-27 22:32:03,548 - INFO -      Parallel Videos: 16
+2025-06-27 22:32:03,548 - INFO -      CPU Workers: 16
+2025-06-27 22:32:03,548 - INFO -      GPU Batch Size: 128
+2025-06-27 22:32:03,548 - INFO -      RAM Cache: 88.0GB
+2025-06-27 22:32:03,548 - INFO - 🚀 RAM Cache Manager initialized: 88.0GB available
+2025-06-27 22:32:03,548 - INFO -    System RAM: 125.7GB total
+2025-06-27 22:32:03,548 - INFO - 💾 RAM Cache Manager initialized: 88.0GB allocated
+2025-06-27 22:32:03,548 - INFO - 🚀 COMPLETE TURBO-ENHANCED 360° FEATURES STATUS:
+2025-06-27 22:32:03,548 - INFO -   🌐 360° Detection: ✅
+2025-06-27 22:32:03,548 - INFO -   🔄 Spherical Processing: ✅
+2025-06-27 22:32:03,548 - INFO -   📐 Tangent Plane Processing: ✅
+2025-06-27 22:32:03,548 - INFO -   🌊 Advanced Optical Flow: ✅
+2025-06-27 22:32:03,548 - INFO -   🧠 Pre-trained CNN Features: ✅
+2025-06-27 22:32:03,548 - INFO -   🎯 Attention Mechanisms: ✅
+2025-06-27 22:32:03,548 - INFO -   🎼 Ensemble Matching: ✅
+2025-06-27 22:32:03,548 - INFO -   📊 Advanced DTW: ✅
+2025-06-27 22:32:03,548 - INFO -   🛰️  Enhanced GPS Processing: ✅
+2025-06-27 22:32:03,548 - INFO -   📋 GPX Validation Level: MODERATE
+2025-06-27 22:32:03,548 - INFO -   💾 PowerSafe Mode: ✅
+2025-06-27 22:32:03,548 - INFO -   💾 RAM Cache: ✅ (88.0GB)
+2025-06-27 22:32:03,548 - INFO - 🚀 Starting complete turbo processing system...
+2025-06-27 22:32:03,548 - INFO - 🔍 Verifying GPU setup...
+2025-06-27 22:32:03,549 - INFO - 🎮 Available GPUs: 2
+2025-06-27 22:32:03,702 - INFO - ✅ GPU 0: NVIDIA GeForce RTX 5060 Ti (15.5GB) - Working!
+2025-06-27 22:32:03,828 - INFO - ✅ GPU 1: NVIDIA GeForce RTX 5060 Ti (15.5GB) - Working!
+2025-06-27 22:32:03,829 - INFO - 🎮 GPU verification complete: 2 working GPUs, 31.0GB total VRAM
+2025-06-27 22:32:03,829 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-06-27 22:32:03,829 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-06-27 22:32:03,839 - INFO - PowerSafe mode enabled (PRESERVED + TURBO COMPATIBLE)
+2025-06-27 22:32:03,847 - INFO - GPU 0: NVIDIA GeForce RTX 5060 Ti (15.5GB) [STRICT MODE]
+2025-06-27 22:32:03,847 - INFO - GPU 1: NVIDIA GeForce RTX 5060 Ti (15.5GB) [STRICT MODE]
+2025-06-27 22:32:03,848 - INFO - 🚀 FIXED Turbo GPU Manager initialized with 2 GPUs and CUDA streams
+2025-06-27 22:32:03,848 - INFO - 🎮 GPU0:💤0%(0.0GB) | GPU1:💤0%(0.0GB) | Avg:0%
+2025-06-27 22:32:03,848 - INFO - 🎮 GPU monitoring started
+2025-06-27 22:32:03,848 - INFO - 🎮 GPU monitoring started - watch GPU utilization in real-time
+2025-06-27 22:32:03,848 - INFO - 🚀 Memory allocation strategy:
+2025-06-27 22:32:03,848 - INFO -    📊 Max shared memory: 69.0GB
+2025-06-27 22:32:03,848 - INFO -    📌 Max pinned memory: 11.5GB
+2025-06-27 22:32:03,849 - INFO -    🔄 Multi-GPU pinning: ✅
+2025-06-27 22:32:03,849 - INFO -    🚀 Huge pages: ✅
+2025-06-27 22:32:03,849 - INFO - 🚀 TurboSharedMemoryManager initialized:
+2025-06-27 22:32:03,849 - INFO -    💾 System RAM: 125.7GB (Available: 115.0GB)
+2025-06-27 22:32:03,849 - INFO -    🎮 GPUs: 2 (31.0GB total VRAM)
+2025-06-27 22:32:03,849 - INFO -    🧠 CPU Cores: 16
+2025-06-27 22:32:03,849 - INFO -    📂 Temp directory: /tmp/turbo_cache
+2025-06-27 22:32:03,849 - INFO - 🚀 Memory-mapped caching enabled for maximum I/O performance
+2025-06-27 22:32:03,849 - INFO - 🚀 RAM Cache Manager initialized: 88.0GB available
+2025-06-27 22:32:03,849 - INFO -    System RAM: 125.7GB total
+2025-06-27 22:32:03,849 - INFO - 🔍 Scanning for input files...
+2025-06-27 22:32:03,900 - INFO - Found 116 videos and 2905 GPX files
+2025-06-27 22:32:03,900 - INFO - 🔍 Starting complete enhanced pre-flight video validation...
+2025-06-27 22:32:03,900 - INFO - Enhanced Video Validator initialized (PRESERVED + TURBO):
+2025-06-27 22:32:03,900 - INFO -   Strict Mode: True
+2025-06-27 22:32:03,900 - INFO -   Quarantine Directory: /home/preston/penis/temp/quarantine
+2025-06-27 22:32:03,900 - INFO -   GPU Test Directory: /home/preston/penis/temp/gpu_test
+2025-06-27 22:32:03,900 - INFO - Pre-flight validation of 116 videos...
+2025-06-27 22:32:08,724 - INFO - Process interrupted by user
+2025-06-27 22:32:08,724 - INFO - PowerSafe: Progress has been saved and can be resumed
+2025-06-27 22:32:08,724 - INFO - RAM Cache: Clearing cache before exit
+2025-06-27 22:32:08,724 - INFO - RAM cache cleared
+2025-06-27 22:32:09,724 - INFO - 🎮 GPU monitoring stopped
+2025-06-27 22:32:09,724 - INFO - 🎮 GPU monitoring stopped
+2025-06-27 22:32:09,725 - INFO - Video validator cleanup completed
+2025-06-27 22:32:09,725 - INFO - RAM cache cleared
+2025-06-27 22:32:09,725 - INFO - RAM cache cleared
+2025-06-27 22:32:09,725 - INFO - Complete turbo system cleanup completed
+2025-06-27 22:32:09,726 - INFO - 🧹 Cleaning up TurboSharedMemoryManager...
+2025-06-27 22:32:09,906 - INFO - ✅ TurboSharedMemoryManager cleanup complete

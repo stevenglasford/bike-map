@@ -3,14 +3,13 @@
 nvidia-smi --gpu-reset
 export CUDA_LAUNCH_BLOCKING=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-python matcher50.py \
+python matcher51.py \
     -d ~/penis/panoramics/playground/ \
     -o ~/bike-map/python_scripts/Visualizer/MatcherFiles \
 	--turbo-mode \
     --debug \
     --strict \
     --powersafe \
-    --force \
 	--cuda-streams \
 	--vectorized-ops \
 	--parallel_videos 2 \
@@ -18,7 +17,8 @@ python matcher50.py \
 	--correlation-batch-size 5000 \
 	--max_gpu_memory 8.0 \
 	--max-cpu-workers 0
-	#--gpu_batch_size 100
+	#--force \
+	#--gpu_batch_size 100 \
 	#--max_frames 50 \
     #--video_size 720 480 \
     #--sample_rate 2.0 \

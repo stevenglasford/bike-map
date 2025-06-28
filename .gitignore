@@ -1,3 +1,6 @@
+_shellfish*
+complete_turbo_360_report_ramcache*
+python_scripts/Visualizer/Output
 *.MP4
 *.csv
 __pycache__
