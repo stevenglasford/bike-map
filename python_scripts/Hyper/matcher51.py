@@ -324,7 +324,52 @@ def setup_logging(log_level=logging.INFO, log_file=None):
 
 logger = setup_logging()
 
-
+def enhanced_process_video_gps_pair(video_path: str, gps_path: str, config) -> Dict:
+    """Enhanced processing function with environmental features"""
+        
+    try:
+        # Initialize enhanced processor
+        enhanced_processor = UltraEnhancedCorrelationProcessor(config)
+            
+        # Step 1: Extract traditional features (your existing methods)
+        video_result = extract_video_features(video_path)  # Your existing function
+        gps_result = extract_gps_features(gps_path)        # Your existing function
+            
+        if not video_result or not gps_result:
+            return {
+                    'video_path': video_path,
+                    'gps_path': gps_path,
+                    'correlation_score': 0.0,
+                    'error': 'Feature extraction failed'
+            }
+            
+        # Step 2: Enhanced correlation with environmental features
+        correlation_results = enhanced_processor.compute_ultra_enhanced_correlation(
+                video_features=video_result.get('features', {}),
+                gps_features=gps_result.get('features', {}),
+                video_frames=video_result.get('frames', [])[:100],  # Limit frames for performance
+                gps_df=gps_result.get('df', None)
+        )
+            
+        #Step 3: Return enhanced results
+        return {
+                'video_path': video_path,
+                'gps_path': gps_path,
+                'correlation_score': correlation_results.get('ultra_enhanced_final_score', 0.0),
+                'detailed_correlations': correlation_results,
+                'environmental_boost': correlation_results.get('elevation_visual', 0.0),  # Key improvement metric
+                'processing_mode': 'ultra_enhanced'
+        }
+            
+    except Exception as e:
+        logger.error(f"Enhanced processing failed for {video_path}: {e}")
+        return {
+                'video_path': video_path,
+                'gps_path': gps_path,
+                'correlation_score': 0.0,
+                'error': str(e)
+        }
+    
 
 def get_proper_file_size(filepath):
     """Get file size without integer overflow for large video files"""
@@ -982,7 +1027,277 @@ class EnhancedTemporalMatchingConfig:
     # Advanced filtering
     ENABLE_STRICT_DURATION_FILTERING = True
     ENABLE_DURATION_WEIGHTED_SCORING = True
-    
+
+class EnhancedEnvironmentalProcessor:
+    """Integrate environmental features into your existing pipeline"""
+        
+    def __init__(self, config):
+        self.config = config
+        
+    def extract_enhanced_gps_environmental_features(self, df: pd.DataFrame) -> Dict[str, np.ndarray]:
+        """Extract enhanced GPS environmental features"""
+        n_points = len(df)
+            
+        if n_points < 3:
+            return {}
+            
+        features = {}
+            
+            # Enhanced elevation features
+        if 'elevation' in df.columns:
+            features.update(self._extract_elevation_features(df))
+            
+            # Time-based features
+            if 'timestamp' in df.columns:
+                features.update(self._extract_time_features(df))
+            
+            # Terrain complexity features
+            features.update(self._extract_terrain_features(df))
+            
+            return features
+        
+    def extract_enhanced_video_environmental_features(self, frames: List[np.ndarray]) -> Dict[str, np.ndarray]:
+        """Extract enhanced video environmental features"""
+        num_frames = len(frames)
+            
+        if num_frames < 3:
+            return {}
+            
+        features = {}
+            
+        # Lighting analysis
+        features.update(self._extract_lighting_features(frames))
+            
+        # Scene complexity
+        features.update(self._extract_scene_complexity_features(frames))
+            
+        # Camera stability
+        features.update(self._extract_stability_features(frames))
+            
+        return features
+        
+    def _extract_elevation_features(self, df: pd.DataFrame) -> Dict[str, np.ndarray]:
+        """Enhanced elevation analysis"""
+        n_points = len(df)
+        elevations = df['elevation'].values
+            
+        features = {
+                'elevation_gain_rate': np.zeros(n_points),
+                'elevation_loss_rate': np.zeros(n_points),
+                'terrain_roughness': np.zeros(n_points),
+                'elevation_smoothness': np.zeros(n_points)
+        }
+            
+        # Elevation processing
+        elevation_diff = np.gradient(elevations)
+        elevation_diff_2 = np.gradient(elevation_diff)
+            
+        # Time differences
+        if 'timestamp' in df.columns:
+            try:
+                time_diffs = np.diff(df['timestamp'].values).astype('timedelta64[s]').astype(float)
+                time_diffs = np.concatenate([[time_diffs[0]], time_diffs])
+                time_diffs = np.maximum(time_diffs, 1e-8)
+                    
+                # Elevation rates
+                features['elevation_gain_rate'] = np.where(elevation_diff > 0, 
+                                                             (elevation_diff * 60) / time_diffs, 0)
+                features['elevation_loss_rate'] = np.where(elevation_diff < 0, 
+                                                             (np.abs(elevation_diff) * 60) / time_diffs, 0)
+            except:
+                features['elevation_gain_rate'] = np.maximum(elevation_diff, 0)
+                features['elevation_loss_rate'] = np.maximum(-elevation_diff, 0)
+            
+        # Terrain analysis
+        features['terrain_roughness'] = np.abs(elevation_diff_2)
+        features['elevation_smoothness'] = 1.0 / (1.0 + features['terrain_roughness'])
+            
+        return features
+        
+    def _extract_time_features(self, df: pd.DataFrame) -> Dict[str, np.ndarray]:
+        """Time-based environmental features"""
+        n_points = len(df)
+        features = {
+                'time_of_day_score': np.zeros(n_points),
+                'daylight_factor': np.zeros(n_points)
+        }
+            
+        timestamps = df['timestamp'].values
+            
+        for i, timestamp in enumerate(timestamps):
+            try:
+                if isinstance(timestamp, str):
+                    dt = pd.to_datetime(timestamp)
+                else:
+                    dt = timestamp
+                    
+                # Time encoding
+                hour = dt.hour
+                features['time_of_day_score'][i] = np.sin(2 * np.pi * hour / 24)
+                    
+                # Daylight factor (simple heuristic)
+                if 6 <= hour <= 18:
+                    features['daylight_factor'][i] = 1.0
+                else:
+                    features['daylight_factor'][i] = 0.0
+                        
+            except Exception:
+                pass
+            
+        return features
+        
+    def _extract_terrain_features(self, df: pd.DataFrame) -> Dict[str, np.ndarray]:
+        """Terrain complexity features"""
+        n_points = len(df)
+        features = {
+                'turn_density': np.zeros(n_points),
+                'route_complexity': np.zeros(n_points)
+        }
+            
+        if n_points < 5:
+            return features
+            
+        # Calculate bearings
+        bearings = np.zeros(n_points)
+        for i in range(n_points - 1):
+            try:
+                lat1, lon1 = df['lat'].iloc[i], df['lon'].iloc[i]
+                lat2, lon2 = df['lat'].iloc[i+1], df['lon'].iloc[i+1]
+                    
+                lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
+                    
+                dlon = lon2 - lon1
+                y = np.sin(dlon) * np.cos(lat2)
+                x = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(dlon)
+                bearing = np.degrees(np.arctan2(y, x))
+                bearings[i] = (bearing + 360) % 360
+            except:
+                bearings[i] = bearings[i-1] if i > 0 else 0
+            
+        bearings[-1] = bearings[-2] if n_points > 1 else 0
+            
+        # Turn density
+        bearing_changes = np.abs(np.gradient(bearings))
+        bearing_changes = np.minimum(bearing_changes, 360 - bearing_changes)
+            
+        window_size = min(10, n_points // 5)
+        if window_size > 1:
+            bearing_series = pd.Series(bearing_changes)
+            features['turn_density'] = bearing_series.rolling(
+                window=window_size, center=True, min_periods=1
+            ).sum().fillna(0).values
+        else:
+            features['turn_density'] = bearing_changes
+            
+            # Route complexity
+        if 'elevation' in df.columns:
+            elevation_changes = np.abs(np.gradient(df['elevation'].values))
+            features['route_complexity'] = bearing_changes + elevation_changes * 0.1
+        else:
+            features['route_complexity'] = bearing_changes
+            
+        return features
+        
+    def _extract_lighting_features(self, frames: List[np.ndarray]) -> Dict[str, np.ndarray]:
+        """Lighting analysis features"""
+        num_frames = len(frames)
+        features = {
+                'brightness_progression': np.zeros(num_frames),
+                'contrast_stability': np.zeros(num_frames),
+                'shadow_strength': np.zeros(num_frames)
+        }
+            
+        for i, frame in enumerate(frames):
+            try:
+                if len(frame.shape) == 3:
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                else:
+                    gray = frame
+                    
+                features['brightness_progression'][i] = np.mean(gray)
+                features['contrast_stability'][i] = np.std(gray)
+                    
+                # Shadow analysis
+                hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
+                dark_pixels = np.sum(hist[:64])
+                total_pixels = gray.shape[0] * gray.shape[1]
+                features['shadow_strength'][i] = dark_pixels / total_pixels
+                    
+            except Exception:
+                pass
+            
+        return features
+        
+    def _extract_scene_complexity_features(self, frames: List[np.ndarray]) -> Dict[str, np.ndarray]:
+        """Scene complexity features"""
+        num_frames = len(frames)
+        features = {
+                'edge_density_score': np.zeros(num_frames),
+                'texture_richness': np.zeros(num_frames),
+                'scene_change_rate': np.zeros(num_frames)
+        }
+            
+        prev_frame_gray = None
+            
+            
+        for i, frame in enumerate(frames):
+            try:
+                if len(frame.shape) == 3:
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                else:
+                    gray = frame
+                    
+                # Edge density
+                edges = cv2.Canny(gray, 50, 150)
+                features['edge_density_score'][i] = np.sum(edges > 0) / edges.size
+                    
+                # Texture analysis
+                features['texture_richness'][i] = np.std(gray)
+                    
+                # Scene change
+                if prev_frame_gray is not None:
+                    frame_diff = cv2.absdiff(gray, prev_frame_gray)
+                    features['scene_change_rate'][i] = np.mean(frame_diff)
+                    
+                prev_frame_gray = gray.copy()
+                    
+            except Exception:
+                pass
+            
+        return features
+        
+        def _extract_stability_features(self, frames: List[np.ndarray]) -> Dict[str, np.ndarray]:
+            """Camera stability features"""
+            num_frames = len(frames)
+            features = {
+                'shake_intensity': np.zeros(num_frames),
+                'stability_score': np.zeros(num_frames)
+            }
+            
+            for i in range(1, num_frames):
+                try:
+                    curr_frame = frames[i]
+                    prev_frame = frames[i-1]
+                    
+                    if len(curr_frame.shape) == 3:
+                        curr_gray = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
+                        prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
+                    else:
+                        curr_gray = curr_frame
+                        prev_gray = prev_frame
+                    
+                    # Shake detection
+                    frame_diff = cv2.absdiff(curr_gray, prev_gray)
+                    features['shake_intensity'][i] = np.mean(frame_diff)
+                    
+                    # Stability score
+                    features['stability_score'][i] = 1.0 / (1.0 + features['shake_intensity'][i] / 50.0)
+                    
+                except Exception:
+                    pass
+            
+            return features
+   
 class EnhancedEnvironmentalAnalyzer:
     """Comprehensive environmental analysis for both GPS and video data"""
     
@@ -2265,24 +2580,7 @@ class AdvancedMultiScaleCorrelationEngine:
             
         except Exception as e:
             logger.debug(f"Feature weight update failed: {e}")
-    
-    # Placeholder methods for traditional correlations (would use existing implementations)
-    def _compute_statistical_similarity(self, video_features: Dict, gps_features: Dict) -> float:
-        """Placeholder for existing statistical similarity computation"""
-        return 0.0  # Replace with actual implementation
-    
-    def _compute_temporal_similarity(self, video_features: Dict, gps_features: Dict) -> float:
-        """Placeholder for existing temporal similarity computation"""
-        return 0.0  # Replace with actual implementation
-    
-    def _compute_dtw_similarity(self, video_features: Dict, gps_features: Dict) -> float:
-        """Placeholder for existing DTW similarity computation"""
-        return 0.0  # Replace with actual implementation
-    
-    def _compute_optical_flow_similarity(self, video_features: Dict, gps_features: Dict) -> float:
-        """Placeholder for existing optical flow similarity computation"""
-        return 0.0  # Replace with actual implementation
-    
+      
     def _compute_weighted_correlation(self, vector1: np.ndarray, vector2: np.ndarray, weights: np.ndarray) -> float:
         """Compute weighted correlation using feature importance"""
         try:
@@ -7813,6 +8111,78 @@ class TurboAdvancedGPSProcessor:
         
         logger.info(f"🚀 Turbo GPS processor initialized with {self.max_workers} workers (PRESERVED + ENHANCED)")
     
+    @staticmethod
+    def _compute_time_differences_vectorized(timestamps: np.ndarray) -> np.ndarray:
+        """TURBO: Vectorized time difference computation"""
+        n = len(timestamps)
+        time_diffs = np.ones(n)  # Initialize with 1.0 to avoid division by zero
+    
+        if n > 1:
+            # Convert timestamps to total_seconds for vectorized operations
+            time_array = np.array([ts.timestamp() if hasattr(ts, 'timestamp') else ts.total_seconds() 
+                                 for ts in timestamps])
+            diffs = np.diff(time_array)
+            time_diffs[:-1] = np.maximum(diffs, 1e-8)  # Avoid division by zero
+            time_diffs[-1] = time_diffs[-2] if n > 1 else 1.0
+    
+        return time_diffs
+
+    @staticmethod
+    def _compute_duration_safe(timestamps: pd.Series) -> float:
+        """Safely compute duration from timestamps"""
+        try:
+            if len(timestamps) < 2:
+                return 0.0
+            start_time = timestamps.iloc[0]
+            end_time = timestamps.iloc[-1]
+            duration = (end_time - start_time).total_seconds()
+            return max(duration, 0.0)
+        except Exception:
+            return 0.0
+
+    # Add these helper functions outside the class (global level)
+    def compute_distances_vectorized_turbo(lats: np.ndarray, lons: np.ndarray) -> np.ndarray:
+        """Vectorized distance calculation using Haversine formula"""
+        n = len(lats)
+        distances = np.zeros(n)
+    
+        if n > 1:
+            # Haversine formula for distance calculation
+            lat1, lat2 = np.radians(lats[:-1]), np.radians(lats[1:])
+            lon1, lon2 = np.radians(lons[:-1]), np.radians(lons[1:])
+        
+            dlat = lat2 - lat1
+            dlon = lon2 - lon1
+        
+            a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+            c = 2 * np.arcsin(np.sqrt(a))
+        
+            # Earth radius in kilometers
+            earth_radius = 6371.0
+            distances[:-1] = earth_radius * c
+            distances[-1] = 0.0  # Last point has no distance
+    
+        return distances
+
+    def compute_bearings_vectorized_turbo(lats: np.ndarray, lons: np.ndarray) -> np.ndarray:
+        """Vectorized bearing calculation"""
+        n = len(lats)
+        bearings = np.zeros(n)
+    
+        if n > 1:
+            lat1, lat2 = np.radians(lats[:-1]), np.radians(lats[1:])
+            lon1, lon2 = np.radians(lons[:-1]), np.radians(lons[1:])
+        
+            dlon = lon2 - lon1
+            y = np.sin(dlon) * np.cos(lat2)
+            x = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(dlon)
+        
+            bearing = np.degrees(np.arctan2(y, x))
+            bearings[:-1] = (bearing + 360) % 360
+            bearings[-1] = bearings[-2] if n > 1 else 0.0
+    
+        return bearings
+    
     def enhance_existing_gps_extraction(df: pd.DataFrame) -> Dict[str, np.ndarray]:
         """
         INTEGRATION: Add this to your existing TurboAdvancedGPSProcessor class
@@ -8157,7 +8527,7 @@ class TurboAdvancedGPSProcessor:
             
             # TURBO: Extract enhanced features using vectorized operations
             enhanced_features = TurboAdvancedGPSProcessor._extract_enhanced_gps_features_turbo(df)
-            TurboAdvancedGPSProcessor._extract_enhanced_gps_features_turbo()
+            #TurboAdvancedGPSProcessor._extract_enhanced_gps_features_turbo()
             
             # Calculate metadata
             duration = TurboAdvancedGPSProcessor._compute_duration_safe(df['timestamp'])
@@ -8279,6 +8649,15 @@ class TurboAdvancedGPSProcessor:
             consistency = 1.0 / (1.0 + rolling_std / (rolling_mean + 1e-8))
             features['movement_consistency'] = consistency.fillna(0).values
         
+        if len(df) >= 3:
+            env_processor = EnhancedEnvironmentalProcessor(None)  # Create processor
+            
+            # Extract enhanced environmental features
+            env_features = env_processor.extract_enhanced_gps_environmental_features(df)
+            features.update(env_features)
+            
+            logger.debug(f"🗻 Added {len(env_features)} environmental GPS features")
+
         return features
     
     @staticmethod
@@ -9319,6 +9698,24 @@ def process_video_parallel_complete_turbo(args) -> Tuple[str, Optional[Dict]]:
             success_msg += f" [{features['duration']:.1f}s]"
         
         logger.info(success_msg)
+        
+        if frames:  # If you successfully extracted frames
+            env_processor = EnhancedEnvironmentalProcessor(self.config)
+            
+            # Extract lighting features
+            lighting_features = env_processor._extract_lighting_features(frames)
+            features.update(lighting_features)
+            
+            # Extract scene complexity features
+            complexity_features = env_processor._extract_scene_complexity_features(frames)
+            features.update(complexity_features)
+            
+            # Extract camera stability features  
+            stability_features = env_processor._extract_stability_features(frames)
+            features.update(stability_features)
+            
+            logger.debug(f"🌿 Added {len(lighting_features + complexity_features + stability_features)} environmental video features")
+
         
         return video_path, features
         
@@ -11508,6 +11905,127 @@ def update_config_for_temp_dir(args) -> argparse.Namespace:
             print(f"⚠️  Warning: Failed to configure temp directory: {e}")
         return args
 
+def enhance_tensor_correlation_network(self):
+    """Add these methods to your TensorCorrelationNetwork class"""
+        
+    def compute_enhanced_tensor_correlation(self, video_tensor: torch.Tensor, 
+                                              gps_tensor: torch.Tensor,
+                                              environmental_tensors: Dict[str, torch.Tensor] = None) -> torch.Tensor:
+        """Enhanced tensor correlation with environmental features"""
+            
+        # Original tensor correlation
+        """Enhanced correlation with environmental features"""
+    try:
+        # Initialize enhanced processor
+        enhanced_processor = UltraEnhancedCorrelationProcessor(config)
+        
+        # Separate traditional and environmental features
+        video_traditional = {k: v for k, v in video_features.items() 
+                           if not any(term in k.lower() for term in 
+                                    ['lighting', 'brightness', 'vegetation', 'urban', 'horizon', 'complexity'])}
+        
+        video_environmental = {k: v for k, v in video_features.items() 
+                             if any(term in k.lower() for term in 
+                                  ['lighting', 'brightness', 'vegetation', 'urban', 'horizon', 'complexity'])}
+        
+        gps_traditional = {k: v for k, v in gps_features.items() 
+                          if not any(term in k.lower() for term in 
+                                   ['elevation', 'terrain', 'time_of_day', 'route_complexity'])}
+        
+        gps_environmental = {k: v for k, v in gps_features.items() 
+                           if any(term in k.lower() for term in 
+                                ['elevation', 'terrain', 'time_of_day', 'route_complexity'])}
+        
+        # Compute enhanced correlation
+        correlation_result = enhanced_processor.compute_ultra_enhanced_correlation(
+            video_features=video_traditional,
+            gps_features=gps_traditional, 
+            video_env_features=video_environmental,
+            gps_env_features=gps_environmental
+        )
+        
+        return correlation_result
+        
+    except Exception as e:
+        logger.error(f"Enhanced correlation failed: {e}")
+        return {'combined': 0.0, 'quality': 'failed'}
+
+        
+    def _compute_environmental_tensor_correlation(self, video_tensor: torch.Tensor,
+                                                    gps_tensor: torch.Tensor, 
+                                                    env_tensors: Dict[str, torch.Tensor]) -> torch.Tensor:
+        """Compute environmental tensor correlations"""
+            
+        env_correlations = []
+            
+        # Process each environmental feature tensor
+        for env_name, env_tensor in env_tensors.items():
+            try:
+                # Ensure tensor compatibility
+                if env_tensor.shape[0] == video_tensor.shape[0]:  # Same batch size
+                        
+                    # Reshape for correlation if needed
+                    if len(env_tensor.shape) == 2:  # [batch, features]
+                        env_tensor = env_tensor.unsqueeze(1)  # [batch, 1, features]
+                        
+                    # Compute correlation with appropriate tensor
+                    if 'video' in env_name or 'visual' in env_name:
+                        corr = F.cosine_similarity(
+                            video_tensor.mean(dim=1), 
+                            env_tensor.mean(dim=1), 
+                            dim=-1
+                        )
+                    else:  # GPS environmental features
+                        corr = F.cosine_similarity(
+                            gps_tensor.mean(dim=1), 
+                            env_tensor.mean(dim=1), 
+                            dim=-1
+                        )
+                        
+                    env_correlations.append(corr)
+                        
+            except Exception as e:
+                logger.debug(f"Environmental tensor correlation failed for {env_name}: {e}")
+            
+        if env_correlations:
+            # Stack and take mean
+            stacked_correlations = torch.stack(env_correlations, dim=0)
+            return torch.mean(stacked_correlations, dim=0)
+        else:
+            # Fallback to base correlation
+            return F.cosine_similarity(
+                video_tensor.mean(dim=(1, 2)), 
+                gps_tensor.mean(dim=(1, 2)), 
+                dim=-1
+            )
+        
+    def prepare_environmental_tensors(self, video_env_features: Dict, gps_env_features: Dict, 
+                                        device: torch.device) -> Dict[str, torch.Tensor]:
+        """Prepare environmental features as tensors"""
+            
+        env_tensors = {}
+            
+        try:
+            # Convert video environmental features to tensors
+            for name, features in video_env_features.items():
+                if isinstance(features, np.ndarray) and features.size > 0:
+                    tensor = torch.from_numpy(features).float().to(device)
+                    if len(tensor.shape) == 1:
+                        tensor = tensor.unsqueeze(0)  # Add batch dimension
+                    env_tensors[f'video_{name}'] = tensor
+                
+            # Convert GPS environmental features to tensors  
+            for name, features in gps_env_features.items():
+                if isinstance(features, np.ndarray) and features.size > 0:
+                    tensor = torch.from_numpy(features).float().to(device)
+                    if len(tensor.shape) == 1:
+                        tensor = tensor.unsqueeze(0)  # Add batch dimension
+                    env_tensors[f'gps_{name}'] = tensor
+                
+        except Exception as e:
+            logger.debug(f"Environmental tensor preparation failed: {e}")
+            
+        return env_tensors
 
 class GPUUtilizationMonitor:
     """Real-time GPU utilization monitor"""

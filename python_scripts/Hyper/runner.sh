@@ -16,8 +16,8 @@ python matcher51.py \
 	--gpu-batch-size 128 \
 	--correlation-batch-size 5000 \
 	--max_gpu_memory 8.0 \
-	--max-cpu-workers 0
-	#--force \
+	--max-cpu-workers 0 \
+	--force 
 	#--gpu_batch_size 100 \
 	#--max_frames 50 \
     #--video_size 720 480 \
