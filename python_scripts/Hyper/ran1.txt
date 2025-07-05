@@ -1,0 +1,154 @@
+Unable to disable persistence mode for GPU 00000000:24:00.0: Insufficient Permissions
+🔍 TORCH_AVAILABLE = True
+🔍 PSUTIL_AVAILABLE = True
+⚠️ DEBUG: TurboGPUBatchEngine not found in globals, will patch when available
+2025-07-04 10:52:07,377 - INFO - Temp directory configured: /home/preston/penis/temp
+2025-07-04 10:52:07,377 - INFO - 🚀🚀🚀 COMPLETE TURBO MODE + RAM CACHE ACTIVATED - MAXIMUM PERFORMANCE + ALL FEATURES 🚀🚀🚀
+🚀 Turbo mode enabled - preserving all turbo settings
+🚀 TURBO MODE ACTIVATED - Maximum performance with ALL features preserved!
+🚀 RAM Cache: 82.9GB allocated
+🚀 CPU Workers: 16
+🚀 GPU Batch Size: 64
+🚀 Parallel Videos: 16
+True
+2025-07-04 10:52:07,403 - INFO - 🚀 Applying high-end system optimizations...
+2025-07-04 10:52:07,403 - INFO - 🚀 Detected high-RAM system - enabling aggressive caching
+2025-07-04 10:52:07,403 - INFO - 🚀 Detected high-core CPU - enabling maximum parallelism
+2025-07-04 10:52:07,403 - INFO - 🚀 Detected multi-GPU system - enabling aggressive GPU batching
+2025-07-04 10:52:07,403 - INFO - 🚀 SYSTEM OPTIMIZATION SUMMARY:
+2025-07-04 10:52:07,403 - INFO -    CPU Cores: 16
+2025-07-04 10:52:07,403 - INFO -    RAM: 125.7GB
+2025-07-04 10:52:07,403 - INFO -    GPUs: 2
+2025-07-04 10:52:07,403 - INFO -      GPU 0: NVIDIA GeForce RTX 5060 Ti (15.5GB)
+2025-07-04 10:52:07,404 - INFO -      GPU 1: NVIDIA GeForce RTX 5060 Ti (15.5GB)
+2025-07-04 10:52:07,404 - INFO -    Optimized Settings:
+2025-07-04 10:52:07,404 - INFO -      Parallel Videos: 16
+2025-07-04 10:52:07,404 - INFO -      CPU Workers: 16
+2025-07-04 10:52:07,404 - INFO -      GPU Batch Size: 128
+2025-07-04 10:52:07,404 - INFO -      RAM Cache: 88.0GB
+2025-07-04 10:52:07,404 - INFO - 🚀 RAM Cache Manager initialized: 88.0GB available
+2025-07-04 10:52:07,404 - INFO -    System RAM: 125.7GB total
+2025-07-04 10:52:07,404 - INFO - 💾 RAM Cache Manager initialized: 88.0GB allocated
+2025-07-04 10:52:07,404 - INFO - 🚀 COMPLETE TURBO-ENHANCED 360° FEATURES STATUS:
+2025-07-04 10:52:07,404 - INFO -   🌐 360° Detection: ✅
+2025-07-04 10:52:07,404 - INFO -   🔄 Spherical Processing: ✅
+2025-07-04 10:52:07,404 - INFO -   📐 Tangent Plane Processing: ✅
+2025-07-04 10:52:07,404 - INFO -   🌊 Advanced Optical Flow: ✅
+2025-07-04 10:52:07,404 - INFO -   🧠 Pre-trained CNN Features: ✅
+2025-07-04 10:52:07,404 - INFO -   🎯 Attention Mechanisms: ✅
+2025-07-04 10:52:07,404 - INFO -   🎼 Ensemble Matching: ✅
+2025-07-04 10:52:07,404 - INFO -   📊 Advanced DTW: ✅
+2025-07-04 10:52:07,404 - INFO -   🛰️  Enhanced GPS Processing: ✅
+2025-07-04 10:52:07,404 - INFO -   📋 GPX Validation Level: MODERATE
+2025-07-04 10:52:07,404 - INFO -   💾 PowerSafe Mode: ✅
+2025-07-04 10:52:07,404 - INFO -   💾 RAM Cache: ✅ (88.0GB)
+2025-07-04 10:52:07,404 - INFO - 🚀 Starting complete turbo processing system...
+2025-07-04 10:52:07,404 - INFO - 🔍 Verifying GPU setup...
+2025-07-04 10:52:07,404 - INFO - 🎮 Available GPUs: 2
+2025-07-04 10:52:07,574 - INFO - ✅ GPU 0: NVIDIA GeForce RTX 5060 Ti (15.5GB) - Working!
+2025-07-04 10:52:07,729 - INFO - ✅ GPU 1: NVIDIA GeForce RTX 5060 Ti (15.5GB) - Working!
+2025-07-04 10:52:07,729 - INFO - 🎮 GPU verification complete: 2 working GPUs, 31.0GB total VRAM
+2025-07-04 10:52:07,730 - INFO - STRICT MODE ENABLED: GPU usage mandatory
+2025-07-04 10:52:07,730 - INFO - STRICT MODE: Problematic videos will be skipped
+2025-07-04 10:52:07,733 - INFO - PowerSafe mode enabled (PRESERVED + TURBO COMPATIBLE)
+2025-07-04 10:52:07,745 - INFO - GPU 0: NVIDIA GeForce RTX 5060 Ti (15.5GB) [STRICT MODE]
+2025-07-04 10:52:07,745 - INFO - GPU 1: NVIDIA GeForce RTX 5060 Ti (15.5GB) [STRICT MODE]
+2025-07-04 10:52:07,745 - INFO - 🚀 FIXED Turbo GPU Manager initialized with 2 GPUs and CUDA streams
+2025-07-04 10:52:07,746 - INFO - 🎮 GPU0:💤0%(0.0GB) | GPU1:💤0%(0.0GB) | Avg:0%
+2025-07-04 10:52:07,746 - INFO - 🎮 GPU monitoring started
+2025-07-04 10:52:07,746 - INFO - 🎮 GPU monitoring started - watch GPU utilization in real-time
+2025-07-04 10:52:07,746 - INFO - 🚀 Memory allocation strategy:
+2025-07-04 10:52:07,746 - INFO -    📊 Max shared memory: 71.0GB
+2025-07-04 10:52:07,746 - INFO -    📌 Max pinned memory: 11.8GB
+2025-07-04 10:52:07,746 - INFO -    🔄 Multi-GPU pinning: ✅
+2025-07-04 10:52:07,746 - INFO -    🚀 Huge pages: ✅
+2025-07-04 10:52:07,747 - INFO - 🚀 TurboSharedMemoryManager initialized:
+2025-07-04 10:52:07,747 - INFO -    💾 System RAM: 125.7GB (Available: 118.3GB)
+2025-07-04 10:52:07,747 - INFO -    🎮 GPUs: 2 (31.0GB total VRAM)
+2025-07-04 10:52:07,747 - INFO -    🧠 CPU Cores: 16
+2025-07-04 10:52:07,747 - INFO -    📂 Temp directory: /tmp/turbo_cache
+2025-07-04 10:52:07,747 - INFO - 🚀 Memory-mapped caching enabled for maximum I/O performance
+2025-07-04 10:52:07,747 - INFO - 🚀 RAM Cache Manager initialized: 88.0GB available
+2025-07-04 10:52:07,747 - INFO -    System RAM: 125.7GB total
+2025-07-04 10:52:07,747 - INFO - 🔍 Scanning for input files...
+2025-07-04 10:52:07,803 - INFO - Found 116 videos and 2905 GPX files
+2025-07-04 10:52:07,803 - INFO - 🔍 Starting complete enhanced pre-flight video validation...
+2025-07-04 10:52:07,803 - INFO - Enhanced Video Validator initialized (PRESERVED + TURBO):
+2025-07-04 10:52:07,803 - INFO -   Strict Mode: True
+2025-07-04 10:52:07,803 - INFO -   Quarantine Directory: /home/preston/penis/temp/quarantine
+2025-07-04 10:52:07,803 - INFO -   GPU Test Directory: /home/preston/penis/temp/gpu_test
+2025-07-04 10:52:07,803 - INFO - Pre-flight validation of 116 videos...
+
+==========================================================================================
+COMPLETE TURBO VIDEO VALIDATION SUMMARY
+==========================================================================================
+Total Videos Checked: 116
+Valid Videos: 116 (100.0%)
+Corrupted/Rejected Videos: 0 (0.0%)
+  - STRICT Mode Rejected: 0
+  - Actually Corrupted: 0
+
+GPU COMPATIBILITY BREAKDOWN:
+  🟢 Excellent (GPU-optimal): 0 (0.0%)
+  🟡 Good (GPU-friendly): 7 (6.0%)
+  🟠 Fair (Convertible): 0 (0.0%)
+  🔴 Poor (Problematic): 109 (94.0%)
+  ❌ Incompatible: 0
+  ⚪ Unknown: 0
+==========================================================================================
+2025-07-04 10:52:15,127 - INFO - 📋 Complete validation report saved: /home/preston/bike-map/python_scripts/Visualizer/MatcherFiles/complete_turbo_video_validation_report.json
+2025-07-04 10:52:15,127 - INFO - ✅ Complete pre-flight validation: 116 valid videos will be processed
+2025-07-04 10:52:15,189 - WARNING - Could not load existing results: Extra data: line 54155 column 8 (char 2173825)
+2025-07-04 10:52:15,191 - INFO - 🚀 Processing videos with complete enhanced 360° parallel processing + RAM cache...
+2025-07-04 10:52:15,192 - INFO - Processing 116 videos with 🚀 TURBO + RAM CACHE DUAL-GPU support...
+2025-07-04 10:52:15,192 - INFO - 🎮 Setting up DUAL-GPU processing (GPU 0 and GPU 1 working simultaneously)...
+2025-07-04 10:52:15,192 - INFO - 🎮 GPU 0: will process 58 videos
+2025-07-04 10:52:15,192 - INFO - 🎮 GPU 1: will process 58 videos
+2025-07-04 10:52:15,192 - INFO - 🚀 Starting DUAL-GPU processing threads...
+2025-07-04 10:52:15,195 - INFO - 🎮 GPU 0: Starting worker thread with 58 videos
+2025-07-04 10:52:15,196 - INFO - 🌐 Complete 360° Panoramic Video Processor initialized
+2025-07-04 10:52:15,196 - INFO - 🎯 Optimized for 3840x1920 panoramic videos
+2025-07-04 10:52:15,196 - INFO - 🚀 CUDA acceleration enabled for dual-GPU processing
+2025-07-04 10:52:15,196 - INFO - 🎮 GPU 0: Processing 1/58: temp_video_245977170369839104.MP4
+2025-07-04 10:52:15,196 - INFO - 🎮 GPU 1: Starting worker thread with 58 videos
+2025-07-04 10:52:15,197 - INFO - 🌐 Complete 360° Panoramic Video Processor initialized
+2025-07-04 10:52:15,197 - INFO - 🎯 Optimized for 3840x1920 panoramic videos
+2025-07-04 10:52:15,197 - INFO - 🚀 CUDA acceleration enabled for dual-GPU processing
+2025-07-04 10:52:15,197 - INFO - 🎮 GPU 1: Processing 1/58: temp_video_245977211675348992.MP4
+2025-07-04 10:52:15,515 - INFO - 🎮 GPU 0: Initializing 360° panoramic processing models...
+2025-07-04 10:52:15,515 - INFO - Enhanced 360° optical flow extractor initialized with turbo optimizations on cuda
+2025-07-04 10:52:15,515 - INFO - Enhanced 360° CNN feature extractor initialized - will load models on demand per GPU
+2025-07-04 10:52:15,627 - INFO - 🎮 GPU 1: Initializing 360° panoramic processing models...
+2025-07-04 10:52:15,627 - INFO - Enhanced 360° optical flow extractor initialized with turbo optimizations on cuda
+2025-07-04 10:52:15,627 - INFO - Enhanced 360° CNN feature extractor initialized - will load models on demand per GPU
+2025-07-04 10:52:16,927 - INFO - 🧠 GPU 0: ResNet50 loaded
+2025-07-04 10:52:16,937 - INFO - 🌐 GPU 0: 360° panoramic models loaded
+2025-07-04 10:52:16,937 - INFO - 🧠 GPU 0: 360° models loaded
+2025-07-04 10:52:16,937 - INFO - 🧠 GPU 0: Feature models initialized successfully
+2025-07-04 10:52:16,937 - INFO - 🧠 GPU 0: Primary CNN models loaded successfully
+2025-07-04 10:52:16,939 - INFO - 🎮 GPU 0: 360° panoramic models loaded and optimized
+2025-07-04 10:52:16,970 - INFO - 🧠 GPU 1: ResNet50 loaded
+2025-07-04 10:52:16,978 - INFO - 🌐 GPU 1: 360° panoramic models loaded
+2025-07-04 10:52:16,978 - INFO - 🧠 GPU 1: 360° models loaded
+2025-07-04 10:52:16,978 - INFO - 🧠 GPU 1: Feature models initialized successfully
+2025-07-04 10:52:16,978 - INFO - 🧠 GPU 1: Primary CNN models loaded successfully
+2025-07-04 10:52:16,979 - INFO - 🎮 GPU 1: 360° panoramic models loaded and optimized
+2025-07-04 10:52:22,765 - INFO - 🎮 GPU0:💤1%(0.1GB) | GPU1:💤1%(0.1GB) | Avg:1%
+2025-07-04 10:52:37,781 - INFO - 🎮 GPU0:💤1%(0.1GB) | GPU1:💤1%(0.1GB) | Avg:1%
+2025-07-04 10:52:52,796 - INFO - 🎮 GPU0:💤1%(0.1GB) | GPU1:💤1%(0.1GB) | Avg:1%
+2025-07-04 10:53:07,814 - INFO - 🎮 GPU0:💤1%(0.1GB) | GPU1:💤1%(0.1GB) | Avg:1%
+2025-07-04 10:53:22,829 - INFO - 🎮 GPU0:💤1%(0.1GB) | GPU1:💤1%(0.1GB) | Avg:1%
+2025-07-04 10:53:30,083 - INFO - Process interrupted by user
+2025-07-04 10:53:30,083 - INFO - PowerSafe: Progress has been saved and can be resumed
+2025-07-04 10:53:30,083 - INFO - RAM Cache: Clearing cache before exit
+2025-07-04 10:53:30,083 - INFO - RAM cache cleared
+
+Process interrupted. PowerSafe progress has been saved.
+2025-07-04 10:53:31,084 - INFO - 🎮 GPU monitoring stopped
+2025-07-04 10:53:31,084 - INFO - 🎮 GPU monitoring stopped
+2025-07-04 10:53:31,084 - INFO - Video validator cleanup completed
+2025-07-04 10:53:31,084 - INFO - RAM cache cleared
+2025-07-04 10:53:31,084 - INFO - RAM cache cleared
+2025-07-04 10:53:31,084 - INFO - Complete turbo system cleanup completed
+2025-07-04 10:53:31,086 - INFO - 🧹 Cleaning up TurboSharedMemoryManager...
+2025-07-04 10:53:31,329 - INFO - ✅ TurboSharedMemoryManager cleanup complete

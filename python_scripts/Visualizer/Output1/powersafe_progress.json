@@ -1,11 +1,9 @@
 {
-  "session_start_time": "2025-07-01T18:56:06.461633",
-  "last_update": "2025-07-01T18:56:06.461812",
+  "session_start_time": "2025-07-01T23:52:59.816641",
+  "last_update": "2025-07-02T11:33:28.554279",
   "completed_videos": [],
   "failed_videos": [],
-  "total_videos": 0,
-  "completion_rate": 0,
-  "active_processes": [
-    3
-  ]
+  "total_videos": 92,
+  "completion_rate": 0.0,
+  "active_processes": []
 }

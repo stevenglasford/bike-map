@@ -1,0 +1,177 @@
+2025-07-02 10:24:35,575 - gpu_offsetter - INFO - 🎮 Detected 2 CUDA GPUs
+2025-07-02 10:24:35,708 - gpu_offsetter - INFO - GPU 0: 15.5GB total memory
+2025-07-02 10:24:35,853 - gpu_offsetter - INFO - GPU 1: 15.5GB total memory
+2025-07-02 10:24:35,853 - gpu_offsetter - INFO - Loading results from ../Visualizer/MatcherFiles/complete_turbo_360_report_ramcache.json
+2025-07-02 10:24:37,538 - gpu_offsetter - INFO - 🎮 Processing 6744 matches with 2 GPUs
+2025-07-02 10:24:37,538 - gpu_offsetter - INFO - GPU Memory: 10.0GB per GPU
+2025-07-02 10:24:37,538 - gpu_offsetter - INFO - GPU Batch Size: 512
+2025-07-02 10:24:37,538 - gpu_offsetter - INFO - CUDA Streams: 16 per GPU
+2025-07-02 10:24:37,538 - gpu_offsetter - INFO - 🎮 Initializing GPU resources for devices: [0, 1]
+2025-07-02 10:24:37,540 - gpu_offsetter - INFO -    GPU 0: 15.5GB total, 10.0GB allocated, 16 streams
+2025-07-02 10:24:37,541 - gpu_offsetter - INFO -    GPU 1: 15.5GB total, 10.0GB allocated, 16 streams
+2025-07-02 10:24:37,551 - gpu_offsetter - WARNING - OpenCV GPU initialization failed: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:37,551 - gpu_offsetter - INFO - 🎮 GPU Offset Processor initialized with 2 GPUs
+2025-07-02 10:24:38,496 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_245977170369839104.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:38,508 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_245977211675348992.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:38,843 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249409624610967552.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:39,000 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249173973948960768.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:39,243 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249592507485130752.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:39,244 - gpu_offsetter - INFO - 🚀 Progress: 5/6744 (0.1%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 38.0m
+2025-07-02 10:24:39,285 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249941901552128000.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:39,407 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_245977240184033280.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:39,902 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249174044895608832.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:39,987 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249409997794967552.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,044 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249941993562574848.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,045 - gpu_offsetter - INFO - 🚀 Progress: 10/6744 (0.1%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 28.0m
+2025-07-02 10:24:40,134 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249941772178817024.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,635 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249941923572224000.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,693 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249942089528250368.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,825 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249942245577330688.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,941 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_250330889232318464.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:40,942 - gpu_offsetter - INFO - 🚀 Progress: 15/6744 (0.2%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 25.4m
+2025-07-02 10:24:41,305 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249942026068430848.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:41,349 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_250331188558823424.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:41,655 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_250331930711560192.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:41,951 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257228723999215616.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:41,978 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249942172042792960.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:41,979 - gpu_offsetter - INFO - 🚀 Progress: 20/6744 (0.3%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 24.8m
+2025-07-02 10:24:42,093 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257228896406081536.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:42,314 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257229013439746048.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:42,693 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_249942306101137408.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:42,706 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257735046302011392.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:42,719 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257734469832671232.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:42,720 - gpu_offsetter - INFO - 🚀 Progress: 25/6744 (0.4%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 23.2m
+2025-07-02 10:24:43,148 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743136959238144.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:43,505 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_250331270888820736.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:43,513 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743256610148352.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:43,527 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_250331087916498944.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:43,876 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743398239211520.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:43,876 - gpu_offsetter - INFO - 🚀 Progress: 30/6744 (0.4%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 23.6m
+2025-07-02 10:24:44,352 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_252688633415340032.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:44,375 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743588501229568.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:44,433 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257228761450156032.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:44,634 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743713122390016(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,122 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257773083790675968.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,122 - gpu_offsetter - INFO - 🚀 Progress: 35/6744 (0.5%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 24.2m
+2025-07-02 10:24:45,174 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257228963540111360.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,275 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257772921898930176.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,435 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257773356021977088.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,781 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257851179575279616.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,813 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257229067357523968.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:45,813 - gpu_offsetter - INFO - 🚀 Progress: 40/6744 (0.6%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 23.1m
+2025-07-02 10:24:45,947 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257851359343149056.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:46,352 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257851438967816192.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:46,659 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120568170090496.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:46,694 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257734894283657216.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:46,742 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257735186676973568.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:46,744 - gpu_offsetter - INFO - 🚀 Progress: 45/6744 (0.7%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 22.8m
+2025-07-02 10:24:47,056 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120635975204864.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:47,419 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743331197456384.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:47,432 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743200578441216.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:47,454 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120726022717440.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:47,933 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120837519900672.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:47,933 - gpu_offsetter - INFO - 🚀 Progress: 50/6744 (0.7%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 23.2m
+2025-07-02 10:24:48,158 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258121011289915392.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:48,191 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743651008942080.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:48,288 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743518921920512.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:48,636 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258126802424168448.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:48,997 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258127490671710208(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:48,997 - gpu_offsetter - INFO - 🚀 Progress: 55/6744 (0.8%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 23.2m
+2025-07-02 10:24:49,016 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257743713122390016.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:49,032 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257773012462342144.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:49,428 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258127688743518208.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:49,808 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258127801461243904(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:49,859 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257851090437931008.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:49,859 - gpu_offsetter - INFO - 🚀 Progress: 60/6744 (0.9%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 22.9m
+2025-07-02 10:24:49,863 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257773285935157248.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:50,246 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258132832960909312.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:50,301 - gpu_offsetter - INFO - 🧹 Cleaning up GPU resources
+2025-07-02 10:24:50,589 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257851342414938112.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:50,706 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_257851438967816192(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:50,802 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258132963298906112(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:50,802 - gpu_offsetter - INFO - 🚀 Progress: 65/6744 (1.0%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 22.7m
+2025-07-02 10:24:50,989 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258133231302344704.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:51,384 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120568170090496(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:51,528 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258133336797478912(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:51,561 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120635975204864(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:51,669 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258135050527178752.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:51,677 - gpu_offsetter - INFO - 🚀 Progress: 70/6744 (1.0%) | Success: 0.0% | GPU: 0.0% | Memory: [GPU0: 0%, GPU1: 0%] | ETA: 22.4m
+2025-07-02 10:24:52,112 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120726022717440(1).MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:52,243 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258135269390155776.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:52,287 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258120788396216320.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+
+2025-07-02 10:24:52,456 - gpu_offsetter - ERROR - Error processing video /home/preston/penis/panoramics/playground/temp_video_258135610240270336.MP4: OpenCV(4.11.0) /io/opencv/modules/core/include/opencv2/core/private.cuda.hpp:106: error: (-216:No CUDA support) The library is compiled without CUDA support in function 'throw_no_cuda'
+

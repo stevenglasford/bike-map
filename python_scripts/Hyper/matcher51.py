@@ -169,6 +169,324 @@ logger = logging.getLogger(__name__)
 # Add this debug wrapper around your TurboGPUBatchEngine class
 original_TurboGPUBatchEngine_init = None
 
+# ========== DEBUG VIDEO DURATION EXTRACTION ==========
+def debug_video_duration_data(video_features_dict):
+    """Debug the actual video duration data to find the bug"""
+    
+    print(f"\n🔍 DEBUGGING VIDEO DURATION DATA")
+    print(f"Total videos in dict: {len(video_features_dict)}")
+    
+    # Check first 10 videos in detail
+    count = 0
+    for video_path, features in video_features_dict.items():
+        if count >= 10:
+            break
+            
+        video_name = video_path.split('/')[-1] if '/' in video_path else video_path
+        print(f"\n--- Video {count + 1}: {video_name} ---")
+        print(f"Full path: {video_path}")
+        
+        if features is None:
+            print(f"❌ Features is None")
+            count += 1
+            continue
+            
+        print(f"🔍 Features type: {type(features)}")
+        print(f"🔍 Features keys: {list(features.keys())}")
+        
+        # Check for duration field
+        if 'duration' in features:
+            duration = features['duration']
+            print(f"📏 Duration: {duration} (type: {type(duration)})")
+            print(f"    In minutes: {duration/60:.2f}")
+            print(f"    In hours: {duration/3600:.2f}")
+        else:
+            print(f"❌ NO 'duration' field found!")
+            
+        # Check for other time-related fields
+        time_fields = [k for k in features.keys() if any(word in k.lower() for word in ['time', 'duration', 'length', 'seconds', 'minutes'])]
+        if time_fields:
+            print(f"🕐 Other time-related fields: {time_fields}")
+            for field in time_fields:
+                print(f"    {field}: {features[field]}")
+        
+        # Check raw video file if path exists
+        if video_path and '/' in video_path:
+            import os
+            if os.path.exists(video_path):
+                try:
+                    # Try to get actual file duration using opencv/ffmpeg
+                    import cv2
+                    cap = cv2.VideoCapture(video_path)
+                    if cap.isOpened():
+                        fps = cap.get(cv2.CAP_PROP_FPS)
+                        frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+                        if fps > 0:
+                            actual_duration = frame_count / fps
+                            print(f"📹 ACTUAL file duration: {actual_duration:.1f}s ({actual_duration/60:.2f}min)")
+                            
+                            # Compare with stored duration
+                            if 'duration' in features:
+                                stored_duration = features['duration']
+                                diff = abs(actual_duration - stored_duration)
+                                if diff > 10:  # More than 10 second difference
+                                    print(f"⚠️  DURATION MISMATCH!")
+                                    print(f"    Stored: {stored_duration:.1f}s")
+                                    print(f"    Actual: {actual_duration:.1f}s")
+                                    print(f"    Difference: {diff:.1f}s")
+                        cap.release()
+                except Exception as e:
+                    print(f"❌ Could not check actual duration: {e}")
+            else:
+                print(f"❌ Video file does not exist: {video_path}")
+        
+        count += 1
+    
+    # Summary statistics
+    all_durations = []
+    missing_duration = 0
+    
+    for video_path, features in video_features_dict.items():
+        if features and 'duration' in features:
+            all_durations.append(features['duration'])
+        else:
+            missing_duration += 1
+    
+    if all_durations:
+        all_durations.sort()
+        print(f"\n📊 DURATION SUMMARY:")
+        print(f"Videos with duration: {len(all_durations)}")
+        print(f"Videos missing duration: {missing_duration}")
+        print(f"Min duration: {min(all_durations):.1f}s ({min(all_durations)/60:.2f}min)")
+        print(f"Max duration: {max(all_durations):.1f}s ({max(all_durations)/60:.2f}min)")
+        print(f"Average: {sum(all_durations)/len(all_durations):.1f}s")
+        
+        # Check if any are actually long
+        long_durations = [d for d in all_durations if d >= 240]  # 4+ minutes
+        very_long = [d for d in all_durations if d >= 3600]     # 1+ hour
+        
+        print(f"Durations ≥4 minutes: {len(long_durations)}")
+        print(f"Durations ≥1 hour: {len(very_long)}")
+        
+        if very_long:
+            print(f"Longest videos:")
+            for d in sorted(very_long, reverse=True)[:5]:
+                print(f"  {d:.1f}s ({d/3600:.2f} hours)")
+
+
+# ========== CHECK DURATION EXTRACTION CODE ==========
+def debug_duration_extraction_method():
+    """Find and debug the code that extracts video durations"""
+    
+    print(f"\n🔍 LOOKING FOR DURATION EXTRACTION CODE")
+    
+    # This depends on your codebase, but look for these patterns:
+    patterns_to_check = [
+        "def extract_video_features",
+        "def get_video_duration", 
+        "cv2.CAP_PROP_FRAME_COUNT",
+        "ffmpeg",
+        "duration",
+        "get_video_info"
+    ]
+    
+    print(f"Look for these patterns in your code:")
+    for pattern in patterns_to_check:
+        print(f"  - {pattern}")
+    
+    print(f"\nCommon duration extraction bugs:")
+    print(f"  1. Using wrong units (minutes vs seconds)")
+    print(f"  2. Division by zero in fps calculation") 
+    print(f"  3. Wrong frame count property")
+    print(f"  4. Truncating/rounding errors")
+    print(f"  5. Reading metadata instead of actual duration")
+
+
+# ========== QUICK FIX TEST ==========
+def test_quick_duration_fix(video_features_dict):
+    """Test if durations are in wrong units"""
+    
+    print(f"\n🧪 TESTING IF DURATIONS ARE IN WRONG UNITS")
+    
+    sample_durations = []
+    count = 0
+    
+    for video_path, features in video_features_dict.items():
+        if count >= 5:
+            break
+        if features and 'duration' in features:
+            duration = features['duration']
+            sample_durations.append((video_path, duration))
+            count += 1
+    
+    print(f"Sample durations (as stored):")
+    for path, duration in sample_durations:
+        name = path.split('/')[-1] if '/' in path else path
+        print(f"  {name}: {duration}")
+        print(f"    If seconds: {duration}s ({duration/60:.2f}min)")
+        print(f"    If minutes: {duration*60}s ({duration}min)")
+        print(f"    If deciseconds: {duration/10}s ({duration/600:.2f}min)")
+    
+    # Check if multiplying by 60 gives reasonable values
+    print(f"\n💡 POSSIBLE FIXES:")
+    print(f"If durations are in minutes instead of seconds:")
+    print(f"  - Multiply all durations by 60")
+    print(f"If durations are in some other unit:")
+    print(f"  - Check the extraction code")
+
+# ========== DEBUG LONGER VIDEOS SPECIFICALLY ==========
+def debug_long_videos_only(video_features_dict, gps_features_dict):
+    """Focus on videos ≥4 minutes to see why they're not getting matches"""
+    
+    print(f"\n🔍 DEBUG: Looking for videos ≥4 minutes...")
+    
+    long_videos = []
+    short_videos = 0
+    
+    for video_path, features in video_features_dict.items():
+        if features and 'duration' in features:
+            duration = features['duration']
+            if duration >= 240.0:  # 4 minutes
+                long_videos.append((video_path, duration))
+            else:
+                short_videos += 1
+    
+    print(f"📊 Found {len(long_videos)} videos ≥4 minutes, {short_videos} videos <4 minutes")
+    
+    if not long_videos:
+        print(f"❌ NO LONG VIDEOS FOUND! All videos are under 4 minutes.")
+        return
+    
+    # Sort by duration to see the range
+    long_videos.sort(key=lambda x: x[1])
+    print(f"📏 Long video duration range: {long_videos[0][1]:.1f}s to {long_videos[-1][1]:.1f}s")
+    print(f"   ({long_videos[0][1]/60:.1f}min to {long_videos[-1][1]/60:.1f}min)")
+    
+    # Test first few long videos
+    print(f"\n🧪 Testing first 3 long videos:")
+    
+    for i, (video_path, video_duration) in enumerate(long_videos[:3]):
+        video_name = video_path.split('/')[-1] if '/' in video_path else video_path
+        print(f"\n--- Video {i+1}: {video_name} ({video_duration:.1f}s) ---")
+        
+        # Call the filtering method
+        compatible_paths = self._pre_filter_gpx_by_duration(gps_features_dict, video_duration)
+        
+        print(f"🔍 Filtering returned {len(compatible_paths)} compatible GPX files")
+        
+        if len(compatible_paths) > 0:
+            print(f"✅ SUCCESS: Found {len(compatible_paths)} compatible GPX files")
+            print(f"   First few: {[p.split('/')[-1] for p in compatible_paths[:3]]}")
+            
+            # Now test if correlation actually happens
+            video_features = video_features_dict[video_path]
+            first_gpx_path = compatible_paths[0]
+            first_gpx_features = gps_features_dict[first_gpx_path]
+            
+            print(f"\n🔗 Testing correlation with first GPX:")
+            print(f"   GPX: {first_gpx_path.split('/')[-1]}")
+            print(f"   GPX duration: {first_gpx_features.get('duration', 'MISSING'):.1f}s")
+            
+            # Check if correlation method exists
+            if hasattr(self, 'compute_enhanced_similarity_with_duration_filtering'):
+                try:
+                    result = self.compute_enhanced_similarity_with_duration_filtering(
+                        video_features, 
+                        first_gpx_features,
+                        video_duration,
+                        first_gpx_features.get('duration', 0)
+                    )
+                    print(f"   📊 Correlation result: {result}")
+                    
+                    if isinstance(result, dict) and 'combined_score' in result:
+                        score = result['combined_score']
+                        print(f"   📈 Combined score: {score}")
+                        if score > 0:
+                            print(f"   ✅ NON-ZERO SCORE - should be a match!")
+                        else:
+                            print(f"   ❌ ZERO SCORE - this is the problem!")
+                    else:
+                        print(f"   ❌ UNEXPECTED RESULT FORMAT")
+                        
+                except Exception as e:
+                    print(f"   💥 CORRELATION FAILED: {e}")
+                    import traceback
+                    traceback.print_exc()
+            else:
+                print(f"   ❌ NO CORRELATION METHOD FOUND")
+                
+        else:
+            print(f"❌ PROBLEM: No compatible GPX files for long video")
+            
+            # Show why GPX files are being filtered
+            print(f"   Analyzing first 5 GPX files:")
+            temporal_config = EnhancedTemporalMatchingConfig()
+            min_required = max(video_duration * temporal_config.MIN_DURATION_RATIO, 
+                             temporal_config.MIN_ABSOLUTE_DURATION)
+            
+            count = 0
+            for gpx_path, gpx_data in gps_features_dict.items():
+                if count >= 5:
+                    break
+                    
+                if gpx_data and 'duration' in gpx_data:
+                    gpx_duration = gpx_data['duration']
+                    ratio = gpx_duration / video_duration
+                    
+                    abs_pass = gpx_duration >= temporal_config.MIN_ABSOLUTE_DURATION
+                    ratio_pass = gpx_duration >= min_required
+                    
+                    status = "✅ PASS" if (abs_pass and ratio_pass) else "❌ FAIL"
+                    print(f"     {status} {gpx_path.split('/')[-1]}: {gpx_duration:.1f}s (ratio: {ratio:.2f})")
+                    
+                    if not abs_pass:
+                        print(f"        ❌ Failed absolute: {gpx_duration:.1f}s < {temporal_config.MIN_ABSOLUTE_DURATION:.1f}s")
+                    if not ratio_pass:
+                        print(f"        ❌ Failed ratio: {gpx_duration:.1f}s < {min_required:.1f}s")
+                
+                count += 1
+
+
+# ========== SIMPLE TEST: Count videos by duration ==========
+def count_videos_by_duration(video_features_dict):
+    """Quick count of videos by duration ranges"""
+    
+    durations = []
+    for video_path, features in video_features_dict.items():
+        if features and 'duration' in features:
+            durations.append(features['duration'])
+    
+    if not durations:
+        print("❌ No video durations found!")
+        return
+    
+    durations.sort()
+    
+    ranges = [
+        (0, 60, "Under 1 minute"),
+        (60, 240, "1-4 minutes"), 
+        (240, 600, "4-10 minutes"),
+        (600, 1800, "10-30 minutes"),
+        (1800, 3600, "30-60 minutes"),
+        (3600, float('inf'), "Over 1 hour")
+    ]
+    
+    print(f"\n📊 VIDEO DURATION BREAKDOWN:")
+    print(f"Total videos: {len(durations)}")
+    print(f"Range: {min(durations):.1f}s to {max(durations):.1f}s")
+    print()
+    
+    for min_dur, max_dur, label in ranges:
+        count = sum(1 for d in durations if min_dur <= d < max_dur)
+        if count > 0:
+            pct = 100 * count / len(durations)
+            print(f"{label}: {count} videos ({pct:.1f}%)")
+    
+    # Specifically count videos that should pass your 4-minute filter
+    videos_over_4min = sum(1 for d in durations if d >= 240)
+    print(f"\n🎯 Videos ≥4 minutes (should pass filter): {videos_over_4min}")
+    print(f"Videos <4 minutes (will be filtered): {len(durations) - videos_over_4min}")
+
 def debug_TurboGPUBatchEngine_init(self, gpu_manager, config):
     """Debug wrapper for TurboGPUBatchEngine.__init__"""
     print("🔍 DEBUG: TurboGPUBatchEngine.__init__ called")
@@ -1012,16 +1330,16 @@ class EnhancedTemporalMatchingConfig:
     # Duration filtering parameters
     MIN_DURATION_RATIO = 1.0  # GPX must cover at least 100% of video duration
     MAX_DURATION_RATIO = float('inf')  # No upper limit by default (unlimited)
-    MIN_ABSOLUTE_DURATION = 5.0  # Minimum 5 seconds for both video and GPX
+    MIN_ABSOLUTE_DURATION = 240.0  # Minimum 4 minutes (240 seconds) for both video and GPX
     
     # Customizable upper bound (when not infinite)
     ENABLE_MAX_DURATION_LIMIT = False  # Set to True to enable upper bound
     CUSTOM_MAX_DURATION_RATIO = 4.0   # Custom upper limit when enabled
     
     # Temporal quality thresholds (adjusted for new logic)
-    EXCELLENT_DURATION_RATIO_RANGE = (1.0, 1.2)   # GPX 100-120% of video is excellent
-    GOOD_DURATION_RATIO_RANGE = (1.0, 2.0)        # GPX 100-200% of video is good
-    FAIR_DURATION_RATIO_RANGE = (0.95, 5.0)       # GPX 95-500% of video is fair
+    EXCELLENT_DURATION_RATIO_RANGE = (1.0, float('inf'))   # GPX 100-120% of video is excellent
+    GOOD_DURATION_RATIO_RANGE = (0.98, float('inf'))        # GPX 100-200% of video is good
+    FAIR_DURATION_RATIO_RANGE = (0.94, float('inf'))       # GPX 95-500% of video is fair
     POOR_DURATION_RATIO_RANGE = (0.9, float('inf')) # GPX 90%+ of video is poor but acceptable
     
     # Advanced filtering
@@ -3185,62 +3503,182 @@ class TurboGPUBatchEngine:
             return 'very_poor'
             
     def _pre_filter_gpx_by_duration(self, gps_features_dict: Dict, video_duration: float) -> List[str]:
-        """Pre-filter GPX files based on duration compatibility for efficiency"""
+        """DEBUG VERSION: Add debugging to see exactly what's happening"""
+        
+        print(f"\n🔍 DEBUG: _pre_filter_gpx_by_duration called")
+        print(f"   video_duration: {video_duration}")
+        print(f"   gps_features_dict size: {len(gps_features_dict)}")
         
         if video_duration <= 0:
-            return list(gps_features_dict.keys())  # No filtering if video duration unknown
+            print(f"🚫 DEBUG: Video duration <= 0, returning all GPX files")
+            return list(gps_features_dict.keys())
         
         temporal_config = EnhancedTemporalMatchingConfig()
+        print(f"🔍 DEBUG: Config loaded")
+        print(f"   MIN_ABSOLUTE_DURATION: {temporal_config.MIN_ABSOLUTE_DURATION}")
+        print(f"   MIN_DURATION_RATIO: {temporal_config.MIN_DURATION_RATIO}")
+        print(f"   ENABLE_STRICT_DURATION_FILTERING: {temporal_config.ENABLE_STRICT_DURATION_FILTERING}")
+        
         compatible_paths = []
         
-        min_gpx_duration = video_duration * temporal_config.MIN_DURATION_RATIO
+        # Check video duration first
+        if video_duration < temporal_config.MIN_ABSOLUTE_DURATION:
+            print(f"🚫 DEBUG: Video filtered out ({video_duration:.1f}s < {temporal_config.MIN_ABSOLUTE_DURATION:.1f}s)")
+            return []
         
-        # Only apply max duration if explicitly enabled with custom limit
-        max_gpx_duration = float('inf')
-        if temporal_config.ENABLE_MAX_DURATION_LIMIT:
-            max_gpx_duration = video_duration * temporal_config.CUSTOM_MAX_DURATION_RATIO
+        print(f"✅ DEBUG: Video passed duration check ({video_duration:.1f}s)")
         
-        total_gps = len(gps_features_dict)
+        min_gpx_duration = max(
+            video_duration * temporal_config.MIN_DURATION_RATIO,
+            temporal_config.MIN_ABSOLUTE_DURATION
+        )
+        
+        print(f"🔍 DEBUG: Required GPX minimum: {min_gpx_duration:.1f}s")
+        
+        compatible_count = 0
         filtered_count = 0
-        too_short_count = 0
-        too_long_count = 0
         
-        for gps_path, gps_data in gps_features_dict.items():
+        # Check first 5 GPX files in detail
+        for i, (gps_path, gps_data) in enumerate(gps_features_dict.items()):
+            if i >= 5:
+                break
+                
+            print(f"\n🔍 DEBUG: Checking GPX #{i+1}: {gps_path}")
+            
             if gps_data is None:
+                print(f"   ❌ gps_data is None")
+                continue
+                
+            if 'duration' not in gps_data:
+                print(f"   ❌ No 'duration' key in gps_data")
+                print(f"   📋 Available keys: {list(gps_data.keys())}")
+                continue
+                
+            gps_duration = gps_data.get('duration', 0)
+            print(f"   📏 GPX duration: {gps_duration:.1f}s")
+            
+            # Test each filter
+            abs_pass = gps_duration >= temporal_config.MIN_ABSOLUTE_DURATION
+            ratio_pass = gps_duration >= min_gpx_duration
+            
+            print(f"   🧪 Absolute check: {abs_pass} ({gps_duration:.1f}s >= {temporal_config.MIN_ABSOLUTE_DURATION:.1f}s)")
+            print(f"   🧪 Ratio check: {ratio_pass} ({gps_duration:.1f}s >= {min_gpx_duration:.1f}s)")
+            
+            if temporal_config.ENABLE_STRICT_DURATION_FILTERING:
+                if not abs_pass:
+                    print(f"   🚫 FILTERED: Failed absolute duration")
+                    filtered_count += 1
+                    continue
+                    
+                if not ratio_pass:
+                    print(f"   🚫 FILTERED: Failed ratio check")
+                    filtered_count += 1
+                    continue
+            
+            print(f"   ✅ ACCEPTED: Passed all filters")
+            compatible_paths.append(gps_path)
+            compatible_count += 1
+        
+        # Quick count of remaining
+        remaining_compatible = 0
+        remaining_filtered = 0
+        
+        for gps_path, gps_data in list(gps_features_dict.items())[5:]:
+            if gps_data is None or 'duration' not in gps_data:
                 continue
                 
             gps_duration = gps_data.get('duration', 0)
             
-            # Apply minimum absolute duration filter
-            if gps_duration < temporal_config.MIN_ABSOLUTE_DURATION:
-                filtered_count += 1
-                too_short_count += 1
-                continue
-                
-            # Apply duration ratio filters
             if temporal_config.ENABLE_STRICT_DURATION_FILTERING:
-                # Filter out GPX files that are too short (don't cover enough of the video)
-                if gps_duration < min_gpx_duration:
-                    filtered_count += 1
-                    too_short_count += 1
-                    continue
-                
-                # Only filter out long GPX files if max limit is enabled
-                if temporal_config.ENABLE_MAX_DURATION_LIMIT and gps_duration > max_gpx_duration:
-                    filtered_count += 1
-                    too_long_count += 1
-                    continue
-            
-            compatible_paths.append(gps_path)
+                if (gps_duration >= temporal_config.MIN_ABSOLUTE_DURATION and 
+                    gps_duration >= min_gpx_duration):
+                    compatible_paths.append(gps_path)
+                    remaining_compatible += 1
+                else:
+                    remaining_filtered += 1
         
-        max_info = f", max limit: {'disabled (unlimited)' if not temporal_config.ENABLE_MAX_DURATION_LIMIT else f'{temporal_config.CUSTOM_MAX_DURATION_RATIO:.1f}x'}"
-        logger.info(f"Duration filtering: {len(compatible_paths)}/{total_gps} GPX files compatible "
-                   f"with video duration {video_duration:.1f}s")
-        logger.info(f"  Filtered {filtered_count} total: {too_short_count} too short, {too_long_count} too long")
-        logger.info(f"  Min coverage: {temporal_config.MIN_DURATION_RATIO:.1f}x (GPX ≥ {min_gpx_duration:.1f}s){max_info}")
+        total_compatible = compatible_count + remaining_compatible
+        total_filtered = filtered_count + remaining_filtered
+        
+        print(f"\n📊 DEBUG: Final filtering results")
+        print(f"   ✅ Total compatible: {total_compatible}")
+        print(f"   🚫 Total filtered: {total_filtered}")
+        print(f"   📤 Returning {len(compatible_paths)} paths")
         
         return compatible_paths
     
+    
+    # ========== DEBUG THE CALLING CODE ==========
+    def debug_correlation_pipeline(self, video_features_dict, gps_features_dict):
+        """Add this to debug where the pipeline is breaking"""
+        
+        print(f"\n🔍 DEBUG: Starting correlation pipeline")
+        print(f"   Videos: {len(video_features_dict)}")
+        print(f"   GPX files: {len(gps_features_dict)}")
+        
+        # Test with first video
+        first_video_path = list(video_features_dict.keys())[0]
+        first_video_features = video_features_dict[first_video_path]
+        
+        print(f"\n🔍 DEBUG: Testing first video: {first_video_path}")
+        print(f"   Video features keys: {list(first_video_features.keys()) if first_video_features else 'None'}")
+        
+        if first_video_features and 'duration' in first_video_features:
+            video_duration = first_video_features['duration']
+            print(f"   Video duration: {video_duration:.1f}s")
+            
+            # Test filtering
+            compatible_paths = self._pre_filter_gpx_by_duration(gps_features_dict, video_duration)
+            print(f"   Compatible GPX files returned: {len(compatible_paths)}")
+            
+            if len(compatible_paths) > 0:
+                print(f"   First few compatible: {compatible_paths[:3]}")
+                
+                # Test correlation for first compatible GPX
+                first_gpx_path = compatible_paths[0]
+                first_gpx_features = gps_features_dict[first_gpx_path]
+                
+                print(f"\n🔍 DEBUG: Testing correlation with first compatible GPX")
+                print(f"   GPX path: {first_gpx_path}")
+                print(f"   GPX features keys: {list(first_gpx_features.keys()) if first_gpx_features else 'None'}")
+                
+                # This is where we need to check if correlation computation is working
+                try:
+                    # Check if the correlation method exists and works
+                    if hasattr(self, 'compute_enhanced_similarity_with_duration_filtering'):
+                        print(f"   ✅ Found correlation method")
+                        # Try calling it
+                        result = self.compute_enhanced_similarity_with_duration_filtering(
+                            first_video_features, 
+                            first_gpx_features,
+                            video_duration,
+                            first_gpx_features.get('duration', 0)
+                        )
+                        print(f"   📊 Correlation result: {result}")
+                    else:
+                        print(f"   ❌ NO correlation method found!")
+                        
+                except Exception as e:
+                    print(f"   💥 Correlation failed: {e}")
+                    import traceback
+                    traceback.print_exc()
+            else:
+                print(f"   ❌ No compatible GPX files - this is the problem!")
+        else:
+            print(f"   ❌ No duration in video features")
+    
+    
+    # ========== CHECK IF METHOD IS BEING CALLED ==========
+    def debug_method_calls():
+        """Add this to see if your filtering method is even being called"""
+        
+        # Add to the START of your _pre_filter_gpx_by_duration method:
+        import traceback
+        print(f"\n🚨 _pre_filter_gpx_by_duration CALLED!")
+        print(f"📍 Call stack:")
+        for line in traceback.format_stack()[-3:-1]:
+            print(f"   {line.strip()}")
+        
     def _assess_duration_compatibility(self, video_duration: float, gpx_duration: float) -> Dict:
         """Assess temporal compatibility between video and GPX files"""
         
@@ -3916,11 +4354,171 @@ class TurboGPUBatchEngine:
         return self._process_batch_standard_gpu(video_batch_paths, video_features_dict, 
                                         gps_paths, gps_features_dict, device, model)
     
+    def debug_long_videos_only(self, video_features_dict, gps_features_dict):
+        """Focus on videos ≥4 minutes to see why they're not getting matches"""
+        
+        print(f"\n🔍 DEBUG: Looking for videos ≥4 minutes...")
+        
+        
+        videos = []
+        short_videos = 0
+        
+        for video_path, features in video_features_dict.items():
+            if features and 'duration' in features:
+                duration = features['duration']
+                if duration >= 240.0:  # 4 minutes
+                    long_videos.append((video_path, duration))
+                else:
+                    short_videos += 1
+        
+        print(f"📊 Found {len(long_videos)} videos ≥4 minutes, {short_videos} videos <4 minutes")
+        
+        if not long_videos:
+            print(f"❌ NO LONG VIDEOS FOUND! All videos are under 4 minutes.")
+            return
+        
+        # Sort by duration to see the range
+        long_videos.sort(key=lambda x: x[1])
+        print(f"📏 Long video duration range: {long_videos[0][1]:.1f}s to {long_videos[-1][1]:.1f}s")
+        print(f"   ({long_videos[0][1]/60:.1f}min to {long_videos[-1][1]/60:.1f}min)")
+        
+        # Test first few long videos
+        print(f"\n🧪 Testing first 3 long videos:")
+        
+        for i, (video_path, video_duration) in enumerate(long_videos[:3]):
+            video_name = video_path.split('/')[-1] if '/' in video_path else video_path
+            print(f"\n--- Video {i+1}: {video_name} ({video_duration:.1f}s) ---")
+            
+            # Call the filtering method
+            compatible_paths = self._pre_filter_gpx_by_duration(gps_features_dict, video_duration)
+            
+            print(f"🔍 Filtering returned {len(compatible_paths)} compatible GPX files")
+            
+            if len(compatible_paths) > 0:
+                print(f"✅ SUCCESS: Found {len(compatible_paths)} compatible GPX files")
+                print(f"   First few: {[p.split('/')[-1] for p in compatible_paths[:3]]}")
+                
+                # Now test if correlation actually happens
+                video_features = video_features_dict[video_path]
+                first_gpx_path = compatible_paths[0]
+                first_gpx_features = gps_features_dict[first_gpx_path]
+                
+                print(f"\n🔗 Testing correlation with first GPX:")
+                print(f"   GPX: {first_gpx_path.split('/')[-1]}")
+                print(f"   GPX duration: {first_gpx_features.get('duration', 'MISSING'):.1f}s")
+                
+                # Check if correlation method exists
+                if hasattr(self, 'compute_enhanced_similarity_with_duration_filtering'):
+                    try:
+                        result = self.compute_enhanced_similarity_with_duration_filtering(
+                            video_features, 
+                            first_gpx_features,
+                            video_duration,
+                            first_gpx_features.get('duration', 0)
+                        )
+                        print(f"   📊 Correlation result: {result}")
+                        
+                        if isinstance(result, dict) and 'combined_score' in result:
+                            score = result['combined_score']
+                            print(f"   📈 Combined score: {score}")
+                            if score > 0:
+                                print(f"   ✅ NON-ZERO SCORE - should be a match!")
+                            else:
+                                print(f"   ❌ ZERO SCORE - this is the problem!")
+                        else:
+                            print(f"   ❌ UNEXPECTED RESULT FORMAT")
+                            
+                    except Exception as e:
+                        print(f"   💥 CORRELATION FAILED: {e}")
+                        import traceback
+                        traceback.print_exc()
+                else:
+                    print(f"   ❌ NO CORRELATION METHOD FOUND")
+                    
+            else:
+                print(f"❌ PROBLEM: No compatible GPX files for long video")
+                
+                # Show why GPX files are being filtered
+                print(f"   Analyzing first 5 GPX files:")
+                temporal_config = EnhancedTemporalMatchingConfig()
+                min_required = max(video_duration * temporal_config.MIN_DURATION_RATIO, 
+                                 temporal_config.MIN_ABSOLUTE_DURATION)
+                
+                count = 0
+                for gpx_path, gpx_data in gps_features_dict.items():
+                    if count >= 5:
+                        break
+                        
+                    if gpx_data and 'duration' in gpx_data:
+                        gpx_duration = gpx_data['duration']
+                        ratio = gpx_duration / video_duration
+                        
+                        abs_pass = gpx_duration >= temporal_config.MIN_ABSOLUTE_DURATION
+                        ratio_pass = gpx_duration >= min_required
+                        
+                        status = "✅ PASS" if (abs_pass and ratio_pass) else "❌ FAIL"
+                        print(f"     {status} {gpx_path.split('/')[-1]}: {gpx_duration:.1f}s (ratio: {ratio:.2f})")
+                        
+                        if not abs_pass:
+                            print(f"        ❌ Failed absolute: {gpx_duration:.1f}s < {temporal_config.MIN_ABSOLUTE_DURATION:.1f}s")
+                        if not ratio_pass:
+                            print(f"        ❌ Failed ratio: {gpx_duration:.1f}s < {min_required:.1f}s")
+                    
+                    count += 1
+    
+    
+    # ========== SIMPLE TEST: Count videos by duration ==========
+    def count_videos_by_duration(video_features_dict):
+        """Quick count of videos by duration ranges"""
+        
+        durations = []
+        for video_path, features in video_features_dict.items():
+            if features and 'duration' in features:
+                durations.append(features['duration'])
+        
+        if not durations:
+            print("❌ No video durations found!")
+            return
+        
+        durations.sort()
+        
+        ranges = [
+            (0, 60, "Under 1 minute"),
+            (60, 240, "1-4 minutes"), 
+            (240, 600, "4-10 minutes"),
+            (600, 1800, "10-30 minutes"),
+            (1800, 3600, "30-60 minutes"),
+            (3600, float('inf'), "Over 1 hour")
+        ]
+        
+        print(f"\n📊 VIDEO DURATION BREAKDOWN:")
+        print(f"Total videos: {len(durations)}")
+        print(f"Range: {min(durations):.1f}s to {max(durations):.1f}s")
+        print()
+        
+        for min_dur, max_dur, label in ranges:
+            count = sum(1 for d in durations if min_dur <= d < max_dur)
+            if count > 0:
+                pct = 100 * count / len(durations)
+                print(f"{label}: {count} videos ({pct:.1f}%)")
+        
+        # Specifically count videos that should pass your 4-minute filter
+        videos_over_4min = sum(1 for d in durations if d >= 240)
+        print(f"\n🎯 Videos ≥4 minutes (should pass filter): {videos_over_4min}")
+        print(f"Videos <4 minutes (will be filtered): {len(durations) - videos_over_4min}")
+
+    
     def _process_batch_standard_gpu(self, video_batch_paths: List[str], video_features_dict: Dict,
                                     gps_paths: List[str], gps_features_dict: Dict, 
                                     device: torch.device, model: nn.Module) -> Dict:
         """Enhanced standard batch processing with duration filtering"""
         batch_results = {}
+        #count_videos_by_duration(video_features_dict)
+        print("poop")
+        #debug_long_videos_only(video_features_dict, gps_features_dict)
+        #test_quick_duration_fix(video_features_dict)
+        debug_duration_extraction_method()
+        debug_video_duration_data(video_features_dict)
         
         for video_path in video_batch_paths:
             video_features = video_features_dict[video_path]
@@ -5662,6 +6260,7 @@ class EnhancedGPUBatchProcessor:
         
         for video_path in video_batch:
             video_features = video_features_dict[video_path]
+            
             if video_features is None:
                 continue
             
@@ -5782,6 +6381,7 @@ class EnhancedGPUBatchProcessor:
         temporal_config = EnhancedTemporalMatchingConfig()
         compatible_paths = []
         
+                
         min_gpx_duration = video_duration * temporal_config.MIN_DURATION_RATIO
         
         # Only apply max duration if explicitly enabled with custom limit
@@ -11356,13 +11956,20 @@ class CompleteTurboVideoProcessor:
             is_360_video = 1.8 <= aspect_ratio <= 2.2
             is_exact_panoramic = (width, height) == self.panoramic_resolution
             
+            cap = cv2.VideoCapture(video_path)
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # Get this ONCE
+            fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
+            #vagina
+            # Calculate ACTUAL duration immediately
+            actual_duration = total_frames / fps
+            
             features.update({
                 'is_360_video': is_360_video,
                 'is_exact_panoramic': is_exact_panoramic,
                 'video_resolution': (width, height),
                 'aspect_ratio': aspect_ratio,
                 'frame_count': num_frames,
-                'duration': num_frames / self.config.sample_rate,
+                'duration': actual_duration,
                 'video_codec': codec
             })
             
