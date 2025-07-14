@@ -82,6 +82,7 @@ cmake -D CMAKE_BUILD_TYPE=Release \
       -D BUILD_opencv_sfm=ON \
       -D WITH_OPENGL=ON \
       -D WITH_TBB=ON \
+      -D WITH_FFMPEG=ON \
       -D WITH_V4L=ON \
       -D WITH_GTK=ON \
       -D WITH_QT=OFF \

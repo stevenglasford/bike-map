@@ -63,7 +63,7 @@ import os
 import glob
 import subprocess
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import multiprocessing as mp
 import threading
 from threading import Lock, Event, RLock
@@ -115,7 +115,6 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestRegressor
 import calendar
 
-
 try:
     import cupy as cp
     CUPY_AVAILABLE = True
@@ -166,387 +165,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def get_video_info_ffprobe(video_path):
-    """
-    FIXED: Get video metadata using ffprobe with reliable JSON parsing
-    Returns: (fps, frame_count, duration) or (None, None, None) if failed
-    """
-    try:
-        # Use JSON format for reliable parsing
-        cmd = [
-            'ffprobe',
-            '-v', 'quiet',
-            '-print_format', 'json',
-            '-show_format',
-            '-show_streams',
-            '-select_streams', 'v:0',
-            str(video_path)
-        ]
-        
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=30)
-        data = json.loads(result.stdout)
-        
-        # Find the video stream
-        video_stream = None
-        for stream in data.get('streams', []):
-            if stream.get('codec_type') == 'video':
-                video_stream = stream
-                break
-        
-        if not video_stream:
-            logger.warning(f"❌ No video stream found in {Path(video_path).name}")
-            return None, None, None
-            
-        # Extract metadata
-        fps = None
-        frame_count = None
-        duration = None
-        
-        # Get FPS
-        if 'r_frame_rate' in video_stream:
-            fps_str = video_stream['r_frame_rate']
-            if '/' in fps_str:
-                try:
-                    num, den = fps_str.split('/')
-                    fps = float(num) / float(den) if float(den) != 0 else None
-                except (ValueError, ZeroDivisionError):
-                    pass
-            else:
-                try:
-                    fps = float(fps_str)
-                except ValueError:
-                    pass
-        
-        # Get frame count
-        if 'nb_frames' in video_stream:
-            try:
-                frame_count = int(video_stream['nb_frames'])
-            except (ValueError, TypeError):
-                pass
-        
-        # Get duration (prefer format, fallback to stream)
-        format_info = data.get('format', {})
-        if 'duration' in format_info:
-            try:
-                duration = float(format_info['duration'])
-                if duration <= 0:
-                    duration = None
-            except (ValueError, TypeError):
-                pass
-        
-        if duration is None and 'duration' in video_stream:
-            try:
-                duration = float(video_stream['duration'])
-                if duration <= 0:
-                    duration = None
-            except (ValueError, TypeError):
-                pass
-        
-        # Calculate missing values
-        if fps and duration and not frame_count:
-            frame_count = int(fps * duration)
-            
-        if fps and frame_count and not duration:
-            duration = frame_count / fps
-            
-        return fps, frame_count, duration
-        
-    except Exception as e:
-        logger.warning(f"❌ Error getting video info for {Path(video_path).name}: {e}")
-        return None, None, None
-        
-
-# Alternative: If you prefer a more direct approach without JSON parsing
-def get_video_duration_simple(video_path):
-    """
-    Get just the duration using a simpler ffprobe command
-    """
-    try:
-        cmd = [
-            'ffprobe',
-            '-v', 'quiet',
-            '-show_entries', 'format=duration',
-            '-of', 'csv=p=0',
-            video_path
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        return float(result.stdout.strip())
-    except:
-        return None
-
-def get_video_fps_simple(video_path):
-    """
-    Get just the FPS using a simpler ffprobe command
-    """
-    try:
-        cmd = [
-            'ffprobe',
-            '-v', 'quiet',
-            '-show_entries', 'stream=r_frame_rate',
-            '-select_streams', 'v:0',
-            '-of', 'csv=p=0',
-            video_path
-        ]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        fps_str = result.stdout.strip()
-        if '/' in fps_str:
-            num, den = fps_str.split('/')
-            return float(num) / float(den) if float(den) != 0 else 0
-        return float(fps_str)
-    except:
-        return None
-
 
 # Add this debug wrapper around your TurboGPUBatchEngine class
 original_TurboGPUBatchEngine_init = None
-
-#use gpu acceleration for ffmpeg calls
-def create_ffmpeg_command(video_path, target_width, target_height, max_frames, start_frame=0):
-    """Create ffmpeg command for GPU-accelerated frame extraction"""
-    
-    # Try different CUDA decoders based on common codecs
-    hwaccel_options = [
-        ['-hwaccel', 'cuda', '-c:v', 'h264_cuvid'],  # H.264
-        ['-hwaccel', 'cuda', '-c:v', 'hevc_cuvid'],  # H.265
-        ['-hwaccel', 'cuda'],  # Generic CUDA
-        []  # Fallback to software decoding
-    ]
-    
-    base_cmd = ['ffmpeg', '-hide_banner', '-loglevel', 'error']
-    
-    for hw_opts in hwaccel_options:
-        cmd = base_cmd + hw_opts + [
-            '-i', str(video_path),
-            '-vf', f'scale={target_width}:{target_height}',  # Use GPU scaling if available
-            '-vframes', str(max_frames),
-            '-f', 'rawvideo',
-            '-pix_fmt', 'rgb24',
-            '-'  # Output to stdout
-        ]
-        
-        # Test if the command works
-        try:
-            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # Read a small amount to test
-            test_data = proc.stdout.read(target_width * target_height * 3)
-            if len(test_data) > 0:
-                proc.terminate()
-                proc.wait()
-                return cmd  # This command works
-            proc.terminate()
-            proc.wait()
-        except:
-            continue
-    
-    # If we get here, return the software fallback
-    return base_cmd + [
-        '-i', str(video_path),
-        '-vf', f'scale={target_width}:{target_height}',
-        '-vframes', str(max_frames),
-        '-f', 'rawvideo',
-        '-pix_fmt', 'rgb24',
-        '-'
-    ]
-
-def process_video_ffmpeg_gpu(self, video_path):
-    """GPU-accelerated video processing using ffmpeg instead of OpenCV"""
-    try:
-        logger.info(f"Using GPU-accelerated ffmpeg processing for {Path(video_path).name}")
-        
-        # Get video info
-        width, height, total_frames, fps = get_video_info_ffmpeg(video_path)
-        if not all([width, height]):
-            logger.error("Could not get video dimensions")
-            return None
-        
-        # Determine processing parameters
-        max_frames = min(self.config.max_frames, total_frames) if total_frames else self.config.max_frames
-        target_width, target_height = self.config.target_size
-        
-        # Create ffmpeg command
-        cmd = create_ffmpeg_command(video_path, target_width, target_height, max_frames)
-        logger.info(f"Using ffmpeg command: {' '.join(cmd[:8])}...")  # Log first part of command
-        
-        # Start ffmpeg process
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
-        
-        # Initialize features
-        features = {
-            'motion_magnitude': [],
-            'color_variance': [],
-            'edge_density': [],
-            'is_360_video': False,
-            'processing_mode': 'GPU_Accelerated_FFmpeg'
-        }
-        
-        frame_size = target_width * target_height * 3  # RGB
-        frame_count = 0
-        prev_gray = None
-        
-        try:
-            while frame_count < max_frames:
-                # Read one frame worth of raw RGB data
-                raw_frame = process.stdout.read(frame_size)
-                
-                if len(raw_frame) != frame_size:
-                    break  # End of stream or error
-                
-                # Convert raw bytes to numpy array
-                frame = np.frombuffer(raw_frame, dtype=np.uint8)
-                frame = frame.reshape((target_height, target_width, 3))
-                
-                # Convert RGB to BGR for OpenCV compatibility (for processing only)
-                frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
-                
-                # Calculate motion (requires previous frame)
-                if prev_gray is not None:
-                    # Frame difference for motion
-                    frame_diff = cv2.absdiff(gray, prev_gray)
-                    motion = np.mean(frame_diff)
-                else:
-                    motion = 0.0
-                
-                # Color variance
-                color_var = np.var(frame)
-                
-                # Edge density
-                edges = cv2.Canny(gray, 50, 150)
-                edge_density = np.mean(edges) / 255.0
-                
-                # Store features
-                features['motion_magnitude'].append(motion)
-                features['color_variance'].append(color_var)
-                features['edge_density'].append(edge_density)
-                
-                prev_gray = gray.copy()
-                frame_count += 1
-                
-        except Exception as e:
-            logger.error(f"Error processing frames: {e}")
-        finally:
-            # Clean up process
-            process.stdout.close()
-            process.stderr.close()
-            process.wait()
-        
-        # Convert lists to numpy arrays
-        for key in ['motion_magnitude', 'color_variance', 'edge_density']:
-            features[key] = np.array(features[key])
-        
-        # Detect 360° video based on original dimensions
-        if width > 0 and height > 0:
-            aspect_ratio = width / height
-            features['is_360_video'] = 1.8 <= aspect_ratio <= 2.2
-        
-        logger.info(f"Processed {frame_count} frames with GPU acceleration")
-        return features
-        
-    except Exception as e:
-        logger.error(f"GPU processing failed: {e}")
-        return None
-
-# Alternative: Even more GPU-optimized version using ffmpeg filters
-def process_video_ffmpeg_filters(self, video_path):
-    """Use ffmpeg's built-in filters for some processing"""
-    try:
-        logger.info(f"Using ffmpeg filters for {Path(video_path).name}")
-        
-        # Get basic info
-        width, height, total_frames, fps = get_video_info_ffmpeg(video_path)
-        if not all([width, height]):
-            return None
-        
-        max_frames = min(self.config.max_frames, total_frames) if total_frames else self.config.max_frames
-        target_width, target_height = self.config.target_size
-        
-        # Enhanced command with GPU filters
-        cmd = [
-            'ffmpeg', '-hide_banner', '-loglevel', 'error',
-            '-hwaccel', 'cuda',
-            '-i', str(video_path),
-            '-vf', f'scale_cuda={target_width}:{target_height}',  # GPU scaling
-            '-vframes', str(max_frames),
-            '-f', 'rawvideo',
-            '-pix_fmt', 'rgb24',
-            '-'
-        ]
-        
-        # Fallback command without CUDA filters
-        fallback_cmd = [
-            'ffmpeg', '-hide_banner', '-loglevel', 'error',
-            '-i', str(video_path),
-            '-vf', f'scale={target_width}:{target_height}',
-            '-vframes', str(max_frames),
-            '-f', 'rawvideo',
-            '-pix_fmt', 'rgb24',
-            '-'
-        ]
-        
-        # Try GPU command first, fallback to regular
-        for command in [cmd, fallback_cmd]:
-            try:
-                process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                break
-            except:
-                continue
-        else:
-            logger.error("Could not start ffmpeg process")
-            return None
-        
-        # Process frames (same as above)
-        features = {
-            'motion_magnitude': [],
-            'color_variance': [],
-            'edge_density': [],
-            'is_360_video': False,
-            'processing_mode': 'GPU_Filters_FFmpeg'
-        }
-        
-        frame_size = target_width * target_height * 3
-        frame_count = 0
-        prev_gray = None
-        
-        while frame_count < max_frames:
-            raw_frame = process.stdout.read(frame_size)
-            if len(raw_frame) != frame_size:
-                break
-            
-            frame = np.frombuffer(raw_frame, dtype=np.uint8)
-            frame = frame.reshape((target_height, target_width, 3))
-            frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-            gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
-            
-            # Motion calculation
-            motion = np.mean(cv2.absdiff(gray, prev_gray)) if prev_gray is not None else 0.0
-            color_var = np.var(frame)
-            edges = cv2.Canny(gray, 50, 150)
-            edge_density = np.mean(edges) / 255.0
-            
-            features['motion_magnitude'].append(motion)
-            features['color_variance'].append(color_var)
-            features['edge_density'].append(edge_density)
-            
-            prev_gray = gray.copy()
-            frame_count += 1
-        
-        process.stdout.close()
-        process.stderr.close()
-        process.wait()
-        
-        # Convert to arrays
-        for key in ['motion_magnitude', 'color_variance', 'edge_density']:
-            features[key] = np.array(features[key])
-        
-        # 360° detection
-        aspect_ratio = width / height if height > 0 else 0
-        features['is_360_video'] = 1.8 <= aspect_ratio <= 2.2
-        
-        return features
-        
-    except Exception as e:
-        logger.error(f"FFmpeg filter processing failed: {e}")
-        return None
 
 # ========== DEBUG VIDEO DURATION EXTRACTION ==========
 def debug_video_duration_data(video_features_dict):
@@ -590,39 +211,35 @@ def debug_video_duration_data(video_features_dict):
                 print(f"    {field}: {features[field]}")
         
         # Check raw video file if path exists
-        # Your updated code block
         if video_path and '/' in video_path:
+            import os
             if os.path.exists(video_path):
                 try:
-                    # Get video metadata using the FIXED method
-                    total_frames, fps, actual_duration = self._get_video_metadata_ffprobe(video_path)
-                    
-                    # Apply fallbacks if extraction failed
-                    if total_frames is None:
-                        total_frames = num_frames
-                        logger.debug(f"Using tensor frame count {num_frames} for {Path(video_path).name}")
-                    
-                    if actual_duration is None or actual_duration <= 0:
-                        # Calculate from available data
+                    # Try to get actual file duration using opencv/ffmpeg
+                    import cv2
+                    cap = cv2.VideoCapture(video_path)
+                    if cap.isOpened():
+                        fps = cap.get(cv2.CAP_PROP_FPS)
+                        frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
                         if fps > 0:
-                            actual_duration = num_frames / fps
-                        else:
-                            actual_duration = num_frames / 25.0  # Ultimate fallback
-                        logger.warning(f"⚠️ Using calculated duration {actual_duration:.1f}s for {Path(video_path).name}")
-                    
-                    # Log success for verification
-                    logger.debug(f"✅ Extracted metadata for {Path(video_path).name}: "
-                                f"duration={actual_duration:.1f}s, fps={fps:.2f}, frames={total_frames}")
-                        
+                            actual_duration = frame_count / fps
+                            print(f"📹 ACTUAL file duration: {actual_duration:.1f}s ({actual_duration/60:.2f}min)")
+                            
+                            # Compare with stored duration
+                            if 'duration' in features:
+                                stored_duration = features['duration']
+                                diff = abs(actual_duration - stored_duration)
+                                if diff > 10:  # More than 10 second difference
+                                    print(f"⚠️  DURATION MISMATCH!")
+                                    print(f"    Stored: {stored_duration:.1f}s")
+                                    print(f"    Actual: {actual_duration:.1f}s")
+                                    print(f"    Difference: {diff:.1f}s")
+                        cap.release()
                 except Exception as e:
-                    logger.warning(f"⚠️ Metadata extraction failed, using tensor-based fallback: {e}")
-                    # Ultimate fallback to tensor dimensions and default fps
-                    total_frames = num_frames
-                    fps = 25.0
-                    actual_duration = num_frames / fps         
+                    print(f"❌ Could not check actual duration: {e}")
             else:
                 print(f"❌ Video file does not exist: {video_path}")
-
+        
         count += 1
     
     # Summary statistics
@@ -4647,7 +4264,7 @@ class TurboGPUBatchEngine:
     
     def _process_video_batch_intelligent(self, video_batch_paths: List[str], video_features_dict: Dict,
                                         gps_paths: List[str], gps_features_dict: Dict) -> Dict:
-        """Intelligent load balancing across all available GPUs - FIXED VERSION"""
+        """Intelligent load balancing across all available GPUs"""
         num_gpus = len(self.gpu_manager.gpu_ids)
         videos_per_gpu = len(video_batch_paths) // num_gpus
         
@@ -4680,9 +4297,6 @@ class TurboGPUBatchEngine:
                     batch_results.update(gpu_results)
                 except Exception as e:
                     logger.error(f"Intelligent GPU batch processing failed: {e}")
-        
-        # REMOVED: All individual video processing code should be in _process_video_batch_single_gpu
-        # The problematic code with "if 'frame_count' in video_features:" should be moved there
         
         return batch_results
     
@@ -4746,7 +4360,7 @@ class TurboGPUBatchEngine:
         print(f"\n🔍 DEBUG: Looking for videos ≥4 minutes...")
         
         
-        long_videos = []
+        videos = []
         short_videos = 0
         
         for video_path, features in video_features_dict.items():
@@ -4903,23 +4517,11 @@ class TurboGPUBatchEngine:
         print("poop")
         #debug_long_videos_only(video_features_dict, gps_features_dict)
         #test_quick_duration_fix(video_features_dict)
-        #self.debug_duration_extraction_method()
-        #self.debug_video_duration_data(video_features_dict)
+        debug_duration_extraction_method()
+        debug_video_duration_data(video_features_dict)
         
         for video_path in video_batch_paths:
             video_features = video_features_dict[video_path]
-            num_frames = None
-            for field_name in ['frame_count', 'total_frames', 'num_frames']:
-                	if field_name in video_features and video_features[field_name]:
-                	    num_frames = int(video_features[field_name])
-                	    break
-            
-            if num_frames is None or num_frames <= 0:
-                duration = video_features.get('duration', 0)
-                fps = video_features.get('fps', 25.0)
-                num_frames = int(duration * fps) if duration > 0 else 25
-            
-            video_features['num_frames'] = num_frames
             if video_features is None:
                 batch_results[video_path] = {'matches': []}
                 continue
@@ -9459,29 +9061,17 @@ class TurboAdvancedGPSProcessor:
     
     def process_gpx_files_turbo(self, gpx_files: List[str]) -> Dict[str, Dict]:
         """NEW TURBO: Process GPX files with maximum parallelization"""
-        
-        # Force 16 workers and debug
-        max_workers = min(16, len(gpx_files))
-        
-        logger.info(f"🚀 Processing {len(gpx_files)} GPX files with {max_workers} workers...")
-        print(f"🔧 DEBUG: Using {max_workers} workers for {len(gpx_files)} GPX files")
+        logger.info(f"🚀 Processing {len(gpx_files)} GPX files with {self.max_workers} workers...")
         
         gpx_database = {}
-        start_time = time.time()
         
         # Use ThreadPoolExecutor for GPU-compatible processing
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            print(f"🔧 DEBUG: ThreadPoolExecutor created with {executor._max_workers} workers")
-            
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             # Submit all GPX processing tasks
             future_to_gpx = {
                 executor.submit(self._process_single_gpx_turbo, gpx_file): gpx_file
                 for gpx_file in gpx_files
             }
-            
-            print(f"🔧 DEBUG: Submitted {len(future_to_gpx)} tasks to thread pool")
-            
-            completed_count = 0
             
             # Collect results with progress bar
             for future in tqdm(as_completed(future_to_gpx), total=len(gpx_files), desc="🚀 Turbo GPX processing"):
@@ -9492,20 +9082,15 @@ class TurboAdvancedGPSProcessor:
                         gpx_database[gpx_file] = result
                     else:
                         gpx_database[gpx_file] = None
-                    
-                    completed_count += 1
-                    if completed_count % 100 == 0:  # Debug every 100 files
-                        elapsed = time.time() - start_time
-                        rate = completed_count / elapsed
-                        print(f"🔧 DEBUG: Processed {completed_count}/{len(gpx_files)} files at {rate:.2f} files/sec")
-                        
+                except Exception as e:
+                        logger.warning(f"Unclosed try block exception: {e}")
+                        pass
                 except Exception as e:
                     logger.error(f"GPX processing failed for {gpx_file}: {e}")
                     gpx_database[gpx_file] = None
         
         successful = len([v for v in gpx_database.values() if v is not None])
-        total_time = time.time() - start_time
-        logger.info(f"🚀 Turbo GPX processing complete: {successful}/{len(gpx_files)} successful in {total_time:.2f}s")
+        logger.info(f"🚀 Turbo GPX processing complete: {successful}/{len(gpx_files)} successful")
         
         return gpx_database
     
@@ -12346,6 +11931,9 @@ class CompleteTurboVideoProcessor:
                 self.gpu_manager.release_gpu(gpu_id)
     
     def _extract_complete_features_reuse_models(self, video_path: str, gpu_id: int, codec: str = 'unknown') -> Optional[Dict]:
+        """
+        ENHANCED: Extract features with codec-specific optimizations for panoramic videos
+        """
         try:
             device = torch.device(f'cuda:{gpu_id}')
             gpu_models = self.initialized_gpus[gpu_id]
@@ -12368,33 +11956,12 @@ class CompleteTurboVideoProcessor:
             is_360_video = 1.8 <= aspect_ratio <= 2.2
             is_exact_panoramic = (width, height) == self.panoramic_resolution
             
-            # Get video metadata using the FIXED method
-            try:
-                total_frames, fps, actual_duration = self._get_video_metadata_ffprobe(video_path)
-                
-                # Apply fallbacks if extraction failed
-                if total_frames is None:
-                    total_frames = num_frames
-                    logger.debug(f"Using tensor frame count {num_frames} for {Path(video_path).name}")
-                
-                if actual_duration is None or actual_duration <= 0:
-                    # Calculate from available data
-                    if fps > 0:
-                        actual_duration = num_frames / fps
-                    else:
-                        actual_duration = num_frames / 25.0  # Ultimate fallback
-                    logger.warning(f"⚠️ Using calculated duration {actual_duration:.1f}s for {Path(video_path).name}")
-                
-                # Log success for verification
-                logger.debug(f"✅ Extracted metadata for {Path(video_path).name}: "
-                            f"duration={actual_duration:.1f}s, fps={fps:.2f}, frames={total_frames}")
-                            
-            except Exception as e:
-                logger.warning(f"⚠️ Metadata extraction failed, using tensor-based fallback: {e}")
-                # Fallback to tensor dimensions and default fps
-                total_frames = num_frames
-                fps = 25.0
-                actual_duration = num_frames / fps
+            cap = cv2.VideoCapture(video_path)
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # Get this ONCE
+            fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
+            #vagina
+            # Calculate ACTUAL duration immediately
+            actual_duration = total_frames / fps
             
             features.update({
                 'is_360_video': is_360_video,
@@ -12402,8 +11969,6 @@ class CompleteTurboVideoProcessor:
                 'video_resolution': (width, height),
                 'aspect_ratio': aspect_ratio,
                 'frame_count': num_frames,
-                'total_frames': total_frames,  # From ffprobe
-                'fps': fps,  # From ffprobe
                 'duration': actual_duration,
                 'video_codec': codec
             })
@@ -12446,94 +12011,6 @@ class CompleteTurboVideoProcessor:
         except Exception as e:
             logger.error(f"🎮 GPU {gpu_id}: Feature extraction failed for {Path(video_path).name}: {e}")
             return None
-    
-    def _get_video_metadata_ffprobe(self, video_path: str) -> tuple:
-        """
-        FIXED: Helper function to extract video metadata using ffprobe with JSON output
-        Returns: (total_frames, fps, duration)
-        """
-        try:
-            # Use JSON format instead of CSV for reliable parsing
-            cmd = [
-                'ffprobe', '-v', 'quiet', '-print_format', 'json',
-                '-show_format', '-show_streams', '-select_streams', 'v:0',
-                str(video_path)
-            ]
-            
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=30)
-            data = json.loads(result.stdout)
-            
-            # Extract video stream
-            video_streams = [s for s in data.get('streams', []) if s.get('codec_type') == 'video']
-            if not video_streams:
-                logger.warning(f"No video stream found in {Path(video_path).name}")
-                return None, 25.0, None
-            
-            video_stream = video_streams[0]
-            format_info = data.get('format', {})
-            
-            # Extract frame count
-            total_frames = None
-            if 'nb_frames' in video_stream:
-                try:
-                    total_frames = int(video_stream['nb_frames'])
-                except (ValueError, TypeError):
-                    pass
-            
-            # Extract frame rate
-            fps = 25.0  # Default fallback
-            if 'r_frame_rate' in video_stream:
-                fps_str = video_stream['r_frame_rate']
-                try:
-                    if '/' in fps_str:
-                        num, den = fps_str.split('/')
-                        fps = float(num) / float(den) if float(den) != 0 else 25.0
-                    else:
-                        fps = float(fps_str) if fps_str else 25.0
-                except (ValueError, ZeroDivisionError):
-                    fps = 25.0
-            
-            # Extract duration (prioritize format duration - this is the key fix!)
-            duration = None
-            
-            # Method 1: From format (most reliable)
-            if 'duration' in format_info:
-                try:
-                    duration = float(format_info['duration'])
-                    if duration <= 0:
-                        duration = None
-                except (ValueError, TypeError):
-                    pass
-            
-            # Method 2: From video stream (fallback)
-            if duration is None and 'duration' in video_stream:
-                try:
-                    duration = float(video_stream['duration'])
-                    if duration <= 0:
-                        duration = None
-                except (ValueError, TypeError):
-                    pass
-            
-            # Method 3: Calculate from frames and fps (last resort)
-            if duration is None and total_frames and fps > 0:
-                duration = total_frames / fps
-            
-            # Calculate missing total_frames if we have duration and fps
-            if total_frames is None and duration and fps > 0:
-                total_frames = int(duration * fps)
-            
-            return total_frames, fps, duration
-            
-        except subprocess.CalledProcessError as e:
-            logger.error(f"ffprobe command failed for {Path(video_path).name}: {e}")
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse ffprobe JSON output for {Path(video_path).name}: {e}")
-        except subprocess.TimeoutExpired:
-            logger.error(f"ffprobe timeout for {Path(video_path).name}")
-        except Exception as e:
-            logger.error(f"Unexpected error in metadata extraction for {Path(video_path).name}: {e}")
-    
-        #return None, 25.0, None  # Return safe defaults on failure    
     
     def _extract_panoramic_specific_features(self, frames_tensor: torch.Tensor, gpu_id: int) -> Dict[str, np.ndarray]:
         """Extract features specific to 360° panoramic videos"""
@@ -12869,63 +12346,13 @@ class OptimizedVideoProcessor:
         self.config = config
         
     def process_with_memory_optimization(self, video_path: str) -> Optional[Dict]:
-        """PRESERVED: Memory-optimized video processing using direct ffmpeg calls"""
+        """PRESERVED: Memory-optimized video processing"""
         try:
             # This is a fallback processor for when GPU processing fails
-            logger.info(f"Using memory-optimized ffmpeg processing for {Path(video_path).name}")
+            logger.info(f"Using memory-optimized CPU processing for {Path(video_path).name}")
             
-            # Get video metadata using ffprobe instead of cv2.VideoCapture
-            try:
-                cmd = [
-                    'ffprobe', '-v', 'quiet', '-select_streams', 'v:0',
-                    '-show_entries', 'stream=width,height,nb_frames',
-                    '-of', 'csv=p=0', str(video_path)
-                ]
-                result = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=30)
-                parts = result.stdout.strip().split(',')
-                
-                if len(parts) < 3:
-                    logger.error("Invalid ffprobe output")
-                    return None
-                    
-                original_width = int(parts[0])
-                original_height = int(parts[1])
-                total_frames = int(parts[2]) if parts[2] and parts[2] != 'N/A' else self.config.max_frames
-                
-            except (subprocess.TimeoutExpired, subprocess.CalledProcessError, ValueError) as e:
-                logger.error(f"Could not get video metadata: {e}")
-                return None
-            
-            # Validate video dimensions
-            if original_width <= 0 or original_height <= 0:
-                logger.error("Invalid video dimensions")
-                return None
-            
-            # Create ffmpeg command for memory-optimized processing
-            target_width, target_height = self.config.target_size
-            max_frames = min(self.config.max_frames, total_frames)
-            
-            # Memory-optimized ffmpeg command (CPU fallback)
-            cmd = [
-                'ffmpeg', '-hide_banner', '-loglevel', 'error',
-                '-i', str(video_path),
-                '-vf', f'scale={target_width}:{target_height}',
-                '-vframes', str(max_frames),
-                '-f', 'rawvideo',
-                '-pix_fmt', 'rgb24',
-                '-'
-            ]
-            
-            # Start ffmpeg process
-            try:
-                process = subprocess.Popen(
-                    cmd, 
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE, 
-                    bufsize=0
-                )
-            except Exception as e:
-                logger.error(f"Failed to start ffmpeg process: {e}")
+            cap = cv2.VideoCapture(video_path)
+            if not cap.isOpened():
                 return None
             
             # Process video in smaller chunks to save memory
@@ -12934,76 +12361,52 @@ class OptimizedVideoProcessor:
                 'color_variance': [],
                 'edge_density': [],
                 'is_360_video': False,
-                'processing_mode': 'MemoryOptimized_FFmpeg'
+                'processing_mode': 'MemoryOptimized'
             }
             
             frame_count = 0
-            frame_size = target_width * target_height * 3  # RGB
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             
-            try:
-                while frame_count < max_frames:
-                    # Read one frame worth of raw RGB data
-                    raw_frame = process.stdout.read(frame_size)
-                    
-                    if len(raw_frame) != frame_size:
-                        # End of stream or incomplete frame
-                        break
-                    
-                    # Convert raw bytes to numpy array (frame is already resized by ffmpeg)
-                    frame = np.frombuffer(raw_frame, dtype=np.uint8)
-                    frame = frame.reshape((target_height, target_width, 3))
-                    
-                    # Convert RGB to BGR for OpenCV compatibility 
-                    frame_resized = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                    gray = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2GRAY)
-                    
-                    # Simple features (same logic as original)
-                    motion = np.mean(np.abs(np.diff(gray, axis=0))) + np.mean(np.abs(np.diff(gray, axis=1)))
-                    color_var = np.var(frame_resized)
-                    edges = cv2.Canny(gray, 50, 150)
-                    edge_density = np.mean(edges) / 255.0
-                    
-                    features['motion_magnitude'].append(motion)
-                    features['color_variance'].append(color_var)
-                    features['edge_density'].append(edge_density)
-                    
-                    frame_count += 1
-                    
-            except Exception as e:
-                logger.error(f"Error processing frames: {e}")
-            finally:
-                # Clean up ffmpeg process
-                try:
-                    process.stdout.close()
-                    process.stderr.close()
-                    # Give process a moment to terminate gracefully
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait()
-                except Exception as e:
-                    logger.warning(f"Error cleaning up ffmpeg process: {e}")
+            while frame_count < min(self.config.max_frames, total_frames):
+                ret, frame = cap.read()
+                if not ret:
+                    break
+                
+                # Basic processing
+                frame_resized = cv2.resize(frame, self.config.target_size)
+                gray = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2GRAY)
+                
+                # Simple features
+                motion = np.mean(np.abs(np.diff(gray, axis=0))) + np.mean(np.abs(np.diff(gray, axis=1)))
+                color_var = np.var(frame_resized)
+                edges = cv2.Canny(gray, 50, 150)
+                edge_density = np.mean(edges) / 255.0
+                
+                features['motion_magnitude'].append(motion)
+                features['color_variance'].append(color_var)
+                features['edge_density'].append(edge_density)
+                
+                frame_count += 1
             
-            # Check if we processed any frames
-            if frame_count == 0:
-                logger.error("No frames were processed")
-                return None
+            cap.release()
             
             # Convert to numpy arrays
             for key in ['motion_magnitude', 'color_variance', 'edge_density']:
                 features[key] = np.array(features[key])
             
-            # Detect 360° video using original dimensions from ffprobe
-            aspect_ratio = original_width / original_height
-            features['is_360_video'] = 1.8 <= aspect_ratio <= 2.2
+            # Detect 360° video
+            width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+            height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+            if width > 0 and height > 0:
+                aspect_ratio = width / height
+                features['is_360_video'] = 1.8 <= aspect_ratio <= 2.2
             
-            logger.info(f"Processed {frame_count} frames using memory-optimized ffmpeg")
             return features
             
         except Exception as e:
             logger.error(f"Memory-optimized processing failed for {video_path}: {e}")
             return None
-        
+
 class SharedGPUResourceManager:
     """PRESERVED: Shared GPU resource manager for coordination between processes"""
     

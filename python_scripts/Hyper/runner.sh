@@ -1,11 +1,13 @@
 #last working
 #python matcher39.py -d ~/penis/panoramics/playground/ -o ~/penis/testingground --debug
-nvidia-smi --gpu-reset
+#nvidia-smi --gpu-reset
 export CUDA_LAUNCH_BLOCKING=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-python matcher51.py \
+export OPENCV_FFMPEG_CAPTURE_OPTIONS="buffer_size;8388608;tcp_nodelay;1"
+export OPENCV_FFMPEG_READ_ATTEMPTS=4096
+python matcher51.1.py \
     -d ~/penis/panoramics/playground/ \
-    -o ~/bike-map/python_scripts/Visualizer/MatcherFiles \
+    -o ~/bike-map/python_scripts/Visualizer/Output2 \
 	--turbo-mode \
     --debug \
     --strict \
