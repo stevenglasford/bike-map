@@ -1,0 +1,96 @@
+🎥 Insta360 Complete Directory Processor
+========================================
+Configuration:
+  Input: /home/preston/penis/insta360_backup
+  Output: /home/preston/penis/insta/processed_videos
+  Workers: 4
+
+
+[0;32m[INFO][0m Setting up Docker environment...
+[0;32m[INFO][0m Found MediaSDK: ./libMediaSDK-dev-3.0.1.2-20250418_153137-amd64.deb
+[0;32m[INFO][0m Building Docker image (this may take a few minutes)...
+Sending build context to Docker daemon  315.2MB
+Step 1/20 : FROM nvidia/cuda:12.9.1-devel-ubuntu22.04
+12.9.1-devel-ubuntu22.04: Pulling from nvidia/cuda
+89dc6ea4eae2: Already exists
+3c5e96eb64c8: Pulling fs layer
+9e2bba20bb5f: Pulling fs layer
+0406b35d5243: Pulling fs layer
+475408d1045e: Pulling fs layer
+8c961b4ded35: Pulling fs layer
+2cf3ac9bd2a6: Pulling fs layer
+706ad202eb77: Pulling fs layer
+a5fadb001e04: Pulling fs layer
+e4d4df2f14b6: Pulling fs layer
+496c5e4d03ba: Pulling fs layer
+8c961b4ded35: Waiting
+706ad202eb77: Waiting
+2cf3ac9bd2a6: Waiting
+475408d1045e: Waiting
+e4d4df2f14b6: Waiting
+496c5e4d03ba: Waiting
+a5fadb001e04: Waiting
+0406b35d5243: Verifying Checksum
+0406b35d5243: Download complete
+3c5e96eb64c8: Download complete
+3c5e96eb64c8: Pull complete
+475408d1045e: Verifying Checksum
+475408d1045e: Download complete
+2cf3ac9bd2a6: Verifying Checksum
+2cf3ac9bd2a6: Download complete
+706ad202eb77: Verifying Checksum
+706ad202eb77: Download complete
+9e2bba20bb5f: Verifying Checksum
+9e2bba20bb5f: Download complete
+a5fadb001e04: Download complete
+496c5e4d03ba: Verifying Checksum
+496c5e4d03ba: Download complete
+9e2bba20bb5f: Pull complete
+0406b35d5243: Pull complete
+475408d1045e: Pull complete
+8c961b4ded35: Verifying Checksum
+8c961b4ded35: Download complete
+8c961b4ded35: Pull complete
+2cf3ac9bd2a6: Pull complete
+706ad202eb77: Pull complete
+a5fadb001e04: Pull complete
+e4d4df2f14b6: Verifying Checksum
+e4d4df2f14b6: Download complete
+e4d4df2f14b6: Pull complete
+496c5e4d03ba: Pull complete
+Digest: sha256:61651c1f1ca4e26445237a630af0977ed0fd59a1316579f3048774f0077203b3
+Status: Downloaded newer image for nvidia/cuda:12.9.1-devel-ubuntu22.04
+ ---> b1c44526b5d1
+Step 2/20 : ENV DEBIAN_FRONTEND=noninteractive
+ ---> Running in 9742198ae274
+ ---> Removed intermediate container 9742198ae274
+ ---> 883ee1351e81
+Step 3/20 : RUN apt-get update && apt-get install -y     software-properties-common     wget     curl     git     build-essential     cmake     pkg-config     python3     python3-pip     python3-dev     jq     bc     parallel     tree     htop     libgl1-mesa-glx     libglib2.0-0     libxrender1     libxext6     libsm6     libxrandr2     libxss1     libxcursor1     libxcomposite1     libasound2     libxi6     libxtst6     xvfb     x11-utils     mesa-utils     libglfw3     libglfw3-dev     libglew-dev     libglm-dev     vulkan-utils     libvulkan1     libvulkan-dev     ffmpeg     && rm -rf /var/lib/apt/lists/*
+ ---> Running in 9df3b5fe00b9
+Get:1 http://archive.ubuntu.com/ubuntu jammy InRelease [270 kB]
+Get:2 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
+Get:3 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64  InRelease [1581 B]
+Get:4 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64  Packages [1840 kB]
+Get:5 http://security.ubuntu.com/ubuntu jammy-security/restricted amd64 Packages [4932 kB]
+Get:6 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]
+Get:7 http://archive.ubuntu.com/ubuntu jammy-backports InRelease [127 kB]
+Get:8 http://archive.ubuntu.com/ubuntu jammy/multiverse amd64 Packages [266 kB]
+Get:9 http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages [17.5 MB]
+Get:10 http://security.ubuntu.com/ubuntu jammy-security/universe amd64 Packages [1267 kB]
+Get:11 http://security.ubuntu.com/ubuntu jammy-security/multiverse amd64 Packages [48.5 kB]
+Get:12 http://security.ubuntu.com/ubuntu jammy-security/main amd64 Packages [3148 kB]
+Get:13 http://archive.ubuntu.com/ubuntu jammy/main amd64 Packages [1792 kB]
+Get:14 http://archive.ubuntu.com/ubuntu jammy/restricted amd64 Packages [164 kB]
+Get:15 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages [1572 kB]
+Get:16 http://archive.ubuntu.com/ubuntu jammy-updates/multiverse amd64 Packages [75.9 kB]
+Get:17 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages [3461 kB]
+Get:18 http://archive.ubuntu.com/ubuntu jammy-updates/restricted amd64 Packages [5139 kB]
+Get:19 http://archive.ubuntu.com/ubuntu jammy-backports/universe amd64 Packages [35.2 kB]
+Get:20 http://archive.ubuntu.com/ubuntu jammy-backports/main amd64 Packages [83.2 kB]
+Fetched 42.0 MB in 3s (13.9 MB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+[91mE: Unable to locate package vulkan-utils
+[0m[0;32m[INFO][0m Cleaning up...

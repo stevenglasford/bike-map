@@ -1,0 +1,600 @@
+#!/usr/bin/env python3
+"""
+Complete Insta360 Directory Processor
+Processes entire camera download directories with perfect organization
+"""
+
+import os
+import sys
+import subprocess
+import json
+import time
+import logging
+import shutil
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+import concurrent.futures
+import threading
+import signal
+
+# Rich imports with fallback
+try:
+    from rich.console import Console
+    from rich.progress import Progress, TaskID, BarColumn, TimeRemainingColumn
+    from rich.table import Table
+    from rich.live import Live
+    console = Console()
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+    console = None
+
+class Insta360DirectoryProcessor:
+    def __init__(self, input_dir: str, output_dir: str, max_workers: int = 2):
+        self.input_dir = Path(input_dir)
+        self.output_dir = Path(output_dir)
+        self.max_workers = max_workers
+        self.stats = {
+            "total_found": 0,
+            "processed": 0,
+            "failed": 0,
+            "skipped": 0,
+            "start_time": datetime.now(),
+            "cameras": {},
+            "processing_rate": 0.0
+        }
+        self.stop_processing = False
+        self.current_tasks = {}
+        
+        # Setup logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler('/logs/processing.log'),
+                logging.StreamHandler()
+            ]
+        )
+        
+        # Setup signal handling
+        signal.signal(signal.SIGINT, self.signal_handler)
+        signal.signal(signal.SIGTERM, self.signal_handler)
+    
+    def signal_handler(self, signum, frame):
+        self.print_message(f"Received signal {signum}, shutting down gracefully...")
+        self.stop_processing = True
+    
+    def print_message(self, message: str):
+        """Print message with or without Rich"""
+        if RICH_AVAILABLE and console:
+            console.print(message)
+        else:
+            print(message)
+    
+    def discover_videos(self) -> List[Dict]:
+        """Discover all video files in camera directory structure"""
+        self.print_message("🔍 Discovering videos...")
+        
+        videos = []
+        video_extensions = ['.insv', '.insp', '.mp4']
+        
+        # Walk through directory structure
+        for root, dirs, files in os.walk(self.input_dir):
+            for file in files:
+                if any(file.lower().endswith(ext) for ext in video_extensions):
+                    if file.lower().endswith(('.insv', '.insp')):  # Only process raw files
+                        file_path = Path(root) / file
+                        
+                        video_info = {
+                            'path': str(file_path),
+                            'name': file,
+                            'size_gb': file_path.stat().st_size / (1024**3),
+                            'camera': self.extract_camera_info(str(file_path)),
+                            'timestamp': self.extract_timestamp(file),
+                            'relative_path': os.path.relpath(file_path, self.input_dir)
+                        }
+                        
+                        videos.append(video_info)
+        
+        # Sort by timestamp
+        videos.sort(key=lambda x: x['timestamp'] if x['timestamp'] else datetime.min)
+        
+        # Update stats
+        self.stats["total_found"] = len(videos)
+        for video in videos:
+            camera = video['camera']
+            if camera not in self.stats["cameras"]:
+                self.stats["cameras"][camera] = {"count": 0, "processed": 0, "failed": 0}
+            self.stats["cameras"][camera]["count"] += 1
+        
+        self.print_message(f"Found {len(videos)} videos across {len(self.stats['cameras'])} cameras")
+        
+        return videos
+    
+    def extract_camera_info(self, file_path: str) -> str:
+        """Extract camera information from file path"""
+        path_parts = file_path.split(os.sep)
+        
+        # Look for camera folder (DCIM/Camera01, DCIM/Camera02, etc.)
+        for i, part in enumerate(path_parts):
+            if part.lower().startswith('camera') and part[6:].isdigit():
+                return part
+        
+        # Fallback: look for numbered sequences in filename
+        filename = os.path.basename(file_path)
+        if 'VID_' in filename:
+            parts = filename.split('_')
+            if len(parts) >= 4:
+                return f"Camera{parts[3]}"
+        
+        return "Unknown"
+    
+    def extract_timestamp(self, filename: str) -> Optional[datetime]:
+        """Extract timestamp from Insta360 filename"""
+        try:
+            # Insta360 format: VID_YYYYMMDD_HHMMSS_XX_NNN.insv
+            if filename.startswith('VID_'):
+                parts = filename.split('_')
+                if len(parts) >= 3:
+                    date_str = parts[1]
+                    time_str = parts[2]
+                    
+                    # Parse date and time
+                    year = int(date_str[:4])
+                    month = int(date_str[4:6])
+                    day = int(date_str[6:8])
+                    hour = int(time_str[:2])
+                    minute = int(time_str[2:4])
+                    second = int(time_str[4:6])
+                    
+                    return datetime(year, month, day, hour, minute, second)
+        except Exception as e:
+            logging.warning(f"Could not parse timestamp from {filename}: {e}")
+        
+        return None
+    
+    def get_output_path(self, video_info: Dict) -> str:
+        """Generate organized output path"""
+        camera = video_info['camera']
+        timestamp = video_info['timestamp']
+        original_name = Path(video_info['name']).stem
+        
+        # Create organized directory structure
+        if timestamp:
+            date_folder = timestamp.strftime("%Y-%m-%d")
+            time_str = timestamp.strftime("%H%M%S")
+            output_filename = f"{camera}_{timestamp.strftime('%Y%m%d_%H%M%S')}_{original_name}.mp4"
+        else:
+            date_folder = "unknown_date"
+            time_str = "unknown"
+            output_filename = f"{camera}_unknown_{original_name}.mp4"
+        
+        output_path = self.output_dir / camera / date_folder / output_filename
+        return str(output_path)
+    
+    def is_already_processed(self, video_info: Dict) -> bool:
+        """Check if video is already processed"""
+        output_path = self.get_output_path(video_info)
+        return os.path.exists(output_path)
+    
+    def process_single_video(self, video_info: Dict, task_id=None) -> Dict:
+        """Process a single video with multiple fallback methods"""
+        input_path = video_info['path']
+        output_path = self.get_output_path(video_info)
+        
+        # Ensure output directory exists
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        
+        result = {
+            'input': input_path,
+            'output': output_path,
+            'video_info': video_info,
+            'success': False,
+            'method': None,
+            'duration': 0,
+            'error': None,
+            'file_size_mb': 0
+        }
+        
+        start_time = time.time()
+        
+        try:
+            print(f"Processing {video_info['name']}")
+            
+            # Method 1: GPU AI stitching
+            if self.try_gpu_stitching(input_path, output_path):
+                result['success'] = True
+                result['method'] = 'GPU_AI'
+            
+            # Method 2: Template stitching
+            elif self.try_template_stitching(input_path, output_path):
+                result['success'] = True
+                result['method'] = 'Template'
+            
+            # Method 3: CPU fallback
+            elif self.try_cpu_stitching(input_path, output_path):
+                result['success'] = True
+                result['method'] = 'CPU'
+            
+            else:
+                result['error'] = 'All stitching methods failed'
+            
+            # Verify output
+            if result['success'] and os.path.exists(output_path):
+                file_size = os.path.getsize(output_path)
+                result['file_size_mb'] = file_size / (1024**2)
+                
+                if file_size < 1024*1024:  # Less than 1MB is suspicious
+                    result['success'] = False
+                    result['error'] = 'Output file too small'
+            
+        except Exception as e:
+            result['error'] = str(e)
+        
+        result['duration'] = time.time() - start_time
+        
+        # Update stats
+        camera = video_info['camera']
+        if result['success']:
+            self.stats['processed'] += 1
+            self.stats['cameras'][camera]['processed'] += 1
+        else:
+            self.stats['failed'] += 1
+            self.stats['cameras'][camera]['failed'] += 1
+        
+        # Calculate processing rate
+        elapsed = (datetime.now() - self.stats['start_time']).total_seconds()
+        self.stats['processing_rate'] = self.stats['processed'] / max(elapsed / 3600, 0.01)  # per hour
+        
+        return result
+    
+    def try_stitching_with_variations(self, input_path: str, output_path: str, stitch_type: str = 'template', enable_gpu: bool = True) -> bool:
+        """Try stitching with different command variations"""
+        binary = '/usr/bin/MediaSDKTest'
+        
+        # First, test GPU availability
+        if enable_gpu:
+            print("=== GPU Debug Info ===")
+            try:
+                gpu_check = subprocess.run(['nvidia-smi', '-L'], capture_output=True, text=True, timeout=10)
+                if gpu_check.returncode == 0:
+                    print(f"GPUs available: {gpu_check.stdout.strip()}")
+                else:
+                    print("No GPUs detected by nvidia-smi")
+                    
+                # Check CUDA 10.2 compatibility
+                cuda_check = subprocess.run(['nvidia-smi'], capture_output=True, text=True, timeout=10)
+                if cuda_check.returncode == 0:
+                    print("CUDA runtime accessible")
+                    # Check if CUDA version is compatible with MediaSDK (needs 10.2)
+                    if "CUDA Version: 12.9" in cuda_check.stdout:
+                        print("Host has CUDA 12.9, container has CUDA 10.2 - this should work for MediaSDK")
+                    elif "CUDA Version: 10." in cuda_check.stdout:
+                        print("CUDA 10.x detected - compatible with MediaSDK")
+                    else:
+                        print("CUDA version may not be optimal for MediaSDK (requires 10.2+)")
+                else:
+                    print("CUDA runtime not accessible")
+                    
+            except Exception as e:
+                print(f"GPU check failed: {e}")
+                enable_gpu = False
+                print("Falling back to CPU processing")
+            print("=== End GPU Debug ===")
+        
+        # Different command variations to try with explicit GPU forcing
+        cmd_variations = [
+            # Variation 1: Explicitly enable CUDA (disable_cuda false)
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', stitch_type, '-output_size', '3840x1920', '-disable_cuda', 'false'],
+            # Variation 2: Disable soft encoding to force hardware
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', stitch_type, '-output_size', '3840x1920', '-disable_cuda', 'false', '-enable_soft_encode', 'false', '-enable_soft_decode', 'false'],
+            # Variation 3: Just don't include disable_cuda flag at all
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', stitch_type, '-output_size', '3840x1920'],
+            # Variation 4: Alternative stitch type with CUDA enabled
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', 'optflow', '-output_size', '3840x1920', '-disable_cuda', 'false'],
+            # Variation 5: Template stitching with CUDA
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', 'template', '-output_size', '3840x1920', '-disable_cuda', 'false'],
+            # Variation 6: Lower resolution for faster testing
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', stitch_type, '-output_size', '1920x960', '-disable_cuda', 'false'],
+        ]
+        
+        # If GPU is disabled, add CPU-only variations
+        if not enable_gpu:
+            cmd_variations = [
+                # CPU-only variations
+                [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', stitch_type, '-output_size', '3840x1920', '-disable_cuda', 'true', '-enable_soft_encode', 'true'],
+                [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', 'template', '-output_size', '1920x960', '-disable_cuda', 'true', '-enable_soft_encode', 'true'],
+            ]
+        
+        for i, cmd in enumerate(cmd_variations):
+            try:
+                print(f"Trying command variation {i+1}: {' '.join(cmd)}")
+                
+                # Set CUDA environment variables for better GPU detection
+                env = os.environ.copy()
+                if enable_gpu:
+                    env['CUDA_VISIBLE_DEVICES'] = '0'  # Use first GPU
+                    env['NVIDIA_VISIBLE_DEVICES'] = 'all'
+                    env['NVIDIA_DRIVER_CAPABILITIES'] = 'compute,utility,graphics'
+                    # Additional CUDA environment variables
+                    env['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
+                    env['CUDA_CACHE_DISABLE'] = '0'
+                    # Force MediaSDK to use GPU
+                    env['INS_USE_GPU'] = '1'
+                    env['INS_ENABLE_CUDA'] = '1'
+                
+                print(f"Environment: CUDA_VISIBLE_DEVICES={env.get('CUDA_VISIBLE_DEVICES', 'not set')}")
+                print(f"Starting MediaSDK command...")
+                
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=300, env=env)
+                
+                print(f"Variation {i+1} - Return code: {result.returncode}")
+                if result.stdout:
+                    print(f"STDOUT: {result.stdout[:300]}...")
+                if result.stderr:
+                    print(f"STDERR: {result.stderr[:300]}...")
+                
+                # Check GPU utilization after processing
+                try:
+                    gpu_util = subprocess.run(['nvidia-smi', '--query-gpu=utilization.gpu', '--format=csv,noheader,nounits', '-i', '0'], 
+                                            capture_output=True, text=True, timeout=5)
+                    if gpu_util.returncode == 0:
+                        utilization = gpu_util.stdout.strip()
+                        print(f"GPU utilization after processing: {utilization}%")
+                        if int(utilization) > 5:
+                            print("✓ GPU was actively used during processing!")
+                        else:
+                            print("⚠ Low GPU utilization - might be using CPU")
+                except:
+                    print("Could not check GPU utilization")
+                
+                if result.returncode == 0 and os.path.exists(output_path):
+                    file_size = os.path.getsize(output_path)
+                    print(f"✓ Success with variation {i+1}! Output size: {file_size/1024/1024:.1f}MB")
+                    
+                    # Check if GPU was actually used by looking for CUDA-related output or GPU processes
+                    gpu_processes = subprocess.run(['nvidia-smi', '--query-compute-apps=pid,process_name', '--format=csv,noheader'], 
+                                                 capture_output=True, text=True)
+                    if enable_gpu and (('cuda' in result.stderr.lower()) or ('gpu' in result.stderr.lower()) or 
+                                     (gpu_processes.returncode == 0 and 'MediaSDK' in gpu_processes.stdout)):
+                        print("✓ GPU acceleration confirmed - CUDA enabled!")
+                    elif enable_gpu:
+                        print("⚠ GPU acceleration unclear - monitor nvidia-smi for GPU usage")
+                    
+                    return True
+                    
+            except subprocess.TimeoutExpired:
+                print(f"Variation {i+1} timed out after 5 minutes")
+                continue
+            except Exception as e:
+                print(f"Variation {i+1} failed with exception: {e}")
+                continue
+        
+        return False
+        return False
+    
+    def try_gpu_stitching(self, input_path: str, output_path: str) -> bool:
+        """Try GPU AI stitching"""
+        print(f"Attempting GPU stitching for {os.path.basename(input_path)}")
+        return self.try_stitching_with_variations(input_path, output_path, 'aistitch', enable_gpu=True)
+    
+    def try_template_stitching(self, input_path: str, output_path: str) -> bool:
+        """Try template stitching"""
+        print(f"Attempting template stitching for {os.path.basename(input_path)}")
+        return self.try_stitching_with_variations(input_path, output_path, 'template', enable_gpu=True)
+    
+    def try_cpu_stitching(self, input_path: str, output_path: str) -> bool:
+        """Try CPU fallback stitching"""
+        print(f"Attempting CPU stitching for {os.path.basename(input_path)}")
+        return self.try_stitching_with_variations(input_path, output_path, 'template', enable_gpu=False)
+    
+    def get_stitcher_command(self, input_path: str, output_path: str, 
+                           stitch_type: str = 'template', 
+                           output_size: str = '3840x1920',
+                           enable_gpu: bool = True) -> List[str]:
+        """Build stitcher command with parameters"""
+        
+        # Use the correct binary path we found
+        binary = '/usr/bin/MediaSDKTest'
+        
+        if not os.path.exists(binary):
+            raise Exception(f"MediaSDK binary not found at {binary}")
+        
+        print(f"Using MediaSDK binary: {binary}")
+        
+        # Test the binary first
+        try:
+            help_result = subprocess.run([binary, '--help'], capture_output=True, text=True, timeout=10)
+            print(f"MediaSDK help output (return code {help_result.returncode}):")
+            print(f"STDOUT: {help_result.stdout[:500]}...")
+            print(f"STDERR: {help_result.stderr[:500]}...")
+        except Exception as e:
+            print(f"Failed to get MediaSDK help: {e}")
+        
+        # Try different command formats - MediaSDK 3.0.1 might use different arguments
+        cmd_variations = [
+            # Standard format
+            [binary, '-inputs', input_path, '-output', output_path, '-stitch_type', stitch_type, '-output_size', output_size],
+            # Alternative format
+            [binary, '--input', input_path, '--output', output_path, '--stitch-type', stitch_type, '--output-size', output_size],
+            # Simple format
+            [binary, input_path, output_path],
+            # Without stitch type
+            [binary, '-inputs', input_path, '-output', output_path]
+        ]
+        
+        # Use the first variation for now, but we'll test others if this fails
+        cmd = cmd_variations[0]
+        
+        if not enable_gpu:
+            cmd.extend(['-disable_cuda', 'true', '-enable_soft_encode', 'true'])
+        
+        print(f"Command to run: {' '.join(cmd)}")
+        return cmd
+    
+    def save_progress_report(self):
+        """Save progress report to file"""
+        report_path = "/logs/progress_report.json"
+        
+        # Create JSON-serializable stats
+        serializable_stats = self.stats.copy()
+        serializable_stats["start_time"] = self.stats["start_time"].isoformat()
+        
+        report = {
+            "timestamp": datetime.now().isoformat(),
+            "stats": serializable_stats,
+            "cameras": {}
+        }
+        
+        # Add camera-specific stats
+        for camera, camera_stats in self.stats['cameras'].items():
+            total = camera_stats['count']
+            processed = camera_stats['processed']
+            failed = camera_stats['failed']
+            remaining = total - processed - failed
+            
+            report['cameras'][camera] = {
+                "total": total,
+                "processed": processed,
+                "failed": failed,
+                "remaining": remaining,
+                "success_rate": (processed / max(processed + failed, 1)) * 100
+            }
+        
+        with open(report_path, 'w') as f:
+            json.dump(report, f, indent=2)
+    
+    def process_all_videos(self):
+        """Process all videos with progress display"""
+        self.print_message("🚀 Starting Insta360 Directory Processing")
+        
+        # Discover videos
+        videos = self.discover_videos()
+        
+        if not videos:
+            self.print_message("No videos found to process!")
+            return
+        
+        # Filter already processed
+        videos_to_process = [v for v in videos if not self.is_already_processed(v)]
+        already_processed = len(videos) - len(videos_to_process)
+        
+        if already_processed > 0:
+            self.print_message(f"Skipping {already_processed} already processed videos")
+        
+        if not videos_to_process:
+            self.print_message("All videos already processed!")
+            return
+        
+        self.print_message(f"Processing {len(videos_to_process)} videos with {self.max_workers} workers")
+        
+        # Process videos with thread pool
+        if RICH_AVAILABLE:
+            self.process_with_rich_progress(videos_to_process)
+        else:
+            self.process_with_simple_progress(videos_to_process)
+        
+        # Final report
+        self.save_progress_report()
+        
+        self.print_message("Processing complete! Check /output for results.")
+    
+    def process_with_rich_progress(self, videos_to_process):
+        """Process with Rich progress display"""
+        with Progress(
+            "[progress.description]{task.description}",
+            BarColumn(),
+            "[progress.percentage]{task.percentage:>3.0f}%",
+            "•",
+            TimeRemainingColumn(),
+        ) as progress:
+            
+            task = progress.add_task("Processing videos...", total=len(videos_to_process))
+            
+            with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                futures = []
+                
+                for video in videos_to_process:
+                    if self.stop_processing:
+                        break
+                    
+                    future = executor.submit(self.process_single_video, video, task)
+                    futures.append(future)
+                
+                for future in concurrent.futures.as_completed(futures):
+                    if self.stop_processing:
+                        break
+                    
+                    try:
+                        result = future.result()
+                        status = "✓" if result['success'] else "✗"
+                        method = result.get('method', 'Failed')
+                        duration = result['duration']
+                        
+                        logging.info(f"{status} {os.path.basename(result['input'])} - {method} ({duration:.1f}s)")
+                        progress.update(task, advance=1)
+                        
+                    except Exception as e:
+                        logging.error(f"Processing error: {e}")
+                        progress.update(task, advance=1)
+                    
+                    # Save progress periodically
+                    if (self.stats['processed'] + self.stats['failed']) % 10 == 0:
+                        self.save_progress_report()
+    
+    def process_with_simple_progress(self, videos_to_process):
+        """Process with simple text progress"""
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = []
+            
+            for video in videos_to_process:
+                if self.stop_processing:
+                    break
+                
+                future = executor.submit(self.process_single_video, video)
+                futures.append(future)
+            
+            for i, future in enumerate(concurrent.futures.as_completed(futures)):
+                if self.stop_processing:
+                    break
+                
+                try:
+                    result = future.result()
+                    status = "✓" if result['success'] else "✗"
+                    method = result.get('method', 'Failed')
+                    duration = result['duration']
+                    
+                    logging.info(f"{status} {os.path.basename(result['input'])} - {method} ({duration:.1f}s)")
+                    
+                    # Progress update
+                    completed = self.stats['processed'] + self.stats['failed']
+                    print(f"Progress: {completed}/{len(videos_to_process)} ({completed*100//len(videos_to_process)}%)")
+                    
+                except Exception as e:
+                    logging.error(f"Processing error: {e}")
+                
+                # Save progress periodically
+                if (self.stats['processed'] + self.stats['failed']) % 10 == 0:
+                    self.save_progress_report()
+
+def main():
+    if len(sys.argv) < 3:
+        print("Usage: process_directory.py <input_dir> <output_dir> [max_workers]")
+        sys.exit(1)
+    
+    input_dir = sys.argv[1]
+    output_dir = sys.argv[2]
+    max_workers = int(sys.argv[3]) if len(sys.argv) > 3 else 2
+    
+    if not os.path.exists(input_dir):
+        print(f"Input directory not found: {input_dir}")
+        sys.exit(1)
+    
+    os.makedirs(output_dir, exist_ok=True)
+    
+    processor = Insta360DirectoryProcessor(input_dir, output_dir, max_workers)
+    processor.process_all_videos()
+
+if __name__ == "__main__":
+    main()

@@ -9,7 +9,7 @@ echo "=================================="
 INPUT_FILE="../Visualizer/MatcherFiles/complete_turbo_360_report_ramcache.json"
 WORKERS=5  # Reduced for stability
 GPU_MEMORY=14.0
-TOP_MATCHES=4
+TOP_MATCHES=12
 
 # Verify input file exists
 if [[ ! -f "$INPUT_FILE" ]]; then
